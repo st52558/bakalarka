@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox alignment="CENTER" fillWidth="false" maxHeight="411.0" maxWidth="395.0" minHeight="411.0" minWidth="395.0" prefHeight="411.0" prefWidth="395.0" spacing="20.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="LoadGame.LoadGameC">
+   <children>
+      <ListView fx:id="listView" prefHeight="328.0" prefWidth="364.0" />
+      <HBox prefHeight="30.0" prefWidth="224.0" spacing="44.0">
+         <children>
+            <Button fx:id="load" mnemonicParsing="false" onMouseClicked="#loadClick" prefHeight="30.0" prefWidth="90.0" text="Načíst">
+               <font>
+                  <Font name="Cambria" size="20.0" />
+               </font>
+            </Button>
+            <Button fx:id="back" mnemonicParsing="false" onMouseClicked="#backClick" prefHeight="30.0" prefWidth="90.0" text="Zpět">
+               <font>
+                  <Font name="Cambria" size="20.0" />
+               </font>
+            </Button>
+         </children>
+      </HBox>
+   </children>
+</VBox>

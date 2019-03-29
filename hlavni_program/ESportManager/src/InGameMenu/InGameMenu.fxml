@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane maxHeight="600.0" maxWidth="800.0" minHeight="600.0" minWidth="800.0" prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: #eeeeee;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="InGameMenu.InGameMenuC">
+   <top>
+      <VBox prefHeight="122.0" prefWidth="800.0" BorderPane.alignment="CENTER">
+         <children>
+            <ImageView fitHeight="100.0" fitWidth="800.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../Pictures/C9.jpg" />
+               </image>
+            </ImageView>
+            <MenuBar>
+               <menus>
+                  <Menu mnemonicParsing="false" text="Hra">
+                     <items>
+                        <MenuItem mnemonicParsing="false" text="Ukončit bez uložení" />
+                        <MenuItem mnemonicParsing="false" text="Uložit" />
+                        <MenuItem mnemonicParsing="false" text="Uložit a ukončit" />
+                        <MenuItem mnemonicParsing="false" text="Uložit jako" />
+                        <MenuItem mnemonicParsing="false" text="Návod" />
+                     </items>
+                  </Menu>
+                  <Menu mnemonicParsing="false" text="Tým">
+                     <items>
+                        <MenuItem mnemonicParsing="false" text="Přehled sekcí" />
+                        <MenuItem mnemonicParsing="false" text="Finance" />
+                        <MenuItem mnemonicParsing="false" text="Sponzoři" />
+                        <MenuItem mnemonicParsing="false" text="Smlouvy" />
+                     </items>
+                  </Menu>
+                  <Menu mnemonicParsing="false" text="Kalendář" />
+                  <Menu mnemonicParsing="false" text="Přestupy">
+                     <items>
+                        <MenuItem mnemonicParsing="false" text="Vyhledat" />
+                        <MenuItem mnemonicParsing="false" text="Přehled klubových přestupů" />
+                        <MenuItem mnemonicParsing="false" text="Světové přestupy" />
+                     </items>
+                  </Menu>
+               </menus>
+            </MenuBar>
+         </children>
+      </VBox>
+   </top>
+   <right>
+      <VBox maxWidth="200.0" minWidth="200.0" prefWidth="200.0" style="-fx-background-color: #bbbbbb;" BorderPane.alignment="CENTER">
+         <children>
+            <TableView maxHeight="300.0" maxWidth="200.0" minHeight="300.0" minWidth="200.0" prefHeight="300.0" prefWidth="200.0">
+               <columns>
+                  <TableColumn prefWidth="52.0" text="Hra" />
+                  <TableColumn prefWidth="70.0" text="Začátek" />
+                  <TableColumn prefWidth="77.0" text="Konec" />
+               </columns>
+            </TableView>
+            <HBox alignment="CENTER" prefHeight="13.0" prefWidth="200.0" spacing="30.0">
+               <children>
+                  <Button mnemonicParsing="false" text="Vyhledat turnaj" />
+                  <Button mnemonicParsing="false" text="Odhlásit" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </right>
+   <center>
+      <ImageView fitHeight="300.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
+   </center>
+   <left>
+      <VBox maxWidth="200.0" minWidth="200.0" prefWidth="200.0" style="-fx-background-color: #bbbbbb;" BorderPane.alignment="CENTER" />
+   </left>
+   <bottom>
+      <HBox prefHeight="50.0" prefWidth="800.0" style="-fx-background-color: #55aaaa;" BorderPane.alignment="CENTER" />
+   </bottom>
+</BorderPane>

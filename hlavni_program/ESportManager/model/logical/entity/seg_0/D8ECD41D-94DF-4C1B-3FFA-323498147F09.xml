@@ -1,0 +1,96 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Entity class="oracle.dbtools.crest.model.design.logical.Entity" directorySegmentName="seg_0" id="D8ECD41D-94DF-4C1B-3FFA-323498147F09" name="NATIONALITY">
+<createdBy>isek</createdBy>
+<createdTime>2018-07-10 18:55:42 UTC</createdTime>
+<ownerDesignName>model</ownerDesignName>
+<engineerTo>
+<item key="4F21378E-F0C6-CF5C-3B8F-6A318E467867" value="true"/>
+</engineerTo>
+<adequatelyNormalized>NO</adequatelyNormalized>
+<expectedVolumes>0</expectedVolumes>
+<fwdEngineeringStrategyName>Single Table</fwdEngineeringStrategyName>
+<growthPercent>0</growthPercent>
+<growthType>Year</growthType>
+<maxVolumes>9999999</maxVolumes>
+<minVolumes>0</minVolumes>
+<normalForm>Third</normalForm>
+<attributes itemClass="oracle.dbtools.crest.model.design.logical.Attribute">
+<Attribute name="IdNationality" id="0E70AED6-A919-38E6-B726-7F27011952A3">
+<createdBy>isek</createdBy>
+<createdTime>2018-07-10 18:55:56 UTC</createdTime>
+<ownerDesignName>model</ownerDesignName>
+<engineerTo>
+<item key="4F21378E-F0C6-CF5C-3B8F-6A318E467867" value="true"/>
+</engineerTo>
+<use>0</use>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="Name" id="5E03AE12-F450-CF41-8DCE-887DC7530E62">
+<createdBy>isek</createdBy>
+<createdTime>2018-07-10 18:56:09 UTC</createdTime>
+<ownerDesignName>model</ownerDesignName>
+<engineerTo>
+<item key="4F21378E-F0C6-CF5C-3B8F-6A318E467867" value="true"/>
+</engineerTo>
+<use>0</use>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="Shortcut" id="4167A672-49F5-4927-BF71-580F3F47B652">
+<createdBy>isek</createdBy>
+<createdTime>2018-07-10 18:56:25 UTC</createdTime>
+<ownerDesignName>model</ownerDesignName>
+<engineerTo>
+<item key="4F21378E-F0C6-CF5C-3B8F-6A318E467867" value="true"/>
+</engineerTo>
+<use>0</use>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="CapitalCity" id="515A7C9D-1344-0CEB-2CB5-30198D42A07B">
+<createdBy>isek</createdBy>
+<createdTime>2018-07-10 18:56:35 UTC</createdTime>
+<ownerDesignName>model</ownerDesignName>
+<engineerTo>
+<item key="4F21378E-F0C6-CF5C-3B8F-6A318E467867" value="true"/>
+</engineerTo>
+<use>0</use>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="Population" id="9227B196-7045-DC5E-7820-10040B0B667E">
+<createdBy>isek</createdBy>
+<createdTime>2018-07-10 18:56:46 UTC</createdTime>
+<ownerDesignName>model</ownerDesignName>
+<engineerTo>
+<item key="4F21378E-F0C6-CF5C-3B8F-6A318E467867" value="true"/>
+</engineerTo>
+<use>0</use>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="idTeam" id="5098B651-E7AC-8097-16A2-E66F2A4FB698">
+<createdBy>isek</createdBy>
+<createdTime>2018-07-11 23:19:34 UTC</createdTime>
+<generatorID>0DCE5510-9FCA-B9B6-5E4D-46E4942B0B2A</generatorID>
+<ownerDesignName>model</ownerDesignName>
+<engineerTo>
+<item key="4F21378E-F0C6-CF5C-3B8F-6A318E467867" value="true"/>
+</engineerTo>
+<nullsAllowed>true</nullsAllowed>
+<referedAttribute>CF738ADB-E2BF-8455-F385-A8E5FFF49DF4</referedAttribute>
+<use>0</use>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+</attributes>
+<identifiers itemClass="oracle.dbtools.crest.model.design.logical.CandidateKey">
+<identifier id="0391561F-B350-E651-FFB7-22B26DA584FD" name="NATIONALITY PK">
+<createdBy>isek</createdBy>
+<createdTime>2018-07-10 20:02:28 UTC</createdTime>
+<ownerDesignName>model</ownerDesignName>
+<engineerTo>
+<item key="4F21378E-F0C6-CF5C-3B8F-6A318E467867" value="true"/>
+</engineerTo>
+<pk>true</pk>
+<usedAttributes>
+<attributeRef>0E70AED6-A919-38E6-B726-7F27011952A3</attributeRef>
+</usedAttributes>
+</identifier>
+</identifiers>
+</Entity>

@@ -1,0 +1,103 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Entity class="oracle.dbtools.crest.model.design.logical.Entity" directorySegmentName="seg_0" id="55A6C09A-19FB-6B26-2F87-31BA64888CD5" name="TOURNAMENTS">
+<createdBy>isek</createdBy>
+<createdTime>2018-08-09 19:07:58 UTC</createdTime>
+<ownerDesignName>model</ownerDesignName>
+<engineerTo>
+<item key="4F21378E-F0C6-CF5C-3B8F-6A318E467867" value="true"/>
+</engineerTo>
+<adequatelyNormalized>NO</adequatelyNormalized>
+<expectedVolumes>0</expectedVolumes>
+<fwdEngineeringStrategyName>Single Table</fwdEngineeringStrategyName>
+<growthPercent>0</growthPercent>
+<growthType>Year</growthType>
+<maxVolumes>9999999</maxVolumes>
+<minVolumes>0</minVolumes>
+<normalForm>Third</normalForm>
+<attributes itemClass="oracle.dbtools.crest.model.design.logical.Attribute">
+<Attribute name="IdTournament" id="8667A075-CBBB-B965-7A0A-C6DDA783BADD">
+<createdBy>isek</createdBy>
+<createdTime>2018-08-09 19:09:04 UTC</createdTime>
+<ownerDesignName>model</ownerDesignName>
+<engineerTo>
+<item key="4F21378E-F0C6-CF5C-3B8F-6A318E467867" value="true"/>
+</engineerTo>
+<use>0</use>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="Place" id="AD9C31B1-0BBC-7709-32F0-51B60A8681BD">
+<createdBy>isek</createdBy>
+<createdTime>2018-08-09 19:09:19 UTC</createdTime>
+<ownerDesignName>model</ownerDesignName>
+<engineerTo>
+<item key="4F21378E-F0C6-CF5C-3B8F-6A318E467867" value="true"/>
+</engineerTo>
+<use>0</use>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="NoOfTeams" id="BA86FCAC-44E5-0D18-BD76-97BA58BC53E7">
+<createdBy>isek</createdBy>
+<createdTime>2018-08-09 19:11:38 UTC</createdTime>
+<ownerDesignName>model</ownerDesignName>
+<engineerTo>
+<item key="4F21378E-F0C6-CF5C-3B8F-6A318E467867" value="true"/>
+</engineerTo>
+<use>0</use>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="Start" id="E774B32B-3001-48F2-02B5-690CB0B88D59">
+<createdBy>isek</createdBy>
+<createdTime>2018-08-09 19:14:40 UTC</createdTime>
+<ownerDesignName>model</ownerDesignName>
+<engineerTo>
+<item key="4F21378E-F0C6-CF5C-3B8F-6A318E467867" value="true"/>
+</engineerTo>
+<use>0</use>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="End" id="C13C111B-5533-389F-9BDD-A26F16F6EDDC">
+<createdBy>isek</createdBy>
+<createdTime>2018-08-09 19:15:20 UTC</createdTime>
+<ownerDesignName>model</ownerDesignName>
+<engineerTo>
+<item key="4F21378E-F0C6-CF5C-3B8F-6A318E467867" value="true"/>
+</engineerTo>
+<use>0</use>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="NumberOfRounds" id="B8A2E008-8944-36A8-FC01-5134648CEDC4">
+<createdBy>isek</createdBy>
+<createdTime>2018-08-09 19:15:38 UTC</createdTime>
+<ownerDesignName>model</ownerDesignName>
+<engineerTo>
+<item key="4F21378E-F0C6-CF5C-3B8F-6A318E467867" value="true"/>
+</engineerTo>
+<use>0</use>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="PlayOff" id="F5560D5B-EFC1-DA99-28E5-A78A5686B569">
+<createdBy>isek</createdBy>
+<createdTime>2018-08-09 19:15:23 UTC</createdTime>
+<ownerDesignName>model</ownerDesignName>
+<engineerTo>
+<item key="4F21378E-F0C6-CF5C-3B8F-6A318E467867" value="true"/>
+</engineerTo>
+<use>0</use>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+</attributes>
+<identifiers itemClass="oracle.dbtools.crest.model.design.logical.CandidateKey">
+<identifier id="331496CD-5438-7A04-F86E-617361017689" name="TOURNAMENTS PK">
+<createdBy>isek</createdBy>
+<createdTime>2018-08-09 19:17:33 UTC</createdTime>
+<ownerDesignName>model</ownerDesignName>
+<engineerTo>
+<item key="4F21378E-F0C6-CF5C-3B8F-6A318E467867" value="true"/>
+</engineerTo>
+<pk>true</pk>
+<usedAttributes>
+<attributeRef>8667A075-CBBB-B965-7A0A-C6DDA783BADD</attributeRef>
+</usedAttributes>
+</identifier>
+</identifiers>
+</Entity>

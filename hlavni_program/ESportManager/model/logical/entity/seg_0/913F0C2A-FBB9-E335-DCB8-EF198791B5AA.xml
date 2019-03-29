@@ -1,0 +1,129 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Entity class="oracle.dbtools.crest.model.design.logical.Entity" directorySegmentName="seg_0" id="913F0C2A-FBB9-E335-DCB8-EF198791B5AA" name="PLAYER">
+<createdBy>isek</createdBy>
+<createdTime>2018-07-11 23:12:57 UTC</createdTime>
+<ownerDesignName>model</ownerDesignName>
+<engineerTo>
+<item key="4F21378E-F0C6-CF5C-3B8F-6A318E467867" value="true"/>
+</engineerTo>
+<adequatelyNormalized>NO</adequatelyNormalized>
+<expectedVolumes>0</expectedVolumes>
+<fwdEngineeringStrategyName>Single Table</fwdEngineeringStrategyName>
+<growthPercent>0</growthPercent>
+<growthType>Year</growthType>
+<maxVolumes>9999999</maxVolumes>
+<minVolumes>0</minVolumes>
+<normalForm>Third</normalForm>
+<attributes itemClass="oracle.dbtools.crest.model.design.logical.Attribute">
+<Attribute name="idPlayer" id="9135DAA3-AB7B-C9CA-A8B7-0A6B74A34B0C">
+<createdBy>isek</createdBy>
+<createdTime>2018-07-11 23:13:05 UTC</createdTime>
+<ownerDesignName>model</ownerDesignName>
+<engineerTo>
+<item key="4F21378E-F0C6-CF5C-3B8F-6A318E467867" value="true"/>
+</engineerTo>
+<nullsAllowed>true</nullsAllowed>
+<use>0</use>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="FirstName" id="C96C9AD3-6B51-B425-8152-5C554E0DD7A3">
+<createdBy>isek</createdBy>
+<createdTime>2018-07-11 23:13:09 UTC</createdTime>
+<ownerDesignName>model</ownerDesignName>
+<engineerTo>
+<item key="4F21378E-F0C6-CF5C-3B8F-6A318E467867" value="true"/>
+</engineerTo>
+<nullsAllowed>true</nullsAllowed>
+<use>0</use>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="LastName" id="232DC808-C473-29AD-E395-596A5624B610">
+<createdBy>isek</createdBy>
+<createdTime>2018-07-11 23:13:14 UTC</createdTime>
+<ownerDesignName>model</ownerDesignName>
+<engineerTo>
+<item key="4F21378E-F0C6-CF5C-3B8F-6A318E467867" value="true"/>
+</engineerTo>
+<nullsAllowed>true</nullsAllowed>
+<use>0</use>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="Attribute1" id="639EFD39-4486-3934-D1FA-8E6B63091E45">
+<createdBy>isek</createdBy>
+<createdTime>2018-07-11 23:13:53 UTC</createdTime>
+<ownerDesignName>model</ownerDesignName>
+<engineerTo>
+<item key="4F21378E-F0C6-CF5C-3B8F-6A318E467867" value="true"/>
+</engineerTo>
+<nullsAllowed>true</nullsAllowed>
+<use>0</use>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="Attribute2" id="0685BD2F-C263-DDB0-A50A-402BCB3B7431">
+<createdBy>isek</createdBy>
+<createdTime>2018-07-11 23:14:01 UTC</createdTime>
+<ownerDesignName>model</ownerDesignName>
+<engineerTo>
+<item key="4F21378E-F0C6-CF5C-3B8F-6A318E467867" value="true"/>
+</engineerTo>
+<nullsAllowed>true</nullsAllowed>
+<use>0</use>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="Attribute3" id="B34EDB02-6C69-B09B-DF22-2A9DF0340B4B">
+<createdBy>isek</createdBy>
+<createdTime>2018-07-11 23:14:12 UTC</createdTime>
+<ownerDesignName>model</ownerDesignName>
+<engineerTo>
+<item key="4F21378E-F0C6-CF5C-3B8F-6A318E467867" value="true"/>
+</engineerTo>
+<nullsAllowed>true</nullsAllowed>
+<use>0</use>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="Attribute4" id="57C05BB2-74A3-6BEF-4003-FD29A6BFF91B">
+<createdBy>isek</createdBy>
+<createdTime>2018-07-11 23:14:18 UTC</createdTime>
+<ownerDesignName>model</ownerDesignName>
+<engineerTo>
+<item key="4F21378E-F0C6-CF5C-3B8F-6A318E467867" value="true"/>
+</engineerTo>
+<nullsAllowed>true</nullsAllowed>
+<use>0</use>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="Salary" id="E15F37EC-B5A9-CC0A-4E66-7D7E495D9F8E">
+<createdBy>isek</createdBy>
+<createdTime>2018-07-11 23:14:22 UTC</createdTime>
+<ownerDesignName>model</ownerDesignName>
+<engineerTo>
+<item key="4F21378E-F0C6-CF5C-3B8F-6A318E467867" value="true"/>
+</engineerTo>
+<nullsAllowed>true</nullsAllowed>
+<use>0</use>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="Age" id="2C8350CE-AA13-865E-0F52-DFA1C0E0056B">
+<createdBy>isek</createdBy>
+<createdTime>2018-07-11 23:14:30 UTC</createdTime>
+<ownerDesignName>model</ownerDesignName>
+<engineerTo>
+<item key="4F21378E-F0C6-CF5C-3B8F-6A318E467867" value="true"/>
+</engineerTo>
+<nullsAllowed>true</nullsAllowed>
+<use>0</use>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="Energy" id="C68840F8-9D70-8E7A-7467-5BEE839CEA69">
+<createdBy>isek</createdBy>
+<createdTime>2018-07-11 23:14:38 UTC</createdTime>
+<ownerDesignName>model</ownerDesignName>
+<engineerTo>
+<item key="4F21378E-F0C6-CF5C-3B8F-6A318E467867" value="true"/>
+</engineerTo>
+<nullsAllowed>true</nullsAllowed>
+<use>0</use>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+</attributes>
+</Entity>

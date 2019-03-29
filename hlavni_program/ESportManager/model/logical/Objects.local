@@ -1,0 +1,11 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<oracle.dbtools.crest.model.design.logical.LogicalDesign>
+   <object objectType="Entity" objectID="55A6C09A-19FB-6B26-2F87-31BA64888CD5" name="" seqName="seg_0"/>
+   <object objectType="Entity" objectID="8BEA21A1-015F-286C-9834-DC4FE85B82F6" name="" seqName="seg_0"/>
+   <object objectType="Entity" objectID="913F0C2A-FBB9-E335-DCB8-EF198791B5AA" name="" seqName="seg_0" propertyClassName="" propertyParentId="" propertySourceId="" propertyTargetId=""/>
+   <object objectType="Entity" objectID="D8ECD41D-94DF-4C1B-3FFA-323498147F09" name="NATIONALITY" seqName="seg_0" propertyClassName="oracle.dbtools.crest.model.design.logical.Entity" propertyParentId="03678EA0-483F-A648-6795-45D33A3F29CE" propertySourceId="" propertyTargetId=""/>
+   <object objectType="Entity" objectID="F75E8A53-7DE5-777B-E268-479F24BEC5B7" name="" seqName="seg_0" propertyClassName="" propertyParentId="" propertySourceId="" propertyTargetId=""/>
+   <object objectType="Relation" objectID="0DCE5510-9FCA-B9B6-5E4D-46E4942B0B2A" name="" seqName="seg_0" propertyClassName="" propertyParentId="" propertySourceId="" propertyTargetId=""/>
+   <object objectType="Relation" objectID="3135A340-695A-25A6-00CA-D95706C50BC7" name="" seqName="seg_0" propertyClassName="" propertyParentId="" propertySourceId="" propertyTargetId=""/>
+   <object objectType="Relation" objectID="FECA4E55-BF82-31DD-261E-D472D7AA7C3B" name="" seqName="seg_0" propertyClassName="" propertyParentId="" propertySourceId="" propertyTargetId=""/>
+</oracle.dbtools.crest.model.design.logical.LogicalDesign>
