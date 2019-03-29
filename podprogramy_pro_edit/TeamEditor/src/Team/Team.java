@@ -5,10 +5,25 @@
  */
 package Team;
 
+import java.awt.Image;
+
 /**
  *
  * @author Gunny
  */
 public class Team {
-    String
+    int id_tym;
+    String nazev;
+    String zkratka;
+    //int id_mesto;
+    String mesto;
+    Image logo;
+    //int id_manazer;
+    String manazer;
+    int reputace;
+    String[] sponzori;
+    String[] sekce;
+    int rozpocet;
+    String[][] hraci;
+    String[][] zamestnanci;
 }

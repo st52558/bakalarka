@@ -12,8 +12,11 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 
 /**
@@ -23,12 +26,19 @@ import javafx.stage.FileChooser;
 public class TeamEditorFXMLController implements Initializable {
     
     private Label label;
-    @FXML
-    private MenuItem nacist;
-    @FXML
-    private MenuItem ukonceni;
-    @FXML
     private Button add;
+    @FXML
+    private ComboBox<String> narodnostCB;
+    @FXML
+    private TextField nazevTymuTF;
+    @FXML
+    private ListView<String> seznamTymuLB;
+    @FXML
+    private Button editTymB;
+    @FXML
+    private Button smazTymB;
+    @FXML
+    private Button PridatNovyTymB;
     
     private void handleButtonAction(ActionEvent event) {
         System.out.println("You clicked me!");
@@ -37,20 +47,24 @@ public class TeamEditorFXMLController implements Initializable {
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        SQLiteJDBC f = new SQLiteJDBC();
     }    
 
-    @FXML
     private void nacistTym(ActionEvent event) {
-        FileChooser fileChooser = new FileChooser();
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
-        fileChooser.getExtensionFilters().add(extFilter);
-        File file = fileChooser.showOpenDialog(add.getScene().getWindow());
-        System.out.println(file);
+        
     }
 
     @FXML
-    private void ukoncit(ActionEvent event) {
+    private void editujTym(ActionEvent event) {
     }
+
+    @FXML
+    private void smazatTym(ActionEvent event) {
+    }
+
+    @FXML
+    private void pridatTym(ActionEvent event) {
+    }
+
     
 }
