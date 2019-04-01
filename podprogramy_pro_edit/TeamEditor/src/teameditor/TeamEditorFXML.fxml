@@ -9,8 +9,8 @@
 
 <VBox alignment="CENTER" fillWidth="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="446.0" prefWidth="318.0" spacing="20.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="teameditor.TeamEditorFXMLController">
    <children>
-      <ComboBox fx:id="narodnostCB" prefWidth="150.0" promptText="národnost týmu" />
-      <TextField fx:id="nazevTymuTF" prefHeight="25.0" prefWidth="150.0" promptText="vyhledat podle názvu" />
+      <ComboBox fx:id="narodnostCB" onHiding="#zmenaNarodnosti" prefWidth="150.0" promptText="národnost týmu" />
+      <TextField fx:id="nazevTymuTF" onKeyReleased="#vyhledavaniZmena" prefHeight="25.0" prefWidth="150.0" promptText="vyhledat podle názvu" />
       <ListView fx:id="seznamTymuLB" prefHeight="200.0" prefWidth="200.0" />
       <HBox alignment="CENTER" prefHeight="41.0" prefWidth="200.0" spacing="40.0">
          <children>

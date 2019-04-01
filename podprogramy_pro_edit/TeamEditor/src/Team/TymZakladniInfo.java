@@ -12,5 +12,25 @@ package Team;
 public class TymZakladniInfo {
     int id_tym;
     String nazev;
-    String narodnost;
+    int narodnost;
+
+    public TymZakladniInfo(int id_tym, String nazev, int narodnost) {
+        this.id_tym = id_tym;
+        this.nazev = nazev;
+        this.narodnost = narodnost;
+    }
+
+    public int getId_tym() {
+        return id_tym;
+    }
+
+    public String getNazev() {
+        return nazev;
+    }
+
+    public int getNarodnost() {
+        return narodnost;
+    }
+    
+    
 }
