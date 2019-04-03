@@ -5,6 +5,7 @@
  */
 package teameditor;
 
+import EditTeamForm.EditTeamForm;
 import Team.Stat;
 import Team.TymZakladniInfo;
 import java.io.File;
@@ -25,7 +26,9 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 /**
  *
@@ -50,6 +53,7 @@ public class TeamEditorFXMLController implements Initializable {
     ArrayList<Stat> staty;
     ArrayList<TymZakladniInfo> tymy;
     SQLiteJDBC f;
+    Stage stage = new Stage();
 
     private void handleButtonAction(ActionEvent event) {
         System.out.println("You clicked me!");
@@ -78,7 +82,10 @@ public class TeamEditorFXMLController implements Initializable {
     }
 
     @FXML
-    private void editujTym(ActionEvent event) {
+    private void editujTym(ActionEvent event) throws Exception {
+        new EditTeamForm(stage);
+        stage.setAlwaysOnTop(true);
+        disableButtons();
     }
 
     @FXML
@@ -109,8 +116,30 @@ public class TeamEditorFXMLController implements Initializable {
         seznamTymuLB.getItems().clear();
         tymy = f.getTymyPodleNazvu(nazevTymuTF.getText());
         for (int j = 0; j < tymy.size(); j++) {
-            seznamTymuLB.getItems().add(tymy.get(j).getNazev());
+            seznamTymuLB.getItems().add(tymy.get(j).getNazev());    
         }
     }
 
+    private void disableButtons(){
+        PridatNovyTymB.setDisable(true);
+        editTymB.setDisable(true);
+        smazTymB.setDisable(true);
+    }
+    
+    private void enableButtons() {
+        PridatNovyTymB.setDisable(false);
+    editTymB.setDisable(false);
+    smazTymB.setDisable(false);
+    }
+    
+    private void active(){
+        if (!stage.isShowing()){
+            enableButtons();
+        }
+    }
+
+    @FXML
+    private void move(MouseEvent event) {
+        active();
+    }
 }
