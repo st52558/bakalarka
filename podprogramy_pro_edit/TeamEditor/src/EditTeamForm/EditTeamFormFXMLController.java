@@ -25,6 +25,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.FileChooser;
 
@@ -36,21 +37,11 @@ public class EditTeamFormFXMLController implements Initializable {
 
     private Label label;
     private Button add;
-    @FXML
-    private ComboBox<String> narodnostCB;
-    @FXML
-    private TextField nazevTymuTF;
-    @FXML
-    private ListView<String> seznamTymuLB;
-    @FXML
-    private Button editTymB;
-    @FXML
-    private Button smazTymB;
-    @FXML
-    private Button PridatNovyTymB;
     ArrayList<Stat> staty;
     ArrayList<TymZakladniInfo> tymy;
     SQLiteJDBC f;
+    @FXML
+    private ImageView logoImageView;
 
     private void handleButtonAction(ActionEvent event) {
         System.out.println("You clicked me!");
@@ -59,30 +50,19 @@ public class EditTeamFormFXMLController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        
+        try {
+            f = new SQLiteJDBC();
+            logoImageView.setImage(f.getTeamLogo(5));
+
+        } catch (SQLException ex) {
+            Logger.getLogger(TeamEditorFXMLController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(TeamEditorFXMLController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private void nacistTym(ActionEvent event) {
 
     }
 
-    @FXML
-    private void editujTym(ActionEvent event) {
-    }
-
-    @FXML
-    private void smazatTym(ActionEvent event) {
-    }
-
-    @FXML
-    private void pridatTym(ActionEvent event) {
-    }
-
-    @FXML
-    private void zmenaNarodnosti(Event event) throws ClassNotFoundException, SQLException {
-    }
-
-    @FXML
-    private void vyhledavaniZmena(KeyEvent event) throws ClassNotFoundException, SQLException {
-    }
 }

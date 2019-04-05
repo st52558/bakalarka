@@ -11,12 +11,16 @@ package teameditor;
  */
 import Team.Stat;
 import Team.TymZakladniInfo;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.*;
 import java.util.ArrayList;
+import javafx.scene.image.Image;
 
 public class SQLiteJDBC {
 
-    SQLiteJDBC() throws SQLException {
+    public SQLiteJDBC() throws SQLException {
         Connection c = null;
 
         try {
@@ -71,5 +75,20 @@ public class SQLiteJDBC {
             seznam.add(new TymZakladniInfo(rs.getInt("id_tym"),rs.getString("nazev"),rs.getInt("id_stat_fk")));
         }
         return seznam;
+    }
+    
+    public Image getTeamLogo(int id_tym) throws ClassNotFoundException, SQLException, IOException{
+        Image i = null;
+        Class.forName("org.sqlite.JDBC");
+        Connection c = DriverManager.getConnection("jdbc:sqlite:test.db");
+        Statement s = c.createStatement();
+        FileOutputStream fos = null;
+        ResultSet rs = s.executeQuery("select logo from tym_basic where id_tym=" + id_tym);
+        while (rs.next()){
+             byte[] imgArr=rs.getBytes("image");  
+                i=Toolkit.getDefaultToolkit().createImage(imgArr);  
+        }
+        
+        return i;
     }
 }
