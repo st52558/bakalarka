@@ -11,12 +11,21 @@ package teameditor;
  */
 import Team.Stat;
 import Team.TymZakladniInfo;
+import java.awt.AWTException;
+import java.awt.Color;
+import java.awt.Image;
+import java.awt.Robot;
+import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.*;
 import java.util.ArrayList;
-import javafx.scene.image.Image;
+import javafx.embed.swing.SwingFXUtils;
+import javax.imageio.ImageIO;
 
 public class SQLiteJDBC {
 
@@ -34,61 +43,63 @@ public class SQLiteJDBC {
         //statement.executeUpdate("drop table stat");
         //statement.executeUpdate("create table stat (id_stat INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, jmeno VARCHAR(40) NOT NULL)");
         //statement.executeUpdate("create table tym_basic (id_tym INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, nazev VARCHAR(40) NOT NULL, id_stat_fk INTEGER NOT NULL, FOREIGN KEY (id_stat_fk) REFERENCES stat(id_stat))");
-        
+
     }
 
-    ArrayList<Stat> getStatesWhereIsAnyTeam() throws ClassNotFoundException, SQLException{
-        
+    ArrayList<Stat> getStatesWhereIsAnyTeam() throws ClassNotFoundException, SQLException {
+
         ArrayList<Stat> seznam = new ArrayList<Stat>();
         Class.forName("org.sqlite.JDBC");
         Connection c = DriverManager.getConnection("jdbc:sqlite:test.db");
         Statement s = c.createStatement();
-        
+
         //udělat join na státy
         ResultSet rs = s.executeQuery("select tym_basic.id_stat_fk,stat.jmeno from tym_basic inner join stat on stat.id_stat=tym_basic.id_stat_fk group by id_stat_fk");
-        while (rs.next()){
-            seznam.add(new Stat(rs.getInt("id_stat_fk"),rs.getString("jmeno")));
+        while (rs.next()) {
+            seznam.add(new Stat(rs.getInt("id_stat_fk"), rs.getString("jmeno")));
         }
         System.out.println(seznam.size());
         return seznam;
     }
-    
-    ArrayList<TymZakladniInfo> getTymyPodleStatu(int id_stat) throws ClassNotFoundException, SQLException{
+
+    ArrayList<TymZakladniInfo> getTymyPodleStatu(int id_stat) throws ClassNotFoundException, SQLException {
         ArrayList<TymZakladniInfo> seznam = new ArrayList<TymZakladniInfo>();
         Class.forName("org.sqlite.JDBC");
         Connection c = DriverManager.getConnection("jdbc:sqlite:test.db");
         Statement s = c.createStatement();
         ResultSet rs = s.executeQuery("select * from tym_basic where id_stat_fk=" + id_stat);
-        while (rs.next()){
-            seznam.add(new TymZakladniInfo(rs.getInt("id_tym"),rs.getString("nazev"),rs.getInt("id_stat_fk")));
+        while (rs.next()) {
+            seznam.add(new TymZakladniInfo(rs.getInt("id_tym"), rs.getString("nazev"), rs.getInt("id_stat_fk")));
         }
         return seznam;
     }
-    
-    ArrayList<TymZakladniInfo> getTymyPodleNazvu(String nazev) throws ClassNotFoundException, SQLException{
+
+    ArrayList<TymZakladniInfo> getTymyPodleNazvu(String nazev) throws ClassNotFoundException, SQLException {
         ArrayList<TymZakladniInfo> seznam = new ArrayList<TymZakladniInfo>();
         Class.forName("org.sqlite.JDBC");
         Connection c = DriverManager.getConnection("jdbc:sqlite:test.db");
         Statement s = c.createStatement();
         ResultSet rs = s.executeQuery("select * from tym_basic where nazev like'%" + nazev + "%'");
-        while (rs.next()){
-            seznam.add(new TymZakladniInfo(rs.getInt("id_tym"),rs.getString("nazev"),rs.getInt("id_stat_fk")));
+        while (rs.next()) {
+            seznam.add(new TymZakladniInfo(rs.getInt("id_tym"), rs.getString("nazev"), rs.getInt("id_stat_fk")));
         }
         return seznam;
     }
-    
-    public Image getTeamLogo(int id_tym) throws ClassNotFoundException, SQLException, IOException{
-        Image i = null;
+
+    public BufferedImage getTeamLogo(int id_tym) throws ClassNotFoundException, SQLException, IOException {
+        BufferedImage bitmap = null;
         Class.forName("org.sqlite.JDBC");
         Connection c = DriverManager.getConnection("jdbc:sqlite:test.db");
         Statement s = c.createStatement();
-        FileOutputStream fos = null;
         ResultSet rs = s.executeQuery("select logo from tym_basic where id_tym=" + id_tym);
-        while (rs.next()){
-             byte[] imgArr=rs.getBytes("image");  
-                i=Toolkit.getDefaultToolkit().createImage(imgArr);  
+
+        while (rs.next()) {
+            byte[] b;
+            b = rs.getBytes("logo");
+            InputStream in = new ByteArrayInputStream(b);
+            bitmap = ImageIO.read(in);
         }
-        
-        return i;
+
+        return bitmap;
     }
 }
