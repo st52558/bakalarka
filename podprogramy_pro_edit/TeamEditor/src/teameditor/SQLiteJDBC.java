@@ -11,6 +11,8 @@ package teameditor;
  */
 import Team.Stat;
 import Team.TymZakladniInfo;
+import java.awt.Toolkit;
+import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -85,10 +87,17 @@ public class SQLiteJDBC {
         FileOutputStream fos = null;
         ResultSet rs = s.executeQuery("select logo from tym_basic where id_tym=" + id_tym);
         while (rs.next()){
-             byte[] imgArr=rs.getBytes("image");  
-                i=Toolkit.getDefaultToolkit().createImage(imgArr);  
+             byte[] imgArr=rs.getBytes("logo");  
+                i = new Image(new ByteArrayInputStream(imgArr));  
         }
         
         return i;
+    }
+    
+    void removeTym(int id_tym) throws ClassNotFoundException, SQLException{
+        Class.forName("org.sqlite.JDBC");
+        Connection c = DriverManager.getConnection("jdbc:sqlite:test.db");
+        Statement s = c.createStatement();
+        s.execute("delete from tym_basic where id_tym="+id_tym);
     }
 }
