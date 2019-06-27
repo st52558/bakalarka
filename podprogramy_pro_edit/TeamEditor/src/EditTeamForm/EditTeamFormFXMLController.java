@@ -39,25 +39,24 @@ import javafx.stage.FileChooser;
  */
 public class EditTeamFormFXMLController implements Initializable {
 
-    private Label label;
-    private Button add;
-    ArrayList<Stat> staty;
-    ArrayList<TymZakladniInfo> tymy;
+    //private Label label;
+    //private Button add;
+    //ArrayList<Stat> staty;
+    //ArrayList<TymZakladniInfo> tymy;
     SQLiteJDBC f;
     @FXML
     private ImageView logoImageView;
 
     private void handleButtonAction(ActionEvent event) {
-        System.out.println("You clicked me!");
-        label.setText("Hello World!");
     }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
             f = new SQLiteJDBC();
-            Image image = SwingFXUtils.toFXImage((BufferedImage)f.getTeamLogo(5), null);
+            Image image = SwingFXUtils.toFXImage((BufferedImage)f.getTeamLogo(2), null);
             logoImageView.setImage(image);
+                               
 
         } catch (SQLException ex) {
             Logger.getLogger(TeamEditorFXMLController.class.getName()).log(Level.SEVERE, null, ex);

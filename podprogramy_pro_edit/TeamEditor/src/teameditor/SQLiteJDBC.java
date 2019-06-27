@@ -28,7 +28,6 @@ import javafx.embed.swing.SwingFXUtils;
 import javax.imageio.ImageIO;
 
 public class SQLiteJDBC {
-
     public SQLiteJDBC() throws SQLException {
         Connection c = null;
 
