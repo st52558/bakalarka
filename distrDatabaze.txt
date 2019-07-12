@@ -1,0 +1,3 @@
+všechny databáze budou uloženy na serveru a pøi zaèátku hry si mùže hráè vybrat. Ta databáze, kterou si vybere se mu stáhne do hry jako nová databáze pojmenovaná podle názvu hry + rok
+
+když nìkdo udìlá úpravu v databázi tak ji mùže uložit na server (upvote/downvote) a jakýkoliv hráè s ní mùže hrát

@@ -28,7 +28,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.FileChooser;
@@ -54,9 +53,14 @@ public class EditTeamFormFXMLController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         try {
             f = new SQLiteJDBC();
+<<<<<<< HEAD
             Image image = SwingFXUtils.toFXImage((BufferedImage)f.getTeamLogo(2), null);
             logoImageView.setImage(image);
                                
+=======
+            
+            logoImageView.setImage(f.getTeamLogo(5));
+>>>>>>> 66a0a40cbe8cca637f273dfc2da757bc6a12f914
 
         } catch (SQLException ex) {
             Logger.getLogger(TeamEditorFXMLController.class.getName()).log(Level.SEVERE, null, ex);

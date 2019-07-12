@@ -3,12 +3,18 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+<<<<<<< HEAD
             <file>file:/C:/Users/Gunny/Documents/GitHub/bakalarka/podprogramy_pro_edit/TeamEditor/src/Team/Team.java</file>
             <file>file:/C:/Users/Gunny/Documents/GitHub/bakalarka/podprogramy_pro_edit/TeamEditor/src/EditTeamForm/EditTeamFormFXMLController.java</file>
             <file>file:/C:/Users/Gunny/Documents/GitHub/bakalarka/podprogramy_pro_edit/TeamEditor/src/Team/TymZakladniInfo.java</file>
             <file>file:/C:/Users/Gunny/Documents/GitHub/bakalarka/podprogramy_pro_edit/TeamEditor/src/teameditor/TeamEditorFXMLController.java</file>
             <file>file:/C:/Users/Gunny/Documents/GitHub/bakalarka/podprogramy_pro_edit/TeamEditor/src/teameditor/SQLiteJDBC.java</file>
             <file>file:/C:/Users/Gunny/Documents/GitHub/bakalarka/podprogramy_pro_edit/TeamEditor/src/EditTeamForm/EditTeamForm.java</file>
+=======
+            <file>file:/C:/Users/st52558/Documents/GitHub/bakalarka/podprogramy_pro_edit/TeamEditor/src/teameditor/SQLiteJDBC.java</file>
+            <file>file:/C:/Users/st52558/Documents/GitHub/bakalarka/podprogramy_pro_edit/TeamEditor/src/teameditor/TeamEditorFXMLController.java</file>
+            <file>file:/C:/Users/st52558/Documents/GitHub/bakalarka/podprogramy_pro_edit/TeamEditor/src/EditTeamForm/EditTeamFormFXMLController.java</file>
+>>>>>>> 66a0a40cbe8cca637f273dfc2da757bc6a12f914
         </group>
     </open-files>
 </project-private>

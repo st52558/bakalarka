@@ -1,0 +1,17 @@
+﻿<Window x:Class="TeamEdit.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TeamEdit"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="300">
+    <Grid>
+        <ComboBox Name="NationsCB" HorizontalAlignment="Left" Height="30" Margin="50,40,0,0" VerticalAlignment="Top" Width="200" SelectionChanged="NationChangeComboBox" />
+        <TextBox Name="TeamNameTW" HorizontalAlignment="Left" Height="30" Margin="50,90,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200" TextChanged="TeamNameChangeTextView"/>
+        <ListBox Name="TeamListLB" HorizontalAlignment="Left" Height="150" Margin="50,160,0,0" VerticalAlignment="Top" Width="200"/>
+        <Button Name="EditButton" Content="Edituj tým" HorizontalAlignment="Left" Margin="50,350,0,0" VerticalAlignment="Top" Height="30" Width="90" Click="EditButtonClick"/>
+        <Button Name="NewButton" Content="Přidat nový" HorizontalAlignment="Left" Margin="160,350,0,0" VerticalAlignment="Top" Height="30" Width="90" Click="NewButtonClick"/>
+
+    </Grid>
+</Window>
