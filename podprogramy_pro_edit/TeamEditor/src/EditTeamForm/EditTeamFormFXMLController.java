@@ -53,14 +53,10 @@ public class EditTeamFormFXMLController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         try {
             f = new SQLiteJDBC();
-<<<<<<< HEAD
-            Image image = SwingFXUtils.toFXImage((BufferedImage)f.getTeamLogo(2), null);
-            logoImageView.setImage(image);
-                               
-=======
+          //  Image image = SwingFXUtils.toFXImage((BufferedImage)f.getTeamLogo(2), null);
+           // logoImageView.setImage(image);
             
             logoImageView.setImage(f.getTeamLogo(5));
->>>>>>> 66a0a40cbe8cca637f273dfc2da757bc6a12f914
 
         } catch (SQLException ex) {
             Logger.getLogger(TeamEditorFXMLController.class.getName()).log(Level.SEVERE, null, ex);

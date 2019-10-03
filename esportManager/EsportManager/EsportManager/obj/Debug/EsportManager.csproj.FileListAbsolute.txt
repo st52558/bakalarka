@@ -1,0 +1,17 @@
+C:\Users\Gunny\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportManager\bin\Debug\EsportManager.exe.config
+C:\Users\Gunny\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportManager\bin\Debug\EsportManager.exe
+C:\Users\Gunny\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportManager\bin\Debug\EsportManager.pdb
+C:\Users\Gunny\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportManager\obj\Debug\EsportManager.csprojAssemblyReference.cache
+C:\Users\Gunny\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportManager\obj\Debug\MainWindow.g.cs
+C:\Users\Gunny\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportManager\obj\Debug\App.g.cs
+C:\Users\Gunny\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportManager\obj\Debug\EsportManager_MarkupCompile.cache
+C:\Users\Gunny\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportManager\obj\Debug\EsportManager_MarkupCompile.lref
+C:\Users\Gunny\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportManager\obj\Debug\MainWindow.baml
+C:\Users\Gunny\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportManager\obj\Debug\EsportManager.g.resources
+C:\Users\Gunny\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportManager\obj\Debug\EsportManager.Properties.Resources.resources
+C:\Users\Gunny\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportManager\obj\Debug\EsportManager.csproj.GenerateResource.cache
+C:\Users\Gunny\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportManager\obj\Debug\EsportManager.csproj.CoreCompileInputs.cache
+C:\Users\Gunny\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportManager\obj\Debug\EsportManager.exe
+C:\Users\Gunny\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportManager\obj\Debug\EsportManager.pdb
+C:\Users\Gunny\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportManager\obj\Debug\NewGame.g.cs
+C:\Users\Gunny\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportManager\obj\Debug\NewGame.baml

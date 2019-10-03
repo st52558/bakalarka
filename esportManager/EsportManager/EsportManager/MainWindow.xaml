@@ -1,0 +1,17 @@
+﻿<Window x:Class="EsportManager.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:EsportManager"
+        mc:Ignorable="d"
+        Title="Hlavní menu" Height="479" Width="800" ResizeMode="CanMinimize">
+    <Grid>
+        <Image Name="Background" Margin="0,0,0,0" Source="C:\Users\Gunny\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportManager\pictures\menu.jpg" Stretch="Fill" />
+        <Button Name="NewGame"  Content="Nová hra" Margin="325,50,325,0" FontSize="25" VerticalAlignment="Top" Height="50" Click="NewGame_Click"/>
+        <Button Name="LoadGame" Content="Načíst hru" Margin="325,150,325,0" FontSize="25" VerticalAlignment="Top"  Height="50" Click="Button_Click"/>
+        <Button Name="Help" Content="Návod" Margin="325,250,325,0" FontSize="25" VerticalAlignment="Top" Height="50" Click="Help_Click"/>
+        <Button Name="QuitGame" Content="Ukončit hru" Margin="325,350,325,0" FontSize="25" VerticalAlignment="Top"  Height="50" Click="QuitGame_Click"/>
+
+    </Grid>
+</Window>

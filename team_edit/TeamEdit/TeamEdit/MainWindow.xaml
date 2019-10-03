@@ -5,13 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TeamEdit"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="300">
+        Title="Editor" Name="MainWindowW" ResizeMode="CanMinimize" Height="495" Width="300" FontFamily="Verdana">
     <Grid>
-        <ComboBox Name="NationsCB" HorizontalAlignment="Left" Height="30" Margin="50,40,0,0" VerticalAlignment="Top" Width="200" SelectionChanged="NationChangeComboBox" />
-        <TextBox Name="TeamNameTW" HorizontalAlignment="Left" Height="30" Margin="50,90,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200" TextChanged="TeamNameChangeTextView"/>
-        <ListBox Name="TeamListLB" HorizontalAlignment="Left" Height="150" Margin="50,160,0,0" VerticalAlignment="Top" Width="200"/>
-        <Button Name="EditButton" Content="Edituj tým" HorizontalAlignment="Left" Margin="50,350,0,0" VerticalAlignment="Top" Height="30" Width="90" Click="EditButtonClick"/>
-        <Button Name="NewButton" Content="Přidat nový" HorizontalAlignment="Left" Margin="160,350,0,0" VerticalAlignment="Top" Height="30" Width="90" Click="NewButtonClick"/>
-
+        <Button Name="TeamEditButton" Content="Přidat/Upravit tým" HorizontalAlignment="Left" VerticalAlignment="Top" Width="140" Height="50" Click="TeamEditButton_Click"/>
+        <Button Name="PlyerEditButton" Content="Přidat/Upravit hráče" Margin="152,0,0,0" VerticalAlignment="Top" Width="140" Height="50" Click="PlyerEditButton_Click"/>
+        <ComboBox Name="NationsCB" Height="30" Margin="50,90,50,0" VerticalAlignment="Top" SelectionChanged="NationChangeComboBox" />
+        <TextBox Name="TeamNameTW" Height="30" Margin="50,140,50,0" TextWrapping="Wrap" VerticalAlignment="Top" TextChanged="TeamNameChangeTextView"/>
+        <ListBox Name="TeamListLB" Height="150" Margin="50,210,50,0" VerticalAlignment="Top" SelectionChanged="TeamListLBClickInto"/>
+        <Button Name="EditButton" Content="Upravit" Margin="50,0,0,35" Click="EditButtonClick" HorizontalAlignment="Left" Width="90" Height="29" VerticalAlignment="Bottom"/>
+        <Button Name="NewButton" Content="Přidat" Margin="0,0,50,35" Click="NewButtonClick" HorizontalAlignment="Right" Width="87" Height="29" VerticalAlignment="Bottom"/>
+        <ListBox Visibility="Hidden" Name="PlayersListLB" Height="150" Margin="50,400,50,0" VerticalAlignment="Top"/>
     </Grid>
 </Window>

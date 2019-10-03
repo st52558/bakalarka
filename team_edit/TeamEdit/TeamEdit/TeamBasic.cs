@@ -8,12 +8,12 @@ namespace TeamEdit
 {
     class TeamBasic
     {
-        public int IdNation { get; set; }
+        public int IdTeam { get; set; }
         public string Name { get; set; }
 
-        public TeamBasic(int id_nation, String name)
+        public TeamBasic(int id_team,  String name)
         {
-            IdNation = id_nation;
+            IdTeam = id_team;
             Name = name;
         }
     }

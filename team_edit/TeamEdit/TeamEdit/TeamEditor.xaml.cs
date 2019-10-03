@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -21,35 +22,348 @@ namespace TeamEdit
     /// </summary>
     public partial class TeamEditor : Window
     {
+        List<Nation> nationList = new List<Nation>();
+        List<City> cityList = new List<City>();
+        List<TeamSection> teamSectionList = new List<TeamSection>();
+        int selectedTeamId;
+        string filePath;
+
         public TeamEditor()
         {
             InitializeComponent();
+            AddCountriesToCB();
+            ButtonsChanging();
         }
 
-        public TeamEditor(string chosenTeam)
+        private void ButtonsChanging()
         {
-            InitializeComponent();
+            int sections = GetMaxSections();
+            if (SectionLB.Items.Count >= sections)
+            {
+                AddSection.IsEnabled = false;
+            } else
+            {
+                AddSection.IsEnabled = true;
+            }
+
+            if (SectionLB.SelectedIndex > -1)
+            {
+                DeleteSection.IsEnabled = true;
+            } else
+            {
+                DeleteSection.IsEnabled = false;
+            }
+
+            if (SponsorsLB.Items.Count >= 5)
+            {
+                AddSponsor.IsEnabled = false;
+            }
+            else
+            {
+                AddSponsor.IsEnabled = true;
+            }
+
+            if (SponsorsLB.SelectedIndex > -1)
+            {
+                DeleteSponsor.IsEnabled = true;
+            }
+            else
+            {
+                DeleteSponsor.IsEnabled = false;
+            }
+            if (TeamLogo!=null && !string.IsNullOrWhiteSpace(NameBox.Text))
+            {
+                Save.IsEnabled = true;
+            } else
+            {
+                Save.IsEnabled = false;
+            }
+        }
+
+        private int GetMaxSections()
+        {
+            int sections;
             using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\test.db;"))
             {
-                BitmapImage imageSource = new BitmapImage();
                 conn.Open();
-                SQLiteCommand command = new SQLiteCommand("select logo from tym_basic where nazev ='" + chosenTeam + "'", conn);
+
+                SQLiteCommand command = new SQLiteCommand("select count(*) from sekce", conn);
                 SQLiteDataReader reader = command.ExecuteReader();
+                reader.Read();
+                sections = reader.GetInt32(0) * 2;
+                reader.Close();
+            }
+            return sections;
+        }
+
+        public TeamEditor(int chosenTeam)
+        {
+            selectedTeamId = chosenTeam;
+            InitializeComponent();
+            AddCountriesToCB();
+            AddTeamProperties(chosenTeam);
+            GetAllSectionsToListBox();
+            ButtonsChanging();
+        }
+
+        private void AddCitiesToCB()
+        {
+            ResidencyCB.Items.Clear();
+            cityList.Clear();
+            using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\test.db;"))
+            {
+                conn.Open();
+
+                SQLiteCommand command = new SQLiteCommand("select id_mesto,nazev,id_stat_fk from mesto where id_stat_fk=" + nationList.ElementAt(NationalityCB.SelectedIndex).IdNation, conn);
+                SQLiteDataReader reader = command.ExecuteReader();
+
                 while (reader.Read())
                 {
-                    
-                    byte[] data = (byte[])reader[0];
+                    cityList.Add(new City(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(2)));
+                }
+                for (int i = 0; i < cityList.Count; i++)
+                {
+                    ResidencyCB.Items.Add(cityList.ElementAt(i).Name);
+                }
+                reader.Close();
+            }
+        }
 
-                    using (MemoryStream ms = new MemoryStream(data))
+        public void GetAllSectionsToListBox()
+        {
+            SectionLB.Items.Clear();
+            teamSectionList.Clear();
+            using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\test.db;"))
+            {
+                conn.Open();
+
+                SQLiteCommand command = new SQLiteCommand("select tymxsekce.id_tym_sekce,zkratka from tymxsekce join sekce on tymxsekce.sekce_id_sekce=sekce.id_sekce where tymxsekce.tym_id_tym=" + selectedTeamId, conn);
+                SQLiteDataReader reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    teamSectionList.Add(new TeamSection(reader.GetInt32(0), reader.GetString(1), selectedTeamId));
+                    Console.WriteLine(reader.GetInt32(0) + " " + reader.GetString(1) + " " + selectedTeamId);
+                }
+                for (int i = 0; i < teamSectionList.Count; i++)
+                {
+                    SectionLB.Items.Add(teamSectionList.ElementAt(i).Section);
+                }
+                reader.Close();
+            }
+            ButtonsChanging();
+        }
+
+        private void AddCountriesToCB()
+        {
+            using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\test.db;"))
+            {
+                conn.Open();
+
+                SQLiteCommand command = new SQLiteCommand("select id_stat,jmeno from stat", conn);
+                SQLiteDataReader reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    nationList.Add(new Nation(reader.GetInt32(0), reader.GetString(1)));
+                }
+                for (int i = 0; i < nationList.Count; i++)
+                {
+                    NationalityCB.Items.Add(nationList.ElementAt(i).Name);
+                }
+                reader.Close();
+            }
+        }
+
+        private void AddTeamProperties(int chosenTeam)
+        {
+            using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\test.db;"))
+            {
+                
+                conn.Open();
+                SQLiteCommand command = new SQLiteCommand("select * from tym where id_tym =" + chosenTeam, conn);
+                SQLiteDataReader reader = command.ExecuteReader();
+                reader.Read();
+                AddLogo((byte[])reader[3]);
+                SetDefaultCountryAndCity(reader.GetInt32(2));
+                NameBox.Text = reader.GetString(1);
+            }
+        }
+
+        private void AddLogo(byte[] data)
+        {
+            BitmapImage imageSource = new BitmapImage();
+            using (MemoryStream ms = new MemoryStream(data))
                     {
                         imageSource.BeginInit();
                         imageSource.StreamSource = ms;
                         imageSource.CacheOption = BitmapCacheOption.OnLoad;
                         imageSource.EndInit();
                     }
+                    
+                
+                TeamLogo.Source = imageSource;
+
+
+            }
+        
+
+        private void SetDefaultCountryAndCity(int cityID)
+        {
+            using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\test.db;"))
+            {
+                conn.Open();
+
+                SQLiteCommand command = new SQLiteCommand("select id_stat_fk from mesto where id_mesto=" + cityID, conn);
+                SQLiteDataReader reader = command.ExecuteReader();
+                reader.Read();
+                
+                for (int j = 0; j < nationList.Count; j++)
+                {
+
+                    if (nationList.ElementAt(j).IdNation == reader.GetInt32(0))
+                    {
+                        NationalityCB.SelectedIndex = j;
+                    }
+                    
                 }
+                AddCitiesToCB();
+            
+                for (int i = 0; i < cityList.Count; i++)
+                    {
+                    if (cityList.ElementAt(i).CityId == cityID)
+                        {
+                        ResidencyCB.SelectedIndex = i;
+                        break;
+                    }
+                }
+            
+            
+            
+                reader.Close();
+            }
+        }
+
+        private void AddSectionClick(object sender, RoutedEventArgs e)
+        {
+            AddSection win2 = new AddSection(selectedTeamId, GetNotAvailableSections());
+            win2.Show(this);
+        }
+
+        private int[] GetNotAvailableSections()
+        {
+            int[] notAvailableSections;
+            using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\test.db;"))
+            {
+                conn.Open();
+                //zjistit počet nepoužitelných sekcí
+                SQLiteCommand command = new SQLiteCommand("SELECT count(*) FROM (SELECT SEKCE_id_sekce,count(SEKCE_id_sekce) FROM TYMxSEKCE WHERE TYM_id_tym = " + selectedTeamId + " GROUP BY SEKCE_id_sekce) WHERE `count(SEKCE_id_sekce)`>=2", conn);
+                SQLiteDataReader reader = command.ExecuteReader();
+                reader.Read();
+                notAvailableSections = new int[reader.GetInt32(0)];
+                reader.Close();
+                //přidat je do pole
+                command.CommandText = "SELECT SEKCE_id_sekce FROM (SELECT SEKCE_id_sekce,count(SEKCE_id_sekce) FROM TYMxSEKCE WHERE TYM_id_tym = " + selectedTeamId + " GROUP BY SEKCE_id_sekce) WHERE `count(SEKCE_id_sekce)`>=2";
+                reader = command.ExecuteReader();
+                int counter = 0;
+                while (reader.Read())
+                {
+                    notAvailableSections[counter] = reader.GetInt32(0);
+                    counter++;
+                }
+                reader.Close();
+            }
+            
+            return notAvailableSections;
+        }
+
+        private void DeleteSectionClick(object sender, RoutedEventArgs e)
+        {
+            using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\test.db;"))
+            {
+                conn.Open();
+
+                SQLiteCommand command = new SQLiteCommand("delete from tymxsekce where id_tym_sekce=" + teamSectionList.ElementAt(SectionLB.SelectedIndex).ID, conn);
+                SQLiteDataReader reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    teamSectionList.Add(new TeamSection(reader.GetInt32(0), reader.GetString(1), selectedTeamId));
+                    Console.WriteLine(reader.GetInt32(0) + " " + reader.GetString(1) + " " + selectedTeamId);
+                }
+                for (int i = 0; i < teamSectionList.Count; i++)
+                {
+                    SectionLB.Items.Add(teamSectionList.ElementAt(i).Section);
+                }
+                reader.Close();
+            }
+            GetAllSectionsToListBox();
+        }
+
+        private void SponsorsLB_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ButtonsChanging();
+        }
+
+        private void SectionLB_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ButtonsChanging();
+        }
+
+        private void SaveClick(object sender, RoutedEventArgs e)
+        {
+            //UDĚLAT UKLÁDÁNÍ OBÁRZKŮ DO DATABÁZE
+
+
+            /*using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\test.db;"))
+            {
+                
+
+                FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+                BinaryReader br = new BinaryReader(fs);
+                byte[] logoByte = br.ReadBytes((int)fs.Length);
+                BinaryWriter writer = new BinaryWriter(new MemoryStream());
+                writer.Write(logoByte);
+                SQLiteBlob logoBlob = new SQLiteBlob(writer);
+                conn.Open();
+               // Console.WriteLine("update tym set nazev='" + NameBox.Text + "', id_stat_fk=" + nationList.ElementAt(NationalityCB.SelectedIndex).IdNation + ", logo=" + logoByte + " where id_tym=" + selectedTeamId);
+               // SQLiteCommand command = new SQLiteCommand("update tym set nazev='" + NameBox.Text + "', id_stat_fk=" + nationList.ElementAt(NationalityCB.SelectedIndex).IdNation + ", logo=" + logoByte + " where id_tym=" + selectedTeamId, conn);
+                SQLiteDataReader reader = command.ExecuteReader();
+            }*/
+            this.Close();
+        }
+
+        private void CancelClick(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        private void NameChange(object sender, TextChangedEventArgs e)
+        {
+            ButtonsChanging();
+        }
+
+        private void NewLogoClick(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog dialog = new OpenFileDialog();
+            dialog.Filter = "Image files(.jpg,.png,.jpeg) | *.jpg;*.png;*.jpeg";
+            if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                filePath = dialog.FileName;
+                BitmapImage imageSource = new BitmapImage();
+                imageSource.BeginInit();
+                imageSource.StreamSource = dialog.OpenFile();
+                imageSource.CacheOption = BitmapCacheOption.OnLoad;
+                imageSource.EndInit();
                 TeamLogo.Source = imageSource;
             }
         }
+        
+        private void NationChange(object sender, SelectionChangedEventArgs e)
+        {
+            AddCitiesToCB();
+        }
+
+        
     }
 }

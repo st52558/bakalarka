@@ -5,13 +5,32 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TeamEdit"
         mc:Ignorable="d"
-        Title="TeamEditor" Height="700" Width="600">
+        Title="TeamEditor" Height="700" Width="600" ResizeMode="NoResize" Background="Khaki" FontFamily="Verdana">
     <Grid>
-        <Image Visibility="Visible" Name="TeamLogo" HorizontalAlignment="Left" Height="250" Margin="10,90,0,0" VerticalAlignment="Top" Width="250" RenderTransformOrigin="0.5,0.5"/>
-        <TextBox Name="NameBox" HorizontalAlignment="Left" Height="30" Margin="65,30,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="195"/>
-        <Label Name="NameLabel" Content="Name" Height="30" HorizontalAlignment="Left" Margin="10,30,0,0" VerticalAlignment="Top"/>
-        <Label Name="ShortcutLabel" Content="Shortcut" Height="30" HorizontalAlignment="Left" Margin="10,370,0,0" VerticalAlignment="Top"/>
-        <TextBox Name="ShortcutBox" HorizontalAlignment="Left" Height="30" Margin="65,370,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="195"/>
+        <Image Visibility="Visible" Name="TeamLogo" HorizontalAlignment="Left" Height="250" Margin="22,90,0,0" VerticalAlignment="Top" Width="250" RenderTransformOrigin="0.5,0.5"/>
+        <TextBox Name="NameBox" HorizontalAlignment="Left" Height="30" Margin="77,30,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="195" TextChanged="NameChange"/>
+        <Label Name="NameLabel" Content="Name:" Height="30" HorizontalAlignment="Left" HorizontalContentAlignment="Right" Margin="10,30,0,0" VerticalAlignment="Top" Width="65"/>
+        <Label Name="ShortcutLabel" Content="Shortcut:" Height="30" HorizontalAlignment="Left" HorizontalContentAlignment="Right" Margin="10,420,0,0" VerticalAlignment="Top" Width="65"/>
+        <TextBox Name="ShortcutBox" HorizontalAlignment="Left" Height="30" Margin="77,420,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="195"/>
+        <ComboBox Name="NationalityCB" Margin="347,30,10,0" VerticalAlignment="Top" Height="30" Width="195" SelectionChanged="NationChange"/>
+        <ComboBox Name="ResidencyCB" Margin="347,90,10,0" VerticalAlignment="Top" Height="30" Width="195"/>
+        <TextBox Name="ManagerTB" Height="30" Margin="367,150,30,0" TextWrapping="Wrap"  VerticalAlignment="Top"/>
+        <TextBox Name="ReputationTB" Height="30" Margin="367,210,31,0" TextWrapping="Wrap"  VerticalAlignment="Top"/>
+        <ListBox Name="SponsorsLB" Height="90" Margin="367,270,120,0" VerticalAlignment="Top" SelectionChanged="SponsorsLB_SelectionChanged"/>
+        <Button Name="AddSponsor" Content="Přidat" Margin="487,270,30,0" VerticalAlignment="Top" Height="30" Background="#FF75EE85"/>
+        <Button Name="DeleteSponsor" Content="Odebrat" Margin="487,330,30,0" VerticalAlignment="Top" Height="30" Background="#FF75EE85"/>
+        <ListBox Name="SectionLB" Height="90" Margin="367,396,120,0" VerticalAlignment="Top" SelectionChanged="SectionLB_SelectionChanged"/>
+        <Button Name="AddSection" Content="Přidat" Margin="487,396,30,0" VerticalAlignment="Top" Height="30" Click="AddSectionClick" Background="#FF75EE85" />
+        <Button Name="DeleteSection" Content="Odebrat" Margin="487,456,30,0" VerticalAlignment="Top" Height="30" Click="DeleteSectionClick" Background="#FF75EE85"/>
+        <Label Content="Národnost:" Margin="0,30,231,0" VerticalAlignment="Top" HorizontalAlignment="Right" HorizontalContentAlignment="Right" Height="30" Width="80"/>
+        <Label Content="Sídlo:" Margin="0,90,231,0" VerticalAlignment="Top" HorizontalAlignment="Right" HorizontalContentAlignment="Right" Height="30" Width="70"/>
+        <Label Content="Manažer:" Margin="0,150,231,0" VerticalAlignment="Top" HorizontalAlignment="Right" HorizontalContentAlignment="Right" Height="30" Width="70"/>
+        <Label Content="Reputace:" Margin="0,210,231,0" VerticalAlignment="Top" HorizontalAlignment="Right" HorizontalContentAlignment="Right" Height="30" Width="70"/>
+        <Label Content="Sponzoři:" Margin="0,270,231,0" VerticalAlignment="Top" HorizontalAlignment="Right" HorizontalContentAlignment="Right" Height="30" Width="70"/>
+        <Label Content="Sekce:" Margin="0,396,231,0" VerticalAlignment="Top" HorizontalAlignment="Right" HorizontalContentAlignment="Right" Height="30" Width="70"/>
+        <Button Name="Cancel" Content="Zrušit" Margin="0,583,195,0" VerticalAlignment="Top" Height="30" HorizontalAlignment="Right" Width="80" Background="#FF75EE85" Click="CancelClick"/>
+        <Button Name="Save" Content="Uložit" Margin="195,583,0,0" VerticalAlignment="Top" Height="30" HorizontalAlignment="Left" Width="80" Background="#FF75EE85" Click="SaveClick"/>
+        <Button Name="NewLogo" Content="Načíst logo" HorizontalAlignment="Left" Margin="196,346,0,0" VerticalAlignment="Top" Width="76" Background="#FF75EE85" Click="NewLogoClick"/>
 
     </Grid>
 </Window>
