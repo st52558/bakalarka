@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SQLite;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,6 +13,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using TeamEdit;
 
 namespace EsportManager
 {
@@ -19,21 +22,56 @@ namespace EsportManager
     /// </summary>
     public partial class NewGame : Window
     {
+        List<Nation> nationList = new List<Nation>();
+        List<TeamBasic> teamList = new List<TeamBasic>();
         public NewGame()
         {
             InitializeComponent();
+            GetAllNationsToComboBox();
+            CheckIfEnableStartButton();
         }
 
-        private void CheckIfEnableUpdateButton()
+        private void CheckIfEnableStartButton()
         {
-            if (!TeamEditButton.IsEnabled && TeamListLB.SelectedIndex != -1 || !PlyerEditButton.IsEnabled && PlayersListLB.SelectedIndex != -1)
+            if (TeamListLB.SelectedIndex == -1 || !CheckGameName())
             {
-                EditButton.IsEnabled = true;
+                StartButton.IsEnabled = false;
             }
             else
             {
-                EditButton.IsEnabled = false;
+                StartButton.IsEnabled = true;
             }
+        }
+
+        private bool CheckGameName()
+        {
+            if (GameNameTB.Text != "")
+            {
+                if (!CheckIfCharIsAlphabetic(GameNameTB.Text.ElementAt(0)))
+                {
+                    return false;
+                }
+                for (int i = 1; i < GameNameTB.Text.Count(); i++)
+                {
+                    if (!CheckIfCharIsAlphabeticOrNumeric(GameNameTB.Text.ElementAt(i)))
+                    {
+                        return false;
+                    }
+                }
+                //existuje název?
+                return !File.Exists(@".\" + GameNameTB.Text + ".db" );
+            }
+            return false;
+        }
+
+        private bool CheckIfCharIsAlphabeticOrNumeric(char v)
+        {
+            return Char.IsLetterOrDigit(v);
+        }
+
+        private bool CheckIfCharIsAlphabetic(char v)
+        {
+            return Char.IsLetter(v);
         }
 
         private void GetAllNationsToComboBox()
@@ -58,15 +96,7 @@ namespace EsportManager
             }
         }
 
-        private void NationChangeComboBox(object sender, SelectionChangedEventArgs e)
-        {
-            AddTeamsToListBox();
-        }
 
-        private void TeamNameChangeTextView(object sender, TextChangedEventArgs e)
-        {
-            AddTeamsToListBox();
-        }
 
         private void AddTeamsToListBox()
         {
@@ -115,7 +145,39 @@ namespace EsportManager
                     TeamListLB.Items.Add(teamList.ElementAt(i).Name);
                 }
             }
-            CheckingAfterEveryClick();
+            CheckIfEnableStartButton();
+        }
+
+
+        private void NationChangeComboBox(object sender, SelectionChangedEventArgs e)
+        {
+            AddTeamsToListBox();
+        }
+
+        private void TeamNameChangeTextView(object sender, TextChangedEventArgs e)
+        {
+            AddTeamsToListBox();
+        }
+
+        private void TeamListLBClickInto(object sender, SelectionChangedEventArgs e)
+        {
+            CheckIfEnableStartButton();
+        }
+
+        private void GameNameChange(object sender, TextChangedEventArgs e)
+        {
+            CheckIfEnableStartButton();
+        }
+
+        private void TeamListLB_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+           // CheckIfEnableStartButton();
+        }
+
+        private void StartGame(object sender, RoutedEventArgs e)
+        {
+            File.Copy(@"./test.db", @"./" + GameNameTB.Text + ".db");
+            this.Close();
         }
     }
 }

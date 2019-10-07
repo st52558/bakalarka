@@ -7,12 +7,12 @@
         mc:Ignorable="d"
         Title="Nová hra" Height="450" Width="300" ResizeMode="NoResize" >
     <Grid>
-        <Label Content="Název hry" HorizontalAlignment="Left" Margin="39,26,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.593,-1.405"/>
+        <Label  Content="Název hry" HorizontalAlignment="Left" Margin="39,26,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.593,-1.405"/>
         <Label Content="Výběr týmu" HorizontalAlignment="Left" Margin="90,83,0,0" VerticalAlignment="Top"/>
-        <TextBox HorizontalAlignment="Left" Height="23" Margin="117,26,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
-        <ComboBox HorizontalAlignment="Center" Margin="0,109,0,0" VerticalAlignment="Top" Width="120"/>
-        <TextBox HorizontalAlignment="Center" Height="23" Margin="0,146,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
-        <ListBox HorizontalAlignment="Center" Height="155" Margin="0,174,0,0" VerticalAlignment="Top" Width="120"/>
-        <Button Content="Uložit a spustit" HorizontalAlignment="Center" Margin="0,354,0,0" VerticalAlignment="Top" Width="75"/>
+        <TextBox Name="GameNameTB" HorizontalAlignment="Left" Height="23" Margin="117,26,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" TextChanged="GameNameChange" />
+        <ComboBox Name="NationsCB" HorizontalAlignment="Center" Margin="0,109,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="NationChangeComboBox"/>
+        <TextBox Name="TeamNameTW" HorizontalAlignment="Center" Height="23" Margin="0,146,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" TextChanged="TeamNameChangeTextView"/>
+        <ListBox Name="TeamListLB" HorizontalAlignment="Center" Height="155" Margin="0,174,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="TeamListLBClickInto" MouseDown="TeamListLB_MouseDown"/>
+        <Button Name="StartButton" Content="Uložit a spustit" HorizontalAlignment="Center" Margin="0,354,0,0" VerticalAlignment="Top" Width="75" Click="StartGame"/>
     </Grid>
 </Window>

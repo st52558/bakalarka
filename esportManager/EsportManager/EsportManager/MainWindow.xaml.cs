@@ -25,9 +25,10 @@ namespace EsportManager
             InitializeComponent();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void LoadGameClick(object sender, RoutedEventArgs e)
         {
-
+            LoadGame win2 = new LoadGame();
+            win2.Show();
         }
 
         private void QuitGame_Click(object sender, RoutedEventArgs e)
