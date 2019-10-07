@@ -22,13 +22,31 @@ namespace EsportManager
     /// </summary>
     public partial class NewGame : Window
     {
+
+        MainWindow mainwindow;
         List<Nation> nationList = new List<Nation>();
         List<TeamBasic> teamList = new List<TeamBasic>();
+
         public NewGame()
         {
             InitializeComponent();
-            GetAllNationsToComboBox();
+            GetAllDatabasesToComboBox();
             CheckIfEnableStartButton();
+        }
+
+        public MainWindow setMainWindow
+        {
+            get { return mainwindow; }
+            set { mainwindow = value; }
+        }
+
+        private void GetAllDatabasesToComboBox()
+        {
+            string[] files = System.IO.Directory.GetFiles("./", "*.db");
+            for (int i = 0; i < files.Length; i++)
+            {
+                DatabaseComboBox.Items.Add(files[i].Substring(2)); //za to dopsat aktuální datum + tým, za který se hraje
+            }
         }
 
         private void CheckIfEnableStartButton()
@@ -59,7 +77,7 @@ namespace EsportManager
                     }
                 }
                 //existuje název?
-                return !File.Exists(@".\" + GameNameTB.Text + ".db" );
+                return !File.Exists(@".\games\" + GameNameTB.Text + ".db" );
             }
             return false;
         }
@@ -76,8 +94,10 @@ namespace EsportManager
 
         private void GetAllNationsToComboBox()
         {
+            nationList.Clear();
+            teamList.Clear();
             nationList.Add(new Nation(0, "Všechny národnosti"));
-            using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\test.db;"))
+            using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + DatabaseComboBox.SelectedItem  + ";"))
             {
                 conn.Open();
 
@@ -102,7 +122,7 @@ namespace EsportManager
         {
             teamList.Clear();
             TeamListLB.Items.Clear();
-            using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\test.db;"))
+            using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + DatabaseComboBox.SelectedItem + ";"))
             {
                 List<int> citiesList = new List<int>();
                 SQLiteCommand command;
@@ -176,8 +196,15 @@ namespace EsportManager
 
         private void StartGame(object sender, RoutedEventArgs e)
         {
-            File.Copy(@"./test.db", @"./" + GameNameTB.Text + ".db");
+            File.Copy(@"./" + DatabaseComboBox.SelectedItem, @"./games/" + GameNameTB.Text + ".db");
+            mainwindow.Close();
             this.Close();
+        }
+
+        private void DatabaseChanged(object sender, SelectionChangedEventArgs e)
+        {
+            GetAllNationsToComboBox();
+            
         }
     }
 }

@@ -28,22 +28,25 @@ namespace EsportManager
         private void LoadGameClick(object sender, RoutedEventArgs e)
         {
             LoadGame win2 = new LoadGame();
+            win2.setMainWindow = this;
             win2.Show();
         }
 
-        private void QuitGame_Click(object sender, RoutedEventArgs e)
+        private void Quit(object sender, RoutedEventArgs e)
         {
-
+            this.Close();
         }
 
         private void Help_Click(object sender, RoutedEventArgs e)
         {
-
+            Manual win2 = new Manual();
+            win2.Show();
         }
 
         private void NewGame_Click(object sender, RoutedEventArgs e)
         {
             NewGame win2 = new NewGame();
+            win2.setMainWindow = this;
             win2.Show();
         }
     }

@@ -19,25 +19,32 @@ namespace EsportManager
     /// </summary>
     public partial class LoadGame : Window
     {
+        MainWindow mainWindow;
         public LoadGame()
         {
             InitializeComponent();
             LoadGames();
             LoadGameButton.IsEnabled = false;
         }
+        public MainWindow setMainWindow
+        {
+            get { return mainWindow; }
+            set { mainWindow = value; }
+        }
 
         private void LoadGames()
         {
-            string[] files = System.IO.Directory.GetFiles("./", "*.db");
+            string[] files = System.IO.Directory.GetFiles("./games/", "*.db");
             for (int i = 0; i < files.Length; i++)
             {
-                GamesLB.Items.Add((files[i].Remove(files[i].Length - 3)).Substring(2)); //za to dopsat aktuální datum + tým, za který se hraje
+                GamesLB.Items.Add((files[i].Remove(files[i].Length - 3)).Substring(8)); //za to dopsat aktuální datum + tým, za který se hraje
             }
         }
 
         private void LoadGameClick(object sender, RoutedEventArgs e)
         {
-            
+            mainWindow.Close();
+            this.Close();
         }
 
         private void GameChange(object sender, SelectionChangedEventArgs e)
