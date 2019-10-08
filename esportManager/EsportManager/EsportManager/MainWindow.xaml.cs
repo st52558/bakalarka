@@ -28,7 +28,7 @@ namespace EsportManager
         private void LoadGameClick(object sender, RoutedEventArgs e)
         {
             LoadGame win2 = new LoadGame();
-            win2.setMainWindow = this;
+            win2.MainWindow = this;
             win2.Show();
         }
 
@@ -46,7 +46,7 @@ namespace EsportManager
         private void NewGame_Click(object sender, RoutedEventArgs e)
         {
             NewGame win2 = new NewGame();
-            win2.setMainWindow = this;
+            win2.Mainwindow = this;
             win2.Show();
         }
     }

@@ -77,6 +77,9 @@
     <Compile Include="LoadGame.xaml.cs">
       <DependentUpon>LoadGame.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MainGame.xaml.cs">
+      <DependentUpon>MainGame.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Manual.xaml.cs">
       <DependentUpon>Manual.xaml</DependentUpon>
     </Compile>
@@ -87,6 +90,10 @@
     <Compile Include="Team.cs" />
     <Compile Include="TeamBasic.cs" />
     <Page Include="LoadGame.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MainGame.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

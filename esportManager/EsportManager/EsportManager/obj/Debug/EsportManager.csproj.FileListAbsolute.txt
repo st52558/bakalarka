@@ -32,3 +32,5 @@ C:\Users\Gunny\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportMana
 C:\Users\Gunny\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportManager\obj\Debug\LoadGame.baml
 C:\Users\Gunny\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportManager\obj\Debug\Manual.g.cs
 C:\Users\Gunny\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportManager\obj\Debug\Manual.baml
+C:\Users\Gunny\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportManager\obj\Debug\MainGame.g.cs
+C:\Users\Gunny\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportManager\obj\Debug\MainGame.baml

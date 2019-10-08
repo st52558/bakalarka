@@ -22,8 +22,7 @@ namespace EsportManager
     /// </summary>
     public partial class NewGame : Window
     {
-
-        MainWindow mainwindow;
+        public MainWindow Mainwindow { get; set; }
         List<Nation> nationList = new List<Nation>();
         List<TeamBasic> teamList = new List<TeamBasic>();
 
@@ -32,12 +31,6 @@ namespace EsportManager
             InitializeComponent();
             GetAllDatabasesToComboBox();
             CheckIfEnableStartButton();
-        }
-
-        public MainWindow setMainWindow
-        {
-            get { return mainwindow; }
-            set { mainwindow = value; }
         }
 
         private void GetAllDatabasesToComboBox()
@@ -197,7 +190,7 @@ namespace EsportManager
         private void StartGame(object sender, RoutedEventArgs e)
         {
             File.Copy(@"./" + DatabaseComboBox.SelectedItem, @"./games/" + GameNameTB.Text + ".db");
-            mainwindow.Close();
+            Mainwindow.Close();
             this.Close();
         }
 

@@ -19,18 +19,14 @@ namespace EsportManager
     /// </summary>
     public partial class LoadGame : Window
     {
-        MainWindow mainWindow;
+        public MainWindow MainWindow { get; set; }
         public LoadGame()
         {
             InitializeComponent();
             LoadGames();
             LoadGameButton.IsEnabled = false;
         }
-        public MainWindow setMainWindow
-        {
-            get { return mainWindow; }
-            set { mainWindow = value; }
-        }
+        
 
         private void LoadGames()
         {
@@ -43,7 +39,10 @@ namespace EsportManager
 
         private void LoadGameClick(object sender, RoutedEventArgs e)
         {
-            mainWindow.Close();
+            MainGame win2 = new MainGame();
+            win2.DatabaseName = "./games/" + GamesLB.SelectedItem.ToString() + ".db";
+            win2.Show();
+            MainWindow.Close();
             this.Close();
         }
 
