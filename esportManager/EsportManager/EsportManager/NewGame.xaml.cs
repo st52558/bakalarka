@@ -56,7 +56,7 @@ namespace EsportManager
 
         private bool CheckGameName()
         {
-            if (GameNameTB.Text != "")
+            if (GameNameTB.Text != "" && GameNameTB.Text.Length <= 10)
             {
                 if (!CheckIfCharIsAlphabetic(GameNameTB.Text.ElementAt(0)))
                 {
@@ -190,6 +190,9 @@ namespace EsportManager
         private void StartGame(object sender, RoutedEventArgs e)
         {
             File.Copy(@"./" + DatabaseComboBox.SelectedItem, @"./games/" + GameNameTB.Text + ".db");
+            MainGame win2 = new MainGame();
+            win2.DatabaseName = "./games/" + GameNameTB.Text + ".db";
+            win2.Show();
             Mainwindow.Close();
             this.Close();
         }

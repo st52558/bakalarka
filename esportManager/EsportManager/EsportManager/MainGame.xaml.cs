@@ -31,9 +31,15 @@ namespace EsportManager
            
         }
 
-        private void RegisteredTournamentClick(object sender, RoutedEventArgs e)
+        private void ShowRegisteredTournaments(object sender, RoutedEventArgs e)
         {
             Console.WriteLine(DatabaseName);
+        }
+
+        private void ShowSponsors(object sender, RoutedEventArgs e)
+        {
+            ViewSponsors win2 = new ViewSponsors(1, DatabaseName);
+            win2.Show();
         }
     }
 }

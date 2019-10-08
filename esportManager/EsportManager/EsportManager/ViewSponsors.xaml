@@ -1,0 +1,49 @@
+﻿<Window x:Class="EsportManager.ViewSponsors"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:EsportManager"
+        mc:Ignorable="d"
+        Title="ViewSponsors" Height="400" Width="400" ResizeMode="NoResize">
+    <Grid>
+        <Button Name="AddSponsor1" Content="Přidat sponzora" HorizontalAlignment="Center" Margin="0,80,0,0" VerticalAlignment="Top" Width="100" Visibility="Hidden" Click="AddNewSponsor"/>
+        <Button Name="AddSponsor2" Content="Přidat sponzora" HorizontalAlignment="Center" Margin="0,180,0,0" VerticalAlignment="Top" Width="100" Visibility="Hidden" Click="AddNewSponsor"/>
+        <Button Name="AddSponsor3" Content="Přidat sponzora" HorizontalAlignment="Center" Margin="0,280,0,0" VerticalAlignment="Top" Width="100" Visibility="Hidden" Click="AddNewSponsor"/>
+        <Label Name="Sponsor1Name" Content="NÁZEV" HorizontalAlignment="Left" Margin="60,80,0,0" VerticalAlignment="Top"/>
+        <Label Name="Sponsor1MonthlyIncomeLabel" Content="Měsíční příjem" HorizontalAlignment="Left" Margin="150,50,0,0" VerticalAlignment="Top"/>
+        <Label Name="Sponsor1MonthlyIncome" Content="HODNOTA" HorizontalAlignment="Left" Margin="150,70,0,0" VerticalAlignment="Top"/>
+        <Label Name="Sponsor1BonusIncomeLabel" Content="Bonus při obnovení" HorizontalAlignment="Left" Margin="150,100,0,0" VerticalAlignment="Top"/>
+        <Label Name="Sponsor1BonusIncome" Content="HODNOTA" HorizontalAlignment="Left" Margin="150,120,0,0" VerticalAlignment="Top"/>
+        <Label Name="Sponsor1DateOfExpirationLabel" Content="Datum vypršení" HorizontalAlignment="Left" Margin="280,50,0,0" VerticalAlignment="Top"/>
+        <Label Name="Sponsor1DateOfExpiration" Content="HODNOTA" HorizontalAlignment="Left" Margin="280,70,0,0" VerticalAlignment="Top"/>
+        <Button Name="Sponsor1RenewContract" Content="Obnovit" HorizontalAlignment="Left" Margin="280,100,0,0" VerticalAlignment="Top" Width="75"/>
+        <Button Name="Sponsor1SignContract" Content="Podepsat" HorizontalAlignment="Left" Margin="280,100,0,0" VerticalAlignment="Top" Width="75"/>
+        <Button Name="Sponsor1CancelContract" Content="Vypovědět" HorizontalAlignment="Left" Margin="280,120,0,0" VerticalAlignment="Top" Width="75"/>
+
+        <Label Name="Sponsor2Name" Content="NÁZEV" HorizontalAlignment="Left" Margin="60,180,0,0" VerticalAlignment="Top"/>
+        <Label Name="Sponsor2MonthlyIncomeLabel" Content="Měsíční příjem" HorizontalAlignment="Left" Margin="150,150,0,0" VerticalAlignment="Top"/>
+        <Label Name="Sponsor2MonthlyIncome" Content="HODNOTA" HorizontalAlignment="Left" Margin="150,170,0,0" VerticalAlignment="Top"/>
+        <Label Name="Sponsor2BonusIncomeLabel" Content="Bonus při obnovení" HorizontalAlignment="Left" Margin="150,200,0,0" VerticalAlignment="Top"/>
+        <Label Name="Sponsor2BonusIncome" Content="HODNOTA" HorizontalAlignment="Left" Margin="150,220,0,0" VerticalAlignment="Top"/>
+        <Label Name="Sponsor2DateOfExpirationLabel" Content="Datum vypršení" HorizontalAlignment="Left" Margin="280,150,0,0" VerticalAlignment="Top"/>
+        <Label Name="Sponsor2DateOfExpiration" Content="HODNOTA" HorizontalAlignment="Left" Margin="280,170,0,0" VerticalAlignment="Top"/>
+        <Button Name="Sponsor2RenewContract" Content="Obnovit" HorizontalAlignment="Left" Margin="280,200,0,0" VerticalAlignment="Top" Width="75"/>
+        <Button Name="Sponsor2SignContract" Content="Podepsat" HorizontalAlignment="Left" Margin="280,200,0,0" VerticalAlignment="Top" Width="75"/>
+        <Button Name="Sponsor2CancelContract" Content="Vypovědět" HorizontalAlignment="Left" Margin="280,220,0,0" VerticalAlignment="Top" Width="75"/>
+
+        <Label Name="Sponsor3Name" Content="NÁZEV" HorizontalAlignment="Left" Margin="60,280,0,0" VerticalAlignment="Top"/>
+        <Label Name="Sponsor3MonthlyIncomeLabel" Content="Měsíční příjem" HorizontalAlignment="Left" Margin="150,250,0,0" VerticalAlignment="Top"/>
+        <Label Name="Sponsor3MonthlyIncome" Content="HODNOTA" HorizontalAlignment="Left" Margin="150,270,0,0" VerticalAlignment="Top"/>
+        <Label Name="Sponsor3BonusIncomeLabel" Content="Bonus při obnovení" HorizontalAlignment="Left" Margin="150,300,0,0" VerticalAlignment="Top"/>
+        <Label Name="Sponsor3BonusIncome" Content="HODNOTA" HorizontalAlignment="Left" Margin="150,320,0,0" VerticalAlignment="Top"/>
+        <Label Name="Sponsor3DateOfExpirationLabel" Content="Datum vypršení" HorizontalAlignment="Left" Margin="280,250,0,0" VerticalAlignment="Top"/>
+        <Label Name="Sponsor3DateOfExpiration" Content="HODNOTA" HorizontalAlignment="Left" Margin="280,270,0,0" VerticalAlignment="Top"/>
+        <Button Name="Sponsor3RenewContract" Content="Obnovit" HorizontalAlignment="Left" Margin="280,300,0,0" VerticalAlignment="Top" Width="75"/>
+        <Button Name="Sponsor3SignContract" Content="Podepsat" HorizontalAlignment="Left" Margin="280,300,0,0" VerticalAlignment="Top" Width="75"/>
+        <Button Name="Sponsor3CancelContract" Content="Vypovědět" HorizontalAlignment="Left" Margin="280,320,0,0" VerticalAlignment="Top" Width="75"/>
+
+        <Rectangle Fill="Black" Height="1" Margin="0,250,0,0" Stroke="Black" VerticalAlignment="Top" HorizontalAlignment="Left" Width="400"/>
+        <Rectangle Fill="Black" Height="1" Margin="0,150,0,0" Stroke="Black" VerticalAlignment="Top" HorizontalAlignment="Left" Width="400"/>
+    </Grid>
+</Window>

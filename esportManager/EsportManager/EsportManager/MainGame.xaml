@@ -23,13 +23,13 @@
                 <MenuItem Header="Volní zaměstnanci" />
             </MenuItem>
             <MenuItem Header="Tým">
-                <MenuItem Header="Sponzoři" />
+                <MenuItem Name="Sponsors" Header="Sponzoři" Click="ShowSponsors" />
                 <MenuItem Header="Přehled" />
                 <MenuItem Header="Trénink" />
                 <MenuItem Header="Cestování" />
             </MenuItem>
             <MenuItem Header="Turnaje">
-                <MenuItem Name="RegistererdTournaments" Header="Přihlášené" Click="RegisteredTournamentClick" />
+                <MenuItem Name="RegistererdTournaments" Header="Přihlášené" Click="ShowRegisteredTournaments" />
                 <MenuItem Header="Volné turnaje tento měsíc" />
             </MenuItem>
         </Menu>
