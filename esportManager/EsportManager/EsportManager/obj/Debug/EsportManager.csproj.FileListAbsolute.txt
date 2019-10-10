@@ -72,3 +72,5 @@ C:\Users\st52558\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportMa
 C:\Users\st52558\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportManager\obj\Debug\EsportManager.csproj.CopyComplete
 C:\Users\st52558\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportManager\obj\Debug\EsportManager.exe
 C:\Users\st52558\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportManager\obj\Debug\EsportManager.pdb
+C:\Users\Gunny\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportManager\obj\Debug\ViewSponsors.g.cs
+C:\Users\Gunny\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportManager\obj\Debug\ViewSponsors.baml

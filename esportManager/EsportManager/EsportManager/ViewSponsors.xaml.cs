@@ -100,7 +100,7 @@ namespace EsportManager
         private int CheckNumberOfSponsors()
         {
             // zjistit počet sponsorů
-            return 1;
+            return 3;
         }
 
         private void AddNewSponsor(object sender, RoutedEventArgs e)

@@ -1,16 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace EsportManager
 {
@@ -40,6 +29,32 @@ namespace EsportManager
         {
             ViewSponsors win2 = new ViewSponsors(1, DatabaseName);
             win2.Show();
+        }
+
+        private void QuitGame(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        private void ShowManual(object sender, RoutedEventArgs e)
+        {
+            Manual win2 = new Manual();
+            win2.Show();
+        }
+
+        private void ShowFreeEmployees(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ShowPowerRanking(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ShowTeams(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

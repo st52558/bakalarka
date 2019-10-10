@@ -9,18 +9,18 @@
     <DockPanel>
         <Menu DockPanel.Dock="Top" Height="20" VerticalAlignment="Top">
             <MenuItem Header="Hra">
-                <MenuItem Header="Návod" />
+                <MenuItem Name="Manual" Header="Návod" Click="ShowManual" />
                 <Separator />
-                <MenuItem Header="Ukončit" />
+                <MenuItem Name="Quit" Header="Ukončit" Click="QuitGame" />
             </MenuItem>
             <MenuItem Header="Procházet">
-                <MenuItem Header="Hráči" />
-                <MenuItem Header="Volní hráči" />
-                <MenuItem Header="Trh s hráči" />
+                <MenuItem Name="Players" Header="Hráči" />
+                <MenuItem Name="FreePlayers" Header="Volní hráči" />
                 <Separator />
-                <MenuItem Header="Týmy" />
+                <MenuItem Name="Teams" Header="Týmy" Click="ShowTeams" />
+                <MenuItem Name="PowerRanking" Header="Power Ranking" Click="ShowPowerRanking" />
                 <Separator />
-                <MenuItem Header="Volní zaměstnanci" />
+                <MenuItem Name="FreeEmployees" Header="Volní zaměstnanci" Click="ShowFreeEmployees" />
             </MenuItem>
             <MenuItem Header="Tým">
                 <MenuItem Name="Sponsors" Header="Sponzoři" Click="ShowSponsors" />
@@ -33,8 +33,26 @@
                 <MenuItem Header="Volné turnaje tento měsíc" />
             </MenuItem>
         </Menu>
-        <Button Name="NextDayButton" Content="Button" HorizontalAlignment="Left" Margin="278,143,0,0" VerticalAlignment="Top" Width="75" Click="GoToNextDay"/>
-        
-        
+        <TabControl Margin="0,0,0,40" >
+            <TabItem Header="TabItem" >
+                <Grid Background="#FFE5E5E5"/>
+            </TabItem>
+            <TabItem Header="TabItem">
+                <Grid Background="#FFE5E5E5"/>
+            </TabItem>
+            <TabItem Header="TabItem">
+                <Grid Background="#FFE5E5E5"/>
+            </TabItem>
+            <TabItem Header="TabItem">
+                <Grid Background="#FFE5E5E5"/>
+            </TabItem>
+            <TabItem Header="TabItem">
+                <Grid Background="#FFE5E5E5"/>
+            </TabItem>
+            <TabItem Header="TabItem">
+                <Grid Background="#FFE5E5E5"/>
+            </TabItem>
+        </TabControl>
+        <Button Name="NextDayButton" Content="Button" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,10" Width="75" Click="GoToNextDay"/>
     </DockPanel>
 </Window>
