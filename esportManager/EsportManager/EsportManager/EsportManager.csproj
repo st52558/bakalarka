@@ -89,6 +89,7 @@
     </Compile>
     <Compile Include="Team.cs" />
     <Compile Include="TeamBasic.cs" />
+    <Compile Include="TeamSectionBasic.cs" />
     <Compile Include="ViewSponsors.xaml.cs">
       <DependentUpon>ViewSponsors.xaml</DependentUpon>
     </Compile>

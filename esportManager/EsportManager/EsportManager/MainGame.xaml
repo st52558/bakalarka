@@ -33,6 +33,34 @@
                 <MenuItem Header="Volné turnaje tento měsíc" />
             </MenuItem>
         </Menu>
+        <StackPanel DockPanel.Dock="Bottom">
+            <Button Name="NextDayButton" Content="Button" HorizontalAlignment="Right" Margin="0,20,50,20" VerticalAlignment="Top" Width="75" Click="GoToNextDay" RenderTransformOrigin="5.893,0.5"/>
+
+        </StackPanel>
+        <TabControl Name="SectionTabs" Margin="0,0,0,0" DockPanel.Dock="Top">
+            <TabItem Name="Section1" Header="LOL of LOL">
+                <Grid Background="#FFE5E5E5"/>
+            </TabItem>
+            <TabItem Name="Section2" Header="CSko Global">
+                <Grid Background="#FFE5E5E5"/>
+            </TabItem>
+            <TabItem Name="Section3" Header="LOL of LOL B">
+                <Grid Background="#FFE5E5E5"/>
+            </TabItem>
+            <TabItem Name="Section4" Header="CSko Global B">
+                <Grid Background="#FFE5E5E5"/>
+            </TabItem>
+            <TabItem Name="Section5" Header="CSko Global F">
+                <Grid Background="#FFE5E5E5"/>
+            </TabItem>
+            <TabItem Name="Section6" Header="CSko Global C">
+                <Grid Background="#FFE5E5E5"/>
+            </TabItem>
+            
+        </TabControl>
+
+
+
         <TabControl Margin="0,0,0,40" >
             <TabItem Header="TabItem" >
                 <Grid Background="#FFE5E5E5"/>
@@ -53,6 +81,5 @@
                 <Grid Background="#FFE5E5E5"/>
             </TabItem>
         </TabControl>
-        <Button Name="NextDayButton" Content="Button" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,10" Width="75" Click="GoToNextDay"/>
-    </DockPanel>
+         </DockPanel>
 </Window>
