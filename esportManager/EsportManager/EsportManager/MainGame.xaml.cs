@@ -12,65 +12,117 @@ namespace EsportManager
     /// </summary>
     public partial class MainGame : Window
     {
+        class TournamentsDataGrid
+        {
+            public string Turnaj { get; set; }
+            public string Od { get; set; }
+            public string Do { get; set; }
+            public string Místo { get; set; }
+        }
+
+        class PlayersDataGrid
+        {
+            public string Nick { get; set; }
+            public string Jmeno { get; set; }
+            public string Prijmeni { get; set; }
+            public string Pozice { get; set; }
+        }
         public string DatabaseName { get; set; }
         List<TeamSectionBasic> sectionsList = new List<TeamSectionBasic>();
         public MainGame()
         {
             InitializeComponent();
-            
             AddSectionsToList();
             SetTabs();
+            AddAllTournaments();
+            AddAllPlayers();
+            ChangePropertiesOfNextActionButton();
+        }
+
+        private void ChangePropertiesOfNextActionButton()
+        {
+            /* hledání, co se vlastně bude dít.. možnosti:
+               1 - nic se neděje - a - další den
+                                 - b - konec roku
+               2 - je na řadě zápas, takže button posune na okno se zápasem
+               3 - končí sponzorská smlouva, vyjede okno, jestli chceme přesunout na smlouvy
+               4 - končí hráčovi smlouva, vyjede okno, jestli chceme přesunout na přehled hráčů
+               5 - končí zaměstnanci smlouva, vyjede okno, jestli chceme přesunout na 
+            */
+        }
+
+        private void AddAllPlayers()
+        {
+            List<PlayersDataGrid> players = new List<PlayersDataGrid>();
+            players.Add(new PlayersDataGrid() { Nick = "Gunny", Jmeno = "František", Prijmeni = "Soldán", Pozice = "Jungle" });
+            players.Add(new PlayersDataGrid() { Nick = "BlackStar", Jmeno = "Mykola", Prijmeni = "Klebus", Pozice = "Support" });
+            Section2PlayersList.ItemsSource = players;
+        }
+
+        private void AddAllTournaments()
+        {
+            List<TournamentsDataGrid> tournaments = new List<TournamentsDataGrid>();
+            tournaments.Add(new TournamentsDataGrid() { Turnaj = "LOLEC turnaj", Od = "1. 1. 2011", Do = "31. 1. 2011", Místo = "Praha" });
+            tournaments.Add(new TournamentsDataGrid() { Turnaj = "LOLEC turnaj 2", Od = "1. 2. 2011", Do = "31. 2. 2011", Místo = "Brno" });
+            Section2TournamentsList.ItemsSource = tournaments;
         }
 
         private void AddSectionsToList()
         {
             // už tady se bude pomocí dotazu zjišťovat jestli jde o B tým (následně se tam to B za to přidá)
-            sectionsList.Add(new TeamSectionBasic(1,2, "League of Legends"));
-            sectionsList.Add(new TeamSectionBasic(3,1, "Counter Strike"));
-            sectionsList.Add(new TeamSectionBasic(6,3, "League of Legends"));
+            sectionsList.Add(new TeamSectionBasic(1, 2, "League of Legends"));
+            sectionsList.Add(new TeamSectionBasic(3, 1, "Counter Strike"));
+            sectionsList.Add(new TeamSectionBasic(6, 3, "League of Legends"));
+            sectionsList.Add(new TeamSectionBasic(1, 2, "League of Legends"));
+            sectionsList.Add(new TeamSectionBasic(3, 1, "Counter Strike"));
         }
 
         private void SetTabs()
         {
-            int numberOfSections = GetNumberOfSections();
+            int numberOfSections = GetNumberOfSections() + 1;
             while (numberOfSections < SectionTabs.Items.Count)
             {
                 SectionTabs.Items.RemoveAt(numberOfSections);
             }
             switch (numberOfSections)
             {
-                case 1:
-                    SetTabsDesign(Section1, sectionsList.ElementAt(0));
-                    break;
                 case 2:
-                    SetTabsDesign(Section1, sectionsList.ElementAt(0));
-                    SetTabsDesign(Section2, sectionsList.ElementAt(1));
+                    SetTabsDesign(Section1, Section1Body, sectionsList.ElementAt(0));
+                    SetTabAsNewSection(Section2);
                     break;
                 case 3:
-                    SetTabsDesign(Section1, sectionsList.ElementAt(0));
-                    SetTabsDesign(Section2, sectionsList.ElementAt(1));
-                    SetTabsDesign(Section3, sectionsList.ElementAt(2));
+                    SetTabsDesign(Section1, Section1Body, sectionsList.ElementAt(0));
+                    SetTabsDesign(Section2, Section2Body, sectionsList.ElementAt(1));
+                    SetTabAsNewSection(Section3);
                     break;
                 case 4:
-                    SetTabsDesign(Section1, sectionsList.ElementAt(0));
-                    SetTabsDesign(Section2, sectionsList.ElementAt(1));
-                    SetTabsDesign(Section3, sectionsList.ElementAt(2));
-                    SetTabsDesign(Section4, sectionsList.ElementAt(3));
+                    SetTabsDesign(Section1, Section1Body, sectionsList.ElementAt(0));
+                    SetTabsDesign(Section2, Section2Body, sectionsList.ElementAt(1));
+                    SetTabsDesign(Section3, Section3Body, sectionsList.ElementAt(2));
+                    SetTabAsNewSection(Section4);
                     break;
                 case 5:
-                    SetTabsDesign(Section1, sectionsList.ElementAt(0));
-                    SetTabsDesign(Section2, sectionsList.ElementAt(1));
-                    SetTabsDesign(Section3, sectionsList.ElementAt(2));
-                    SetTabsDesign(Section4, sectionsList.ElementAt(3));
-                    SetTabsDesign(Section5, sectionsList.ElementAt(4));
+                    SetTabsDesign(Section1, Section1Body, sectionsList.ElementAt(0));
+                    SetTabsDesign(Section2, Section2Body, sectionsList.ElementAt(1));
+                    SetTabsDesign(Section3, Section3Body, sectionsList.ElementAt(2));
+                    SetTabsDesign(Section4, Section4Body, sectionsList.ElementAt(3));
+                    SetTabAsNewSection(Section5);
                     break;
                 case 6:
-                    SetTabsDesign(Section1, sectionsList.ElementAt(0));
-                    SetTabsDesign(Section2, sectionsList.ElementAt(1));
-                    SetTabsDesign(Section3, sectionsList.ElementAt(2));
-                    SetTabsDesign(Section4, sectionsList.ElementAt(3));
-                    SetTabsDesign(Section5, sectionsList.ElementAt(4));
-                    SetTabsDesign(Section6, sectionsList.ElementAt(5));
+                    SetTabsDesign(Section1, Section1Body, sectionsList.ElementAt(0));
+                    SetTabsDesign(Section2, Section2Body, sectionsList.ElementAt(1));
+                    SetTabsDesign(Section3, Section3Body, sectionsList.ElementAt(2));
+                    SetTabsDesign(Section4, Section4Body, sectionsList.ElementAt(3));
+                    SetTabsDesign(Section5, Section5Body, sectionsList.ElementAt(4));
+                    SetTabAsNewSection(Section6);
+                    break;
+                case 7:
+                    SetTabsDesign(Section1, Section1Body, sectionsList.ElementAt(0));
+                    SetTabsDesign(Section2, Section2Body, sectionsList.ElementAt(1));
+                    SetTabsDesign(Section3, Section3Body, sectionsList.ElementAt(2));
+                    SetTabsDesign(Section4, Section4Body, sectionsList.ElementAt(3));
+                    SetTabsDesign(Section5, Section5Body, sectionsList.ElementAt(4));
+                    SetTabsDesign(Section6, Section6Body, sectionsList.ElementAt(5));
                     break;
                 default:
                     break;
@@ -78,16 +130,22 @@ namespace EsportManager
 
         }
 
-        private void SetTabsDesign(TabItem tab, TeamSectionBasic teamSectionBasic)
+        private void SetTabAsNewSection(TabItem tab)
+        {
+            
+            tab.Header = "+";
+        }
+
+        private void SetTabsDesign(TabItem tab, Grid body, TeamSectionBasic teamSectionBasic)
         {
             Brush brush = Brushes.Black;
-            
-            if (teamSectionBasic.sectionID % 4 == 0) { brush = Brushes.Brown; }
+            if (teamSectionBasic.sectionID % 4 == 0) { brush = Brushes.Brown;}
             if (teamSectionBasic.sectionID % 4 == 1) { brush = Brushes.Cyan; }
             if (teamSectionBasic.sectionID % 4 == 2) { brush = Brushes.Salmon; }
             if (teamSectionBasic.sectionID % 4 == 3) { brush = Brushes.Snow; }
-
             tab.Background = brush;
+            body.Background = brush;
+            tab.Header = teamSectionBasic.sectionName;
         }
 
         private void GoToNextDay(object sender, RoutedEventArgs e)

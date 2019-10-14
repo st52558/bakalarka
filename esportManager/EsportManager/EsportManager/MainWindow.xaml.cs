@@ -1,6 +1,9 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -23,6 +26,8 @@ namespace EsportManager
         public MainWindow()
         {
             InitializeComponent();
+            BitmapImage image = new BitmapImage(new Uri(System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + "/pictures/menu.jpg", UriKind.Absolute));
+            Background.Source = image;
         }
 
         private void LoadGameClick(object sender, RoutedEventArgs e)
