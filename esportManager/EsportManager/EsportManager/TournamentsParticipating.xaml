@@ -20,6 +20,6 @@
         <ListBox Name="Section5Tournaments" HorizontalAlignment="Right" Height="100" Margin="0,250,50,0" VerticalAlignment="Top" Width="100"/>
         <Label Name="Section6Label" Content="Label" HorizontalAlignment="Center" Margin="0,225,0,0" VerticalAlignment="Top"/>
         <ListBox Name="Section6Tournaments" HorizontalAlignment="Center" Height="100" Margin="0,250,0,0" VerticalAlignment="Top" Width="100"/>
-        <Button Name="CancelTournament" Content="Odhlásit" HorizontalAlignment="Center" Margin="0,0,0,20" VerticalAlignment="Bottom" Width="75" Click="CancelTournament_Click"/>
+        <Button Name="CancelTournament" Content="Odhlásit" HorizontalAlignment="Center" Margin="0,0,0,20" VerticalAlignment="Bottom" Width="75" Click="CancelChosenTournament"/>
     </Grid>
 </Window>

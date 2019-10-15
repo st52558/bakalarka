@@ -78,3 +78,7 @@ C:\Users\Gunny\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportMana
 C:\Users\Gunny\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportManager\obj\Debug\TeamSearch.baml
 C:\Users\Gunny\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportManager\obj\Debug\TournamentsParticipating.g.cs
 C:\Users\Gunny\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportManager\obj\Debug\TournamentsParticipating.baml
+C:\Users\st52558\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportManager\obj\Debug\TeamSearch.g.cs
+C:\Users\st52558\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportManager\obj\Debug\TournamentsParticipating.g.cs
+C:\Users\st52558\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportManager\obj\Debug\TeamSearch.baml
+C:\Users\st52558\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportManager\obj\Debug\TournamentsParticipating.baml

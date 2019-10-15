@@ -146,6 +146,9 @@ namespace EsportManager
             tab.Header = "+";
             body.Children.Clear();
             Button addSectionButton = new Button();
+            addSectionButton.Width = 150;
+            addSectionButton.Height = 70;
+            addSectionButton.Content = "Přidat novou sekci";
             addSectionButton.Name = "addSection";
             addSectionButton.Click += this.AddNewSection;
             body.Children.Add(addSectionButton);
