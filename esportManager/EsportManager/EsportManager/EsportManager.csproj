@@ -89,7 +89,13 @@
     </Compile>
     <Compile Include="Team.cs" />
     <Compile Include="TeamBasic.cs" />
+    <Compile Include="TeamSearch.xaml.cs">
+      <DependentUpon>TeamSearch.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TeamSectionBasic.cs" />
+    <Compile Include="TournamentsParticipating.xaml.cs">
+      <DependentUpon>TournamentsParticipating.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewSponsors.xaml.cs">
       <DependentUpon>ViewSponsors.xaml</DependentUpon>
     </Compile>
@@ -118,6 +124,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="NewGame.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="TeamSearch.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="TournamentsParticipating.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

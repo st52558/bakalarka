@@ -4,7 +4,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="MainGame" Height="450" Width="800">
+        Title="MainGame" Height="450" Width="800" Closing="Window_Closing">
     <DockPanel>
         <Menu DockPanel.Dock="Top" Height="20" VerticalAlignment="Top">
             <MenuItem Header="Hra">
@@ -41,37 +41,38 @@
         <TabControl Name="SectionTabs" Margin="0,0,0,0" DockPanel.Dock="Top">
             <TabItem Name="Section1">
                 <Grid Name="Section1Body">
-                    
+                    <DataGrid FontSize="12" Name="Section1PlayersList" HorizontalAlignment="Right" Width="300" Margin="0,0,20,0" IsReadOnly="True" CanUserDeleteRows="False" CanUserAddRows="False" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="True"/>
+                    <DataGrid FontSize="12" Name="Section1TournamentsList" HorizontalAlignment="Right" Width="300" Margin="0,0,340,0" IsReadOnly="True" CanUserAddRows="False" CanUserReorderColumns="True" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="True"/>
                 </Grid>
             </TabItem>
             <TabItem Name="Section2">
                 <Grid Name="Section2Body">
-                    <DataGrid FontSize="12" Name="Section2PlayersList" HorizontalAlignment="Right" Width="300" Margin="0,0,20,0" IsReadOnly="True" CanUserDeleteRows="False" CanUserAddRows="False" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="True">
-                        
-                    </DataGrid>
-                    <DataGrid FontSize="12" Name="Section2TournamentsList" HorizontalAlignment="Right" Width="300" Margin="0,0,340,0" IsReadOnly="True" CanUserAddRows="False" CanUserReorderColumns="True" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="True">
-                        
-                    </DataGrid>
+                    <DataGrid FontSize="12" Name="Section2PlayersList" HorizontalAlignment="Right" Width="300" Margin="0,0,20,0" IsReadOnly="True" CanUserDeleteRows="False" CanUserAddRows="False" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="True"/>
+                    <DataGrid FontSize="12" Name="Section2TournamentsList" HorizontalAlignment="Right" Width="300" Margin="0,0,340,0" IsReadOnly="True" CanUserAddRows="False" CanUserReorderColumns="True" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="True"/>
                 </Grid>
             </TabItem>
             <TabItem Name="Section3">
                 <Grid Name="Section3Body">
-
+                    <DataGrid FontSize="12" Name="Section3PlayersList" HorizontalAlignment="Right" Width="300" Margin="0,0,20,0" IsReadOnly="True" CanUserDeleteRows="False" CanUserAddRows="False" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="True"/>
+                    <DataGrid FontSize="12" Name="Section3TournamentsList" HorizontalAlignment="Right" Width="300" Margin="0,0,340,0" IsReadOnly="True" CanUserAddRows="False" CanUserReorderColumns="True" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="True"/>
                 </Grid>
             </TabItem>
             <TabItem Name="Section4">
                 <Grid Name="Section4Body">
-
+                    <DataGrid FontSize="12" Name="Section4PlayersList" HorizontalAlignment="Right" Width="300" Margin="0,0,20,0" IsReadOnly="True" CanUserDeleteRows="False" CanUserAddRows="False" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="True"/>
+                    <DataGrid FontSize="12" Name="Section4TournamentsList" HorizontalAlignment="Right" Width="300" Margin="0,0,340,0" IsReadOnly="True" CanUserAddRows="False" CanUserReorderColumns="True" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="True"/>
                 </Grid>
             </TabItem>
             <TabItem Name="Section5">
                 <Grid Name="Section5Body">
-
+                    <DataGrid FontSize="12" Name="Section5PlayersList" HorizontalAlignment="Right" Width="300" Margin="0,0,20,0" IsReadOnly="True" CanUserDeleteRows="False" CanUserAddRows="False" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="True"/>
+                    <DataGrid FontSize="12" Name="Section5TournamentsList" HorizontalAlignment="Right" Width="300" Margin="0,0,340,0" IsReadOnly="True" CanUserAddRows="False" CanUserReorderColumns="True" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="True"/>
                 </Grid>
             </TabItem>
             <TabItem Name="Section6">
                 <Grid Name="Section6Body">
-
+                    <DataGrid FontSize="12" Name="Section6PlayersList" HorizontalAlignment="Right" Width="300" Margin="0,0,20,0" IsReadOnly="True" CanUserDeleteRows="False" CanUserAddRows="False" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="True"/>
+                    <DataGrid FontSize="12" Name="Section6TournamentsList" HorizontalAlignment="Right" Width="300" Margin="0,0,340,0" IsReadOnly="True" CanUserAddRows="False" CanUserReorderColumns="True" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="True"/>
                 </Grid>
             </TabItem>
             
