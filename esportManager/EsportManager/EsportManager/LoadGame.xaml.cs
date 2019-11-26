@@ -39,8 +39,7 @@ namespace EsportManager
 
         private void LoadGameClick(object sender, RoutedEventArgs e)
         {
-            MainGame win2 = new MainGame();
-            win2.DatabaseName = "./games/" + GamesLB.SelectedItem.ToString() + ".db";
+            MainGame win2 = new MainGame("./games/" + GamesLB.SelectedItem.ToString() + ".db");
             win2.Show();
             MainWindow.Close();
             this.Close();

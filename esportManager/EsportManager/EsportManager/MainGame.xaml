@@ -33,10 +33,11 @@
             </MenuItem>
         </Menu>
         <Grid DockPanel.Dock="Bottom" HorizontalAlignment="Right" Height="200" Width="800" >
-            <Image Name="Logo" Height="200" Width="200" HorizontalAlignment="Left" Margin="25,0,0,0"/>
-            <Label Name="TeamNameLabel" Content="Counter Logic Gaming" FontSize="30" Margin="250,20,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
-            <Label Name="DateLabel" Margin="0,0,200,0" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-            <Button Name="NextActionButton" Margin="0,0,50,0" Content="Další den" Height="25" Width="75" Click="GoToNextDay" HorizontalAlignment="Right"/>
+            <Image Name="Logo" Height="200" Width="200" HorizontalAlignment="Left" Margin="20,0,0,0"/>
+            <Label Name="TeamNameLabel" Content="Counter Logic Gaming" FontSize="30" Margin="225,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="550"/>
+            <Label Name="BudgetLabel" Content="Budget" Margin="225,55,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+            <Label Name="DateLabel" Content="Date" Margin="0,120,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" HorizontalContentAlignment="Center" Width="100"/>
+            <Button Name="NextActionButton" Margin="0,150,10,10" Content="Další den" Width="100" Click="GoToNextDay" HorizontalAlignment="Right"/>
         </Grid>
         <TabControl Name="SectionTabs" Margin="0,0,0,0" DockPanel.Dock="Top">
             <TabItem Name="Section1">
@@ -75,7 +76,7 @@
                     <DataGrid FontSize="12" Name="Section6TournamentsList" HorizontalAlignment="Right" Width="300" Margin="0,0,340,0" IsReadOnly="True" CanUserAddRows="False" CanUserReorderColumns="True" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="True"/>
                 </Grid>
             </TabItem>
-            
+
 
         </TabControl>
     </DockPanel>

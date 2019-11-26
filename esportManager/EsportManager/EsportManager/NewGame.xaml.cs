@@ -94,7 +94,7 @@ namespace EsportManager
             {
                 conn.Open();
 
-                SQLiteCommand command = new SQLiteCommand("select id_stat,jmeno from (select mesto.id_mesto,mesto.nazev,mesto.id_stat_fk from tym inner join mesto on mesto.id_mesto=tym.id_mesto_fk group by id_mesto_fk) inner join stat on id_stat_fk=stat.id_stat group by id_stat", conn);
+                SQLiteCommand command = new SQLiteCommand("select id_stat,jmeno from (select mesto.id_mesto,mesto.nazev,mesto.id_stat_fk from team inner join mesto on mesto.id_mesto=team.id_city_fk group by id_city_fk) inner join stat on id_stat_fk=stat.id_stat group by id_stat", conn);
                 SQLiteDataReader reader = command.ExecuteReader();
 
                 while (reader.Read())
@@ -133,7 +133,7 @@ namespace EsportManager
                     reader.Close();
                     for (int i = 0; i < citiesList.Count; i++)
                     {
-                        command = new SQLiteCommand("select id_tym,nazev from tym where nazev like '%" + TeamNameTW.Text + "%' and id_mesto_fk=" + citiesList.ElementAt(i), conn);
+                        command = new SQLiteCommand("select id_team,name from team where name like '%" + TeamNameTW.Text + "%' and id_city_fk=" + citiesList.ElementAt(i), conn);
                         reader = command.ExecuteReader();
                         while (reader.Read())
                         {
@@ -144,7 +144,7 @@ namespace EsportManager
                 }
                 else
                 {
-                    command = new SQLiteCommand("select id_tym,nazev from tym where nazev like '%" + TeamNameTW.Text + "%'", conn);
+                    command = new SQLiteCommand("select id_team,name from team where name like '%" + TeamNameTW.Text + "%'", conn);
                     reader = command.ExecuteReader();
                     while (reader.Read())
                     {
@@ -190,8 +190,7 @@ namespace EsportManager
         private void StartGame(object sender, RoutedEventArgs e)
         {
             File.Copy(@"./" + DatabaseComboBox.SelectedItem, @"./games/" + GameNameTB.Text + ".db");
-            MainGame win2 = new MainGame();
-            win2.DatabaseName = "./games/" + GameNameTB.Text + ".db";
+            MainGame win2 = new MainGame("./games/" + GameNameTB.Text + ".db");
             win2.Show();
             Mainwindow.Close();
             this.Close();
