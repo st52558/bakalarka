@@ -21,6 +21,7 @@ namespace EsportManager
     {
         public TeamSearch()
         {
+            WindowStartupLocation = WindowStartupLocation.CenterScreen;
             InitializeComponent();
         }
     }

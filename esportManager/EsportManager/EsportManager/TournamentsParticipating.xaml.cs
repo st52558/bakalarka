@@ -27,6 +27,7 @@ namespace EsportManager
         List<Tournament> tournamentsForSection6 = new List<Tournament>();
         public TournamentsParticipating()
         {
+            WindowStartupLocation = WindowStartupLocation.CenterScreen;
             InitializeComponent();
             SetAllLists();
         }

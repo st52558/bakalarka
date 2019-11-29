@@ -74,6 +74,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="PlayerSearch.xaml.cs">
+      <DependentUpon>PlayerSearch.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="FreePlayers.xaml.cs">
+      <DependentUpon>FreePlayers.xaml</DependentUpon>
+    </Compile>
     <Compile Include="LoadGame.xaml.cs">
       <DependentUpon>LoadGame.xaml</DependentUpon>
     </Compile>
@@ -100,6 +106,14 @@
     <Compile Include="ViewSponsors.xaml.cs">
       <DependentUpon>ViewSponsors.xaml</DependentUpon>
     </Compile>
+    <Page Include="PlayerSearch.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="FreePlayers.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="LoadGame.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

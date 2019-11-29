@@ -25,6 +25,7 @@ namespace EsportManager
     {
         public MainWindow()
         {
+            WindowStartupLocation = WindowStartupLocation.CenterScreen;
             InitializeComponent();
             BitmapImage image = new BitmapImage(new Uri(System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + "/pictures/menu.jpg", UriKind.Absolute));
             Background.Source = image;
@@ -34,6 +35,7 @@ namespace EsportManager
         {
             LoadGame win2 = new LoadGame();
             win2.MainWindow = this;
+            this.IsEnabled = false;
             win2.Show();
         }
 
@@ -52,7 +54,13 @@ namespace EsportManager
         {
             NewGame win2 = new NewGame();
             win2.Mainwindow = this;
+            this.IsEnabled = false;
             win2.Show();
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            
         }
     }
 }

@@ -22,6 +22,8 @@ namespace EsportManager
         public MainWindow MainWindow { get; set; }
         public LoadGame()
         {
+            WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            
             InitializeComponent();
             LoadGames();
             LoadGameButton.IsEnabled = false;
@@ -55,6 +57,11 @@ namespace EsportManager
             {
                 LoadGameButton.IsEnabled = true;
             }
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            MainWindow.IsEnabled = true;
         }
     }
 }

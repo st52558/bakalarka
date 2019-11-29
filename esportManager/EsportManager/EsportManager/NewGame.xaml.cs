@@ -28,6 +28,7 @@ namespace EsportManager
 
         public NewGame()
         {
+            WindowStartupLocation = WindowStartupLocation.CenterScreen;
             InitializeComponent();
             GetAllDatabasesToComboBox();
             CheckIfEnableStartButton();
@@ -190,16 +191,27 @@ namespace EsportManager
         private void StartGame(object sender, RoutedEventArgs e)
         {
             File.Copy(@"./" + DatabaseComboBox.SelectedItem, @"./games/" + GameNameTB.Text + ".db");
-            MainGame win2 = new MainGame("./games/" + GameNameTB.Text + ".db");
-            win2.Show();
-            Mainwindow.Close();
-            this.Close();
+            using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=./games/" + GameNameTB.Text + ".db;"))
+            {
+                conn.Open();
+                SQLiteCommand command = new SQLiteCommand("update info set id_team=" + teamList.ElementAt(TeamListLB.SelectedIndex).IdTeam + ", date='2019-01-01'", conn);
+                command.ExecuteReader();
+                MainGame win2 = new MainGame("./games/" + GameNameTB.Text + ".db");
+                win2.Show();
+                Mainwindow.Close();
+                this.Close();
+            }
         }
 
         private void DatabaseChanged(object sender, SelectionChangedEventArgs e)
         {
             GetAllNationsToComboBox();
             
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            Mainwindow.IsEnabled = true;
         }
     }
 }

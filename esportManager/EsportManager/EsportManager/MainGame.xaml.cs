@@ -38,6 +38,7 @@ namespace EsportManager
         
         public MainGame(string database)
         {
+            WindowStartupLocation = WindowStartupLocation.CenterScreen;
             DatabaseName = database;
             InitializeComponent();
             SetLabels();
@@ -136,6 +137,8 @@ namespace EsportManager
 
         private void ChangePropertiesOfNextActionButton()
         {
+            NextActionButton.Click -= SponsorContractExpired;
+            NextActionButton.Click -= NextMonthClick;
             NextActionButton.Click -= PlayerContractExpired;
             NextActionButton.Click -= NextDayClick;
             NextActionButton.Click -= EndYearClick;
@@ -159,10 +162,28 @@ namespace EsportManager
                         return;
                     }
                 }
+                reader.Close();
                 // končí zaměstnanci smlouva
 
                 // končí sponzorská smlouva
-
+                int yearCurrent = int.Parse(date.Remove(4, 6));
+                int monthCurrent = int.Parse(date.Remove(7, 3).Remove(0, 5));
+                int dayCurrent = int.Parse(date.Remove(0, 8));
+                command = new SQLiteCommand("select teamxsponsor.expiration_date from sponsor2 join teamxsponsor on sponsor2.id_sponsor=teamxsponsor.id_sponsor where teamxsponsor.id_team=" + idTeam + ";", conn);
+                reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    int yearExpire = int.Parse(reader.GetString(0).Remove(4, 6));
+                    int monthExpire = int.Parse(reader.GetString(0).Remove(7, 3).Remove(0, 5));
+                    int dayExpire = int.Parse(reader.GetString(0).Remove(0, 8));
+                    if (yearExpire == yearCurrent && monthCurrent == monthExpire && dayExpire==dayCurrent) 
+                    {
+                        NextActionButton.Content = "končí sponzorská smlouva";
+                        NextActionButton.Click += SponsorContractExpired;
+                        return;
+                    }
+                }
+                        
                 // je na řadě zápas
 
                 // nic se neděje - konec roku
@@ -170,6 +191,15 @@ namespace EsportManager
                 {
                     NextActionButton.Content = "ukončit rok";
                     NextActionButton.Click += EndYearClick;
+                    return;
+                }
+                //nic se neděje - konec měsíce
+                int month = int.Parse(date.Remove(7, 3).Remove(0, 5));
+                int day = int.Parse(date.Remove(0, 8));
+                if ((day == 30 && (month == 4 || month == 6 || month == 9 || month == 11)) || day == 31 || (day == 28 && month == 2))
+                {
+                    NextActionButton.Content = "další měsíc";
+                    NextActionButton.Click += NextMonthClick;
                     return;
                 }
                 // nic se neděje - další den
@@ -188,6 +218,44 @@ namespace EsportManager
                 */
             }
 
+        private void SponsorContractExpired(object sender, RoutedEventArgs e)
+        {
+            MessageBoxResult result = MessageBox.Show("Nejméně jedna smlouva se sponzorem dnes končí, kliknutím na Ano skončí se sponzorem/sponzory spolupráce.", "Končí smlouva se sponzorem", MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.Yes)
+            {
+                using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + DatabaseName + ";"))
+                {
+                    conn.Open();
+                    SQLiteCommand command = new SQLiteCommand("delete from teamxsponsor where id_team=" + idTeam + " and expiration_date='" + date + "';", conn);
+                    command.ExecuteReader();
+                    ChangePropertiesOfNextActionButton();
+                }
+            }
+        }
+
+        private void NextMonthClick(object sender, RoutedEventArgs e)
+        {
+            using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + DatabaseName + ";"))
+            {
+                conn.Open();
+                SQLiteCommand command = new SQLiteCommand("select sum(monthly_payment) from sponsor2 join teamxsponsor on teamxsponsor.id_sponsor=sponsor2.id_sponsor and teamxsponsor.id_team=" + idTeam + ";", conn);
+                SQLiteDataReader reader = command.ExecuteReader();
+                reader.Read();
+                int income = reader.GetInt32(0);
+                reader.Close();
+                command = new SQLiteCommand("select sum(salary) from player join teamxsection on teamxsection.id_team=player.team_fk and teamxsection.id_team=" + idTeam + ";", conn);
+                reader = command.ExecuteReader();
+                reader.Read();
+                income -= reader.GetInt32(0);
+                Console.WriteLine(income);
+                reader.Close();
+                command = new SQLiteCommand("update team set budget=budget+" + income + " where id_team=" + idTeam + ";", conn);
+                command.ExecuteReader();
+            }
+            NextDayClick(sender,e);
+            SetLabels();
+        }
+
         private void NextDayClick(object sender, RoutedEventArgs e)
         {
             date = NextDay(date);
@@ -196,8 +264,7 @@ namespace EsportManager
             {
                 conn.Open();
                 SQLiteCommand command = new SQLiteCommand("update info set date='" + date + "';", conn);
-                SQLiteDataReader reader = command.ExecuteReader();
-                reader.Close();
+                command.ExecuteReader();
             }
             ChangePropertiesOfNextActionButton();
         }
@@ -205,6 +272,7 @@ namespace EsportManager
         private void EndYearClick(object sender, RoutedEventArgs e)
         {
             ChangePropertiesOfNextActionButton();
+            SetLabels();
         }
 
         private void PlayerContractExpired(object sender, RoutedEventArgs e)
@@ -217,11 +285,16 @@ namespace EsportManager
                     conn.Open();
                     SQLiteCommand command = new SQLiteCommand("select player.id_player from player join teamxsection on player.team_fk=teamxsection.id_teamxsection join team on team.id_team=teamxsection.id_team where team.id_team=" + idTeam + " and contractEnd<='" + date + "';", conn);
                     SQLiteDataReader reader = command.ExecuteReader();
+                    string comm = "";
                     while (reader.Read())
                     {
-                        SQLiteCommand command2 = new SQLiteCommand("update player set team_fk=0, contractEnd='' where id_player=" + reader.GetInt32(0)+ ";", conn);
-                        SQLiteDataReader reader2 = command2.ExecuteReader();
+                        comm += "update player set value=0, salary=0, team_fk=NULL, contractEnd='' where id_player=" + reader.GetInt32(0) + ";";
+                        /*SQLiteCommand command2 = new SQLiteCommand("update player set value=0, salary=0, team_fk=NULL, contractEnd='' where id_player=" + reader.GetInt32(0) + ";", conn);
+                        command2.ExecuteReader();*/
                     }
+                    reader.Close();
+                    command = new SQLiteCommand(comm, conn);
+                    command.ExecuteReader();
                     AddAllPlayers();
                     //hráči jsou volní
                     ChangePropertiesOfNextActionButton();
@@ -452,12 +525,12 @@ namespace EsportManager
                 int salary2, salary3;
                 while (reader.Read())
                 {
-                   /* teamplayS = Math.Min((int)(rand.Next(-4, 5) + reader.GetInt32(2) * 0.9), 100);
-                    individualS = Math.Min((int)(rand.Next(-4, 5) + reader.GetInt32(2) * 0.9), 100);
-                    teamplayP = Math.Min(teamplayS + rand.Next(2, 11), 100);
-                    individualP = Math.Min(individualS + rand.Next(2, 11), 100);
-                    SQLiteCommand command2 = new SQLiteCommand("update player set individualSkill=" + individualS + ", teamplaySkill=" + teamplayS + ", teamplayPotencial=" + teamplayP + ", individualPotencial=" + individualP + " where id_player=" + reader.GetInt32(0) + ";", conn);
-                    SQLiteDataReader reader2 = command2.ExecuteReader();*/
+                    /* teamplayS = Math.Min((int)(rand.Next(-4, 5) + reader.GetInt32(2) * 0.9), 100);
+                     individualS = Math.Min((int)(rand.Next(-4, 5) + reader.GetInt32(2) * 0.9), 100);
+                     teamplayP = Math.Min(teamplayS + rand.Next(2, 11), 100);
+                     individualP = Math.Min(individualS + rand.Next(2, 11), 100);
+                     SQLiteCommand command2 = new SQLiteCommand("update player set individualSkill=" + individualS + ", teamplaySkill=" + teamplayS + ", teamplayPotencial=" + teamplayP + ", individualPotencial=" + individualP + " where id_player=" + reader.GetInt32(0) + ";", conn);
+                     SQLiteDataReader reader2 = command2.ExecuteReader();*/
                     /*salary = 1000 + (int)(((reader.GetInt32(3) * (reader.GetInt32(1) + reader.GetInt32(2)) / 2) - 3600) * 1.02);
                     salary4 = (salary * 100 / 3);
                     salary2 = (int)(salary4 / 100);
@@ -518,6 +591,42 @@ namespace EsportManager
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             Environment.Exit(1);
+        }
+
+        private void ShowFreePlyaers(object sender, RoutedEventArgs e)
+        {
+            FreePlayers win2 = new FreePlayers(DatabaseName);
+            win2.Show();
+        }
+
+        private void ShowAllPlayers(object sender, RoutedEventArgs e)
+        {
+            PlayerSearch win2 = new PlayerSearch(DatabaseName);
+            win2.Show();
+        }
+
+        private void Window_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            /*if (IsEnabled)
+            {
+                SetLabels();
+                AddSectionsToList();
+                SetTabs();
+                AddAllTournaments();
+                AddAllPlayers();
+                ChangePropertiesOfNextActionButton();
+                NonPlayerTeamsActions();
+            }*/
+        }
+
+        private void Window_Activated(object sender, EventArgs e)
+        {
+            SetLabels();
+            AddSectionsToList();
+            AddAllTournaments();
+            AddAllPlayers();
+            ChangePropertiesOfNextActionButton();
+            NonPlayerTeamsActions();
         }
     }
 }

@@ -4,7 +4,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="MainGame" Height="450" Width="800" Closing="Window_Closing">
+        Title="MainGame" Height="450" Width="800" Closing="Window_Closing" IsEnabledChanged="Window_IsEnabledChanged" Activated="Window_Activated" ResizeMode="NoResize">
     <DockPanel>
         <Menu DockPanel.Dock="Top" Height="20" VerticalAlignment="Top">
             <MenuItem Header="Hra">
@@ -13,8 +13,8 @@
                 <MenuItem Name="Quit" Header="Ukončit" Click="QuitGame" />
             </MenuItem>
             <MenuItem Header="Procházet">
-                <MenuItem Name="Players" Header="Hráči" />
-                <MenuItem Name="FreePlayers" Header="Volní hráči" />
+                <MenuItem Name="Players" Header="Hráči" Click="ShowAllPlayers" />
+                <MenuItem Name="FreePlayers" Header="Volní hráči" Click="ShowFreePlyaers" />
                 <Separator />
                 <MenuItem Name="Teams" Header="Týmy" Click="ShowTeams" />
                 <MenuItem Name="PowerRanking" Header="Power Ranking" Click="ShowPowerRanking" />
