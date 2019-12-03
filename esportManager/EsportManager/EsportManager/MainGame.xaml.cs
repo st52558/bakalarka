@@ -30,6 +30,7 @@ namespace EsportManager
             public string Nick { get; set; }
             public string Jmeno { get; set; }
             public string Prijmeni { get; set; }
+            public int E { get; set; }
         }
         public string DatabaseName { get; set; }
         List<TeamSectionBasic> sectionsList = new List<TeamSectionBasic>();
@@ -312,7 +313,7 @@ namespace EsportManager
                 {
                     Console.WriteLine(sectionsList.ElementAt(i).ID);
                     List<PlayersDataGrid> players = new List<PlayersDataGrid>();
-                    SQLiteCommand command = new SQLiteCommand("select nick, player.name, surname, position_type.name from player join position_type on position_type.id_position_in_game=player.position and position_type.id_section=player.game where team_fk=" + sectionsList.ElementAt(i).ID, conn);
+                    SQLiteCommand command = new SQLiteCommand("select nick, player.name, surname, position_type.name, energy from player join position_type on position_type.id_position_in_game=player.position and position_type.id_section=player.game where team_fk=" + sectionsList.ElementAt(i).ID, conn);
                     SQLiteDataReader reader = command.ExecuteReader();
                     string nick, jmeno, prijmeni, pozice;
                     while (reader.Read())
@@ -349,11 +350,17 @@ namespace EsportManager
                             pozice = reader.GetString(3);
                         }
                         //players.Add(new PlayersDataGrid() { Nick = reader.GetString(0), Jmeno = reader.GetString(1), Prijmeni = reader.GetString(2), Pozice = reader.GetString(3) });
-                        players.Add(new PlayersDataGrid() { Pozice = pozice, Nick = nick, Jmeno = jmeno, Prijmeni = prijmeni });
+                        players.Add(new PlayersDataGrid() { Pozice = pozice, Nick = nick, Jmeno = jmeno, Prijmeni = prijmeni, E = reader.GetInt32(4)});
                     }
                     
                     reader.Close();
-                    switch (i)
+                    command = new SQLiteCommand("select nick, coach.name, surname, team_fk from coach join teamxsection on teamxsection.id_team=coach.team_fk where teamxsection.id_teamxsection=" + sectionsList.ElementAt(i).ID, conn);
+                    reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        players.Add(new PlayersDataGrid() { Pozice = "Trenér", Nick = reader.GetString(0), Jmeno = reader.GetString(1), Prijmeni = reader.GetString(2), E = 0 });
+                    } 
+                        switch (i)
                     {
                         case 0:
                             Section1PlayersList.ItemsSource = players;
@@ -627,6 +634,12 @@ namespace EsportManager
             AddAllPlayers();
             ChangePropertiesOfNextActionButton();
             NonPlayerTeamsActions();
+        }
+
+        private void ShowTraining(object sender, RoutedEventArgs e)
+        {
+            Training win2 = new Training();
+            win2.Show();
         }
     }
 }

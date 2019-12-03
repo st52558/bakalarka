@@ -1,0 +1,86 @@
+﻿<Window x:Class="EsportManager.Training"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:EsportManager"
+        mc:Ignorable="d"
+        Title="Training" Height="450" Width="608">
+    <Grid Background="LightGray">
+        <Label Content="Ráno" HorizontalAlignment="Right" Margin="0,0,100,0" VerticalAlignment="Top"/>
+        <Label Content="Odpoledne" HorizontalAlignment="Center" Margin="0,0,0,0" VerticalAlignment="Top"/>
+        <Label Content="Večer" HorizontalAlignment="Left" Margin="100,0,0,0" VerticalAlignment="Top"/>
+        <Grid Name="MondayMorningGrid" HorizontalAlignment="Left" Height="50" VerticalAlignment="Top" Width="200" Margin="0,20,0,0">
+            <ComboBox Name="MondayMorningCB" HorizontalAlignment="Center" Margin="0,20,0,0" VerticalAlignment="Center" Width="120" SelectionChanged="MondayMorningTrainingChanged" />
+        </Grid>
+        <Grid Name="MondayAfternoonGrid" HorizontalAlignment="Left" Height="50" VerticalAlignment="Top" Width="200" Margin="200,20,0,0">
+            <Label Content="Pondělí"  HorizontalContentAlignment="Center" Margin="0,0,0,0" VerticalAlignment="Top"/>
+            <ComboBox Name="MondayAfternoonCB" HorizontalAlignment="Center" Margin="0,20,0,0" VerticalAlignment="Center" Width="120" SelectionChanged="MondayAfternoonTrainingChanged" />
+        </Grid>
+        <Grid Name="MondayEveningGrid" HorizontalAlignment="Left" Height="50" VerticalAlignment="Top" Width="200" Margin="400,20,0,0">
+            <ComboBox Name="MondayEveningCB" HorizontalAlignment="Center" Margin="0,20,0,0" VerticalAlignment="Center" Width="120" SelectionChanged="MondayEveningTrainingChanged" />
+        </Grid>
+        <Grid HorizontalAlignment="Left" Height="50" VerticalAlignment="Top" Width="200" Margin="0,70,0,0">
+            <ComboBox Name="TuesdayMorningCB" HorizontalAlignment="Center" Margin="0,20,0,0" VerticalAlignment="Center" Width="120" SelectionChanged="TuesdayMorningTrainingChanged" />
+        </Grid>
+        <Grid HorizontalAlignment="Left" Height="50" VerticalAlignment="Top" Width="200" Margin="200,70,0,0">
+            <Label Content="Úterý" HorizontalAlignment="Center" Margin="0,0,0,0" VerticalAlignment="Top"/>
+            <ComboBox Name="TuesdayAfternoonCB" HorizontalAlignment="Center" Margin="0,20,0,0" VerticalAlignment="Center" Width="120" SelectionChanged="TuesdayAfternoonTrainingChanged" />
+        </Grid>
+        <Grid HorizontalAlignment="Left" Height="50" VerticalAlignment="Top" Width="200" Margin="400,70,0,0">
+            <ComboBox Name="TuesdayEveningCB" HorizontalAlignment="Center" Margin="0,20,0,0" VerticalAlignment="Center" Width="120" SelectionChanged="TuesdayEveningTrainingChanged" />
+        </Grid>
+        <Grid HorizontalAlignment="Left" Height="50" VerticalAlignment="Top" Width="200" Margin="0,120,0,0">
+            <ComboBox Name="WednesdayMorningCB" HorizontalAlignment="Center" Margin="0,20,0,0" VerticalAlignment="Center" Width="120" SelectionChanged="WednesdayMorningTrainingChanged" />
+        </Grid>
+        <Grid HorizontalAlignment="Left" Height="50" VerticalAlignment="Top" Width="200" Margin="200,120,0,0">
+            <Label Content="Středa" HorizontalAlignment="Center" Margin="0,0,0,0" VerticalAlignment="Top"/>
+            <ComboBox Name="WednesdayAfternoonCB" HorizontalAlignment="Center" Margin="0,20,0,0" VerticalAlignment="Center" Width="120" SelectionChanged="WednesdayAfternoonTrainingChanged" />
+        </Grid>
+        <Grid HorizontalAlignment="Left" Height="50" VerticalAlignment="Top" Width="200" Margin="400,120,0,0">
+            <ComboBox Name="WednesdayEveningCB" HorizontalAlignment="Center" Margin="0,20,0,0" VerticalAlignment="Center" Width="120" SelectionChanged="WednesdayEveningTrainingChanged" />
+        </Grid>
+        <Grid HorizontalAlignment="Left" Height="50" VerticalAlignment="Top" Width="200" Margin="0,170,0,0">
+            <ComboBox Name="ThursdayMorningCB" HorizontalAlignment="Center" Margin="0,20,0,0" VerticalAlignment="Center" Width="120" SelectionChanged="ThursdayMorningTrainingChanged" />
+        </Grid>
+        <Grid HorizontalAlignment="Left" Height="50" VerticalAlignment="Top" Width="200" Margin="200,170,0,0">
+            <Label Content="Čtvrtek" HorizontalAlignment="Center" Margin="0,0,0,0" VerticalAlignment="Top"/>
+            <ComboBox Name="ThursdayAfternoonCB" HorizontalAlignment="Center" Margin="0,20,0,0" VerticalAlignment="Center" Width="120" SelectionChanged="ThursdayAfternoonTrainingChanged" />
+        </Grid>
+        <Grid HorizontalAlignment="Left" Height="50" VerticalAlignment="Top" Width="200" Margin="400,170,0,0">
+            <ComboBox Name="ThursdayEveningCB" HorizontalAlignment="Center" Margin="0,20,0,0" VerticalAlignment="Center" Width="120" SelectionChanged="ThursdayEveningTrainingChanged" />
+        </Grid>
+        <Grid HorizontalAlignment="Left" Height="50" VerticalAlignment="Top" Width="200" Margin="0,220,0,0">
+            <ComboBox Name="FridayMorningCB" HorizontalAlignment="Center" Margin="0,20,0,0" VerticalAlignment="Center" Width="120" SelectionChanged="FridayMorningCBTrainingChanged" />
+        </Grid>
+        <Grid HorizontalAlignment="Left" Height="50" VerticalAlignment="Top" Width="200" Margin="200,220,0,0">
+            <Label Content="Pátek" HorizontalAlignment="Center" Margin="0,0,0,0" VerticalAlignment="Top"/>
+            <ComboBox Name="FridayAfternoonCB" HorizontalAlignment="Center" Margin="0,20,0,0" VerticalAlignment="Center" Width="120" SelectionChanged="FridayAfternoonTrainingChanged" />
+        </Grid>
+        <Grid HorizontalAlignment="Left" Height="50" VerticalAlignment="Top" Width="200" Margin="400,220,0,0">
+            <ComboBox Name="FridayEveningCB" HorizontalAlignment="Center" Margin="0,20,0,0" VerticalAlignment="Center" Width="120" SelectionChanged="FridayEveningTrainingChanged" />
+        </Grid>
+        <Grid HorizontalAlignment="Left" Height="50" VerticalAlignment="Top" Width="200" Margin="0,270,0,0">
+            <ComboBox Name="SaturdayMorningCB" HorizontalAlignment="Center" Margin="0,20,0,0" VerticalAlignment="Center" Width="120" SelectionChanged="SaturdayMorningTrainingChanged" />
+        </Grid>
+        <Grid HorizontalAlignment="Left" Height="50" VerticalAlignment="Top" Width="200" Margin="200,270,0,0">
+            <Label Content="Sobota" HorizontalAlignment="Center" Margin="0,0,0,0" VerticalAlignment="Top"/>
+            <ComboBox Name="SaturdayAfternoonCB" HorizontalAlignment="Center" Margin="0,20,0,0" VerticalAlignment="Center" Width="120" SelectionChanged="SaturdayAfternoonTrainingChanged" />
+        </Grid>
+        <Grid HorizontalAlignment="Left" Height="50" VerticalAlignment="Top" Width="200" Margin="400,270,0,0">
+            <ComboBox Name="SaturdayEveningCB" HorizontalAlignment="Center" Margin="0,20,0,0" VerticalAlignment="Center" Width="120" SelectionChanged="SaturdayEveningTrainingChanged" />
+        </Grid>
+        <Grid HorizontalAlignment="Left" Height="50" VerticalAlignment="Top" Width="200" Margin="0,320,0,0">
+            <ComboBox Name="SundayMorningCB" HorizontalAlignment="Center" Margin="0,20,0,0" VerticalAlignment="Center" Width="120" SelectionChanged="SundayMorningTrainingChanged" />
+        </Grid>
+        <Grid HorizontalAlignment="Left" Height="50" VerticalAlignment="Top" Width="200" Margin="200,320,0,0">
+            <Label Content="Neděle" HorizontalAlignment="Center" Margin="0,0,0,0" VerticalAlignment="Top"/>
+            <ComboBox Name="SundayAfternoonCB" HorizontalAlignment="Center" Margin="0,20,0,0" VerticalAlignment="Center" Width="120" SelectionChanged="SundayAfternoonTrainingChanged" />
+        </Grid>
+        <Grid HorizontalAlignment="Left" Height="50" VerticalAlignment="Top" Width="200" Margin="400,320,0,0">
+            <ComboBox Name="SundayEveningCB" HorizontalAlignment="Center" Margin="0,20,0,0" VerticalAlignment="Center" Width="120" SelectionChanged="SundayEveningTrainingChanged" />
+        </Grid>
+        <Button Name="Save" Content="Uložit tréninky" HorizontalAlignment="Center" Margin="0,380,0,0" VerticalAlignment="Top" Width="100" Click="SaveTraining"/>
+
+    </Grid>
+</Window>

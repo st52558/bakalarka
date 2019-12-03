@@ -4,7 +4,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="MainGame" Height="450" Width="800" Closing="Window_Closing" IsEnabledChanged="Window_IsEnabledChanged" Activated="Window_Activated" ResizeMode="NoResize">
+        Title="MainGame" Height="450" Width="800" Closing="Window_Closing" IsEnabledChanged="Window_IsEnabledChanged" Activated="Window_Activated" ResizeMode="NoResize" Background="LightGray">
     <DockPanel>
         <Menu DockPanel.Dock="Top" Height="20" VerticalAlignment="Top">
             <MenuItem Header="Hra">
@@ -19,12 +19,12 @@
                 <MenuItem Name="Teams" Header="Týmy" Click="ShowTeams" />
                 <MenuItem Name="PowerRanking" Header="Power Ranking" Click="ShowPowerRanking" />
                 <Separator />
-                <MenuItem Name="FreeEmployees" Header="Volní zaměstnanci" Click="ShowFreeEmployees" />
+                <MenuItem Name="FreeEmployees" Header="Volní Trenéři" Click="ShowFreeEmployees" />
             </MenuItem>
             <MenuItem Header="Tým">
                 <MenuItem Name="Sponsors" Header="Sponzoři" Click="ShowSponsors" />
                 <MenuItem Header="Přehled" />
-                <MenuItem Header="Trénink" />
+                <MenuItem Header="Trénink" Click="ShowTraining" />
                 <MenuItem Header="Cestování" />
             </MenuItem>
             <MenuItem Header="Turnaje">

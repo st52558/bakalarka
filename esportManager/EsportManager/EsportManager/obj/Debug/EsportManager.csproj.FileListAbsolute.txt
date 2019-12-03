@@ -88,3 +88,5 @@ C:\Users\Gunny\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportMana
 C:\Users\Gunny\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportManager\obj\Debug\FreePlayers.baml
 C:\Users\Gunny\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportManager\obj\Debug\PlayerSearch.g.cs
 C:\Users\Gunny\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportManager\obj\Debug\PlayerSearch.baml
+C:\Users\Gunny\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportManager\obj\Debug\Training.g.cs
+C:\Users\Gunny\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportManager\obj\Debug\Training.baml
