@@ -1,0 +1,14 @@
+pokud hráč odehraje zápas, přidá se mu teamCooperation + 1
+pokud je hráč na soupisce a zápas neodehraje odečte se mu teamCooperation - 1
+pokud bude mít hráč teamCooperation < 55, hráč bude nespokojen a nebude chtít prodloužit smlouvu
+
+hráč přestoupí do týmu jen za podmínky, že jeho schopnosti jsou maximálně o 10 jednotek rozdílné od reputace týmu
+
+hráč může mít maximálně 100 energie
+trénink:
+Analýza 	-2 E, možnost získání +1 teamplaySkill
+Individuál 	-2 E, možnost získání +1 individualSkill
+Scrimy		-4 E, možnost získání +1 sehranosti a (+1 teamplaySkill nebo +1 individualSkill)
+Zápas		-5 E, získání 2-4 sehranosti
+Volno		+5 E, možnost ztráty -1 teamplaySkill nebo -1 individualSkill
+Každý den	+3 E
