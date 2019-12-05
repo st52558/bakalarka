@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,101 +20,117 @@ namespace EsportManager
     /// </summary>
     public partial class TournamentsParticipating : Window
     {
-        List<Tournament> tournamentsForSection1 = new List<Tournament>();
-        List<Tournament> tournamentsForSection2 = new List<Tournament>();
-        List<Tournament> tournamentsForSection3 = new List<Tournament>();
-        List<Tournament> tournamentsForSection4 = new List<Tournament>();
-        List<Tournament> tournamentsForSection5 = new List<Tournament>();
-        List<Tournament> tournamentsForSection6 = new List<Tournament>();
-        public TournamentsParticipating()
+        class TournamentBasic
         {
+            public int ID { get; set; }
+            public string Name { get; set; }
+            public string StartDate { get; set; }
+            public string EndDate { get; set; }
+            public int PrizePool { get; set; }
+            public string City { get; set; }
+            public int TokenValue { get; set; }
+        }
+
+        string databaseName;
+        int teamId;
+        string date;
+
+        List<TournamentBasic> tournamentsForSection1 = new List<TournamentBasic>();
+        public TournamentsParticipating(string database)
+        {
+            databaseName = database;
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
+            {
+                conn.Open();
+                SQLiteCommand command = new SQLiteCommand("select id_team, date from info;", conn);
+                SQLiteDataReader reader = command.ExecuteReader();
+                reader.Read();
+                teamId = reader.GetInt32(0);
+                date = reader.GetString(1);
+                reader.Close();
+            }
             InitializeComponent();
             SetAllLists();
         }
 
         private void SetAllLists()
         {
-            tournamentsForSection1.Add(new Tournament(1, "WRLDS", "1.1.2011", "31.1.2011", 2000));
-            tournamentsForSection2.Add(new Tournament(1, "WRLDS", "1.1.2011", "31.1.2011", 2000));
-            tournamentsForSection3.Add(new Tournament(1, "WRLDS", "1.1.2011", "31.1.2011", 2000));
-            tournamentsForSection4.Add(new Tournament(1, "WRLDS", "1.1.2011", "31.1.2011", 2000));
-            tournamentsForSection5.Add(new Tournament(1, "WRLDS", "1.1.2011", "31.1.2011", 2000));
-            tournamentsForSection6.Add(new Tournament(1, "WRLDS", "1.1.2011", "31.1.2011", 2000));
+            tournamentsForSection1.Clear();
+            int index = 13;
+            using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
+            {
+                conn.Open();
+                SQLiteCommand command = new SQLiteCommand("select id_tournament_to, tournament.name, tournament.start_date, tournament.end_date, prize_pool, mesto.nazev, token_value from tournament_token join tournament on tournament.id_tournament=tournament_token.id_tournament_to join mesto on tournament.city_fk=id_mesto where id_teamxsection=" + index + ";", conn);
+                SQLiteDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    tournamentsForSection1.Add(new TournamentBasic() { ID = reader.GetInt32(0), Name = reader.GetString(1), StartDate = reader.GetString(2), EndDate = reader.GetString(3), PrizePool = reader.GetInt32(4), City = reader.GetString(5), TokenValue= reader.GetInt32(6) });
+                }
+                reader.Close();
+            }
             AddAllListsToTournamentListBoxes();
         }
 
         private void AddAllListsToTournamentListBoxes()
         {
-            Section1Tournaments.Items.Clear();
-            Section2Tournaments.Items.Clear();
-            Section3Tournaments.Items.Clear();
-            Section4Tournaments.Items.Clear();
-            Section5Tournaments.Items.Clear();
-            Section6Tournaments.Items.Clear();
+            TournamentList.Items.Clear();
             for (int i = 0; i < tournamentsForSection1.Count; i++)
             {
-                Section1Tournaments.Items.Add(tournamentsForSection1.ElementAt(i).Name + ", " + tournamentsForSection1.ElementAt(i).DateFrom + " - " + tournamentsForSection1.ElementAt(i).DateTo);
-            }
-            for (int i = 0; i < tournamentsForSection2.Count; i++)
-            {
-                Section2Tournaments.Items.Add(tournamentsForSection2.ElementAt(i).Shortcut + ", " + tournamentsForSection2.ElementAt(i).DateFrom + " - " + tournamentsForSection2.ElementAt(i).DateTo);
-            }
-            for (int i = 0; i < tournamentsForSection3.Count; i++)
-            {
-                Section3Tournaments.Items.Add(tournamentsForSection3.ElementAt(i).Shortcut + ", " + tournamentsForSection3.ElementAt(i).DateFrom + " - " + tournamentsForSection3.ElementAt(i).DateTo);
-            }
-            for (int i = 0; i < tournamentsForSection4.Count; i++)
-            {
-                Section4Tournaments.Items.Add(tournamentsForSection4.ElementAt(i).Shortcut + ", " + tournamentsForSection4.ElementAt(i).DateFrom + " - " + tournamentsForSection4.ElementAt(i).DateTo);
-            }
-            for (int i = 0; i < tournamentsForSection5.Count; i++)
-            {
-                Section5Tournaments.Items.Add(tournamentsForSection5.ElementAt(i).Shortcut + ", " + tournamentsForSection5.ElementAt(i).DateFrom + " - " + tournamentsForSection5.ElementAt(i).DateTo);
-            }
-            for (int i = 0; i < tournamentsForSection6.Count; i++)
-            {
-                Section6Tournaments.Items.Add(tournamentsForSection6.ElementAt(i).Shortcut + ", " + tournamentsForSection6.ElementAt(i).DateFrom + " - " + tournamentsForSection6.ElementAt(i).DateTo);
+                TournamentList.Items.Add(tournamentsForSection1.ElementAt(i).Name + ", " + tournamentsForSection1.ElementAt(i).StartDate + " - " + tournamentsForSection1.ElementAt(i).EndDate + ", " + tournamentsForSection1.ElementAt(i).PrizePool + "$, " + tournamentsForSection1.ElementAt(i).City);
             }
         }
 
         private void CancelChosenTournament(object sender, RoutedEventArgs e)
         {
-            if (Section1Tournaments.SelectedIndex == -1 && Section2Tournaments.SelectedIndex == -1 && Section3Tournaments.SelectedIndex == -1 && Section4Tournaments.SelectedIndex == -1 && Section5Tournaments.SelectedIndex == -1 && Section6Tournaments.SelectedIndex == -1)
+            if (TournamentList.SelectedIndex < 0)
             {
                 return;
             }
-            int cancelFee = 1000;
-            MessageBoxResult result = MessageBox.Show("Vážně se chcete odhlásit z turnaje? Bude Vás to stát " + cancelFee + "€.", "Chystáte se odhlásit z turnaje", MessageBoxButton.YesNo);
+            MessageBoxResult result = MessageBox.Show("Vážně se chcete odhlásit z turnaje? Bude Vás to stát " + tournamentsForSection1.ElementAt(TournamentList.SelectedIndex).TokenValue + "$.", "Chystáte se odhlásit z turnaje", MessageBoxButton.YesNo);
             if (result != MessageBoxResult.Yes)
             {
                 return;
             }
-            if (Section1Tournaments.SelectedIndex != -1)
+            
+            using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
             {
-                tournamentsForSection1.RemoveAt(Section1Tournaments.SelectedIndex);
+                conn.Open();
+                SQLiteCommand command = new SQLiteCommand("update team set budget=budget-" + tournamentsForSection1.ElementAt(TournamentList.SelectedIndex).TokenValue + " where id_team=" + teamId + ";", conn);
+                command.ExecuteReader();
+                command = new SQLiteCommand("delete from tournament_token where id_tournament_to=" + tournamentsForSection1.ElementAt(TournamentList.SelectedIndex).ID +" and id_teamxsection=14;", conn);
+                command.ExecuteReader();
             }
-            if (Section2Tournaments.SelectedIndex != -1)
+            SetAllLists();
+            /*tournamentsForSection1.RemoveAt(TournamentList.SelectedIndex);
+            AddAllListsToTournamentListBoxes();*/
+        }
+
+        private void ShowTournament(object sender, MouseButtonEventArgs e)
+        {
+            if (TournamentList.SelectedIndex == -1)
             {
-                tournamentsForSection2.RemoveAt(Section2Tournaments.SelectedIndex);
+                return;
             }
-            if (Section3Tournaments.SelectedIndex != -1)
+            using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
             {
-                tournamentsForSection3.RemoveAt(Section3Tournaments.SelectedIndex);
+                conn.Open();
+                SQLiteCommand command = new SQLiteCommand("select team.name, tournament.name from tournament_token join tournament on tournament.id_tournament=tournament_token.id_tournament_to join teamxsection on teamxsection.id_teamxsection=tournament_token.id_teamxsection join team on teamxsection.id_team=team.id_team where tournament_token.id_tournament_to=" + tournamentsForSection1.ElementAt(TournamentList.SelectedIndex).ID + ";", conn);
+                SQLiteDataReader reader = command.ExecuteReader();
+                int counter = 1;
+                string allTeams = "";
+                while (reader.Read())
+                {
+                    if (counter == 1)
+                    {
+                        allTeams += reader.GetString(1) + '\n' + '\n';
+                    }
+                    allTeams += counter + ": " + reader.GetString(0) + '\n';
+                    counter++;
+                }
+                MessageBox.Show(allTeams, "Registrovaní do turnaje", MessageBoxButton.OK);
+                reader.Close();
             }
-            if (Section4Tournaments.SelectedIndex != -1)
-            {
-                tournamentsForSection4.RemoveAt(Section4Tournaments.SelectedIndex);
-            }
-            if (Section5Tournaments.SelectedIndex != -1)
-            {
-                tournamentsForSection5.RemoveAt(Section5Tournaments.SelectedIndex);
-            }
-            if (Section6Tournaments.SelectedIndex != -1)
-            {
-                tournamentsForSection6.RemoveAt(Section6Tournaments.SelectedIndex);
-            }
-            AddAllListsToTournamentListBoxes();
         }
     }
 }

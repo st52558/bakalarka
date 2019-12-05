@@ -8,18 +8,7 @@
         Title="TournamentsParticipating" Height="440" Width="500">
     <Grid>
         <Label Name="TeamNameLabel" Content="Label" HorizontalAlignment="Center" Margin="0,20,0,0" VerticalAlignment="Top"/>
-        <Label Name="Section1Label" Content="Label" HorizontalAlignment="Left" Margin="50,65,0,0" VerticalAlignment="Top"/>
-        <ListBox Name="Section1Tournaments" HorizontalAlignment="Left" Height="100" Margin="50,90,0,0" VerticalAlignment="Top" Width="100"/>
-        <Label Name="Section2Label" Content="Label" HorizontalAlignment="Right" Margin="0,65,50,0" VerticalAlignment="Top"/>
-        <ListBox Name="Section2Tournaments" HorizontalAlignment="Right" Height="100" Margin="0,90,50,0" VerticalAlignment="Top" Width="100"/>
-        <Label Name="Section3Label" Content="Label" HorizontalAlignment="Center" Margin="0,65,0,0" VerticalAlignment="Top"/>
-        <ListBox Name="Section3Tournaments" HorizontalAlignment="Center" Height="100" Margin="0,90,0,0" VerticalAlignment="Top" Width="100"/>
-        <Label Name="Section4Label" Content="Label" HorizontalAlignment="Left" Margin="50,225,0,0" VerticalAlignment="Top"/>
-        <ListBox Name="Section4Tournaments" HorizontalAlignment="Left" Height="100" Margin="50,250,0,0" VerticalAlignment="Top" Width="100"/>
-        <Label Name="Section5Label" Content="Label" HorizontalAlignment="Right" Margin="0,225,50,0" VerticalAlignment="Top"/>
-        <ListBox Name="Section5Tournaments" HorizontalAlignment="Right" Height="100" Margin="0,250,50,0" VerticalAlignment="Top" Width="100"/>
-        <Label Name="Section6Label" Content="Label" HorizontalAlignment="Center" Margin="0,225,0,0" VerticalAlignment="Top"/>
-        <ListBox Name="Section6Tournaments" HorizontalAlignment="Center" Height="100" Margin="0,250,0,0" VerticalAlignment="Top" Width="100"/>
+        <ListBox Name="TournamentList" HorizontalAlignment="Left" Height="202" Margin="50,147,0,0" VerticalAlignment="Top" Width="374" MouseDoubleClick="ShowTournament"/>
         <Button Name="CancelTournament" Content="Odhlásit" HorizontalAlignment="Center" Margin="0,0,0,20" VerticalAlignment="Bottom" Width="75" Click="CancelChosenTournament"/>
     </Grid>
 </Window>

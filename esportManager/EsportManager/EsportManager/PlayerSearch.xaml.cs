@@ -29,6 +29,7 @@ namespace EsportManager
         class PlayersDataGrid
         {
             public string Hra { get; set; }
+            public string Tym { get; set; }
             public string Pozice { get; set; }
             public string Nick { get; set; }
             public string Jmeno { get; set; }

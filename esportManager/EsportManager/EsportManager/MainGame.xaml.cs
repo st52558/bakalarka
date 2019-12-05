@@ -354,11 +354,11 @@ namespace EsportManager
                     }
                     
                     reader.Close();
-                    command = new SQLiteCommand("select nick, coach.name, surname, team_fk from coach join teamxsection on teamxsection.id_team=coach.team_fk where teamxsection.id_teamxsection=" + sectionsList.ElementAt(i).ID, conn);
+                    command = new SQLiteCommand("select nick, coach.name, surname, team_fk from coach join teamxsection on teamxsection.id_team=coach.team_fk where teamxsection.id_teamxsection=" + sectionsList.ElementAt(i).ID + " and game=" + sectionsList.ElementAt(i).sectionID + ";", conn);
                     reader = command.ExecuteReader();
                     while (reader.Read())
                     {
-                        players.Add(new PlayersDataGrid() { Pozice = "Trenér", Nick = reader.GetString(0), Jmeno = reader.GetString(1), Prijmeni = reader.GetString(2), E = 0 });
+                        players.Add(new PlayersDataGrid() { Pozice = "Trenér", Nick = reader.GetString(0), Jmeno = reader.GetString(1), Prijmeni = reader.GetString(2), E = 100 });
                     } 
                         switch (i)
                     {
@@ -506,6 +506,8 @@ namespace EsportManager
         private void AddNewSection(object sender, RoutedEventArgs e)
         {
             // vyjede form s přidáním sekce
+            AddNewSection win2 = new AddNewSection(DatabaseName);
+            win2.Show();
         }
 
         private void SetTabsDesign(TabItem tab, Grid body, TeamSectionBasic teamSectionBasic)
@@ -558,7 +560,7 @@ namespace EsportManager
 
         private void ShowRegisteredTournaments(object sender, RoutedEventArgs e)
         {
-            TournamentsParticipating win2 = new TournamentsParticipating();
+            TournamentsParticipating win2 = new TournamentsParticipating(DatabaseName);
             win2.Show();
         }
 
@@ -581,7 +583,8 @@ namespace EsportManager
 
         private void ShowFreeEmployees(object sender, RoutedEventArgs e)
         {
-
+            FreeCoaches win2 = new FreeCoaches(DatabaseName);
+            win2.Show();
         }
 
         private void ShowPowerRanking(object sender, RoutedEventArgs e)

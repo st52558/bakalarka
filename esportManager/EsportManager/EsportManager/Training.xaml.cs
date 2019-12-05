@@ -16,6 +16,7 @@ namespace EsportManager
         public Training()
         {
             InitializeComponent();
+            WindowStartupLocation = WindowStartupLocation.CenterScreen;
             trainingTypes.Add("Volno");
             trainingTypes.Add("Individuální");
             trainingTypes.Add("Analýza");

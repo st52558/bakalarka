@@ -23,13 +23,15 @@ namespace EsportManager
         public ViewSponsors FormParent { get; set; }
          
         string databaseName;
+        int formType;
         int idTeam;
         string date;
         int[] availableSponsorsIndexes = new int[3];
         Random random = new Random(); // nastavit seed na: měsíc * rok aby se sponzoři a datumy měnily každý měsíc!!
 
-        public ViewSponsors(int formType, string name)
+        public ViewSponsors(int form, string name)
         {
+            formType = form;
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
             databaseName = name;
             InitializeComponent();
@@ -50,9 +52,39 @@ namespace EsportManager
         {
             if (formType == 1)
             {
+                AddSponsor1.Visibility = Visibility.Hidden;
+                AddSponsor2.Visibility = Visibility.Hidden;
+                AddSponsor3.Visibility = Visibility.Hidden;
                 Sponsor1SignContract.Visibility = Visibility.Hidden;
                 Sponsor2SignContract.Visibility = Visibility.Hidden;
                 Sponsor3SignContract.Visibility = Visibility.Hidden;
+                Sponsor3BonusIncome.Visibility = Visibility.Visible;
+                Sponsor3BonusIncomeLabel.Visibility = Visibility.Visible;
+                Sponsor3CancelContract.Visibility = Visibility.Visible;
+                Sponsor3DateOfExpiration.Visibility = Visibility.Visible;
+                Sponsor3DateOfExpirationLabel.Visibility = Visibility.Visible;
+                Sponsor3MonthlyIncome.Visibility = Visibility.Visible;
+                Sponsor3MonthlyIncomeLabel.Visibility = Visibility.Visible;
+                Sponsor3Name.Visibility = Visibility.Visible;
+                Sponsor3RenewContract.Visibility = Visibility.Visible;
+                Sponsor2BonusIncome.Visibility = Visibility.Visible;
+                Sponsor2BonusIncomeLabel.Visibility = Visibility.Visible;
+                Sponsor2CancelContract.Visibility = Visibility.Visible;
+                Sponsor2DateOfExpiration.Visibility = Visibility.Visible;
+                Sponsor2DateOfExpirationLabel.Visibility = Visibility.Visible;
+                Sponsor2MonthlyIncome.Visibility = Visibility.Visible;
+                Sponsor2MonthlyIncomeLabel.Visibility = Visibility.Visible;
+                Sponsor2Name.Visibility = Visibility.Visible;
+                Sponsor2RenewContract.Visibility = Visibility.Visible;
+                Sponsor1BonusIncome.Visibility = Visibility.Visible;
+                Sponsor1BonusIncomeLabel.Visibility = Visibility.Visible;
+                Sponsor1CancelContract.Visibility = Visibility.Visible;
+                Sponsor1DateOfExpiration.Visibility = Visibility.Visible;
+                Sponsor1DateOfExpirationLabel.Visibility = Visibility.Visible;
+                Sponsor1MonthlyIncome.Visibility = Visibility.Visible;
+                Sponsor1MonthlyIncomeLabel.Visibility = Visibility.Visible;
+                Sponsor1Name.Visibility = Visibility.Visible;
+                Sponsor1RenewContract.Visibility = Visibility.Visible;
                 int numberOfSponsors = CheckNumberOfSponsors();
                 if (numberOfSponsors < 3)
                 {
@@ -304,14 +336,25 @@ namespace EsportManager
                 SQLiteCommand command;
                 if (!Sponsor1RenewContract.IsEnabled)
                 {
+                    command = new SQLiteCommand("select budget from team where id_team=" + idTeam + ";", conn);
+                    SQLiteDataReader reader = command.ExecuteReader();
+                    reader.Read();
+                    int budget = reader.GetInt32(0);
                     int cancelFee = int.Parse(Sponsor1BonusIncome.Content.ToString().Substring(0, Sponsor1BonusIncome.Content.ToString().Length - 1));
-                    MessageBoxResult result = MessageBox.Show("Vážně se chcete rozvázat smlouvu s firmou " + Sponsor1Name.Content + "? Bude Vás to stát " + cancelFee + "$.", "Chystáte se rozvázat smlouvu", MessageBoxButton.YesNo);
-                    if (result != MessageBoxResult.Yes)
+                    if (budget < cancelFee)
                     {
-                        return;
+                        MessageBox.Show("Váš rozpočet neumožňuje rozvázat smlouvu", "Chystáte se rozvázat smlouvu", MessageBoxButton.OK);
+                    } else
+                    {
+                        MessageBoxResult result = MessageBox.Show("Vážně se chcete rozvázat smlouvu s firmou " + Sponsor1Name.Content + "? Bude Vás to stát " + cancelFee + "$.", "Chystáte se rozvázat smlouvu", MessageBoxButton.YesNo);
+                        if (result != MessageBoxResult.Yes)
+                        {
+                            return;
+                        }
+                        command = new SQLiteCommand("update team set budget=budget-" + cancelFee + " where id_team=" + idTeam + ";", conn);
+                        command.ExecuteReader();
                     }
-                    command = new SQLiteCommand("update team set budget=budget-" + cancelFee + " where id_team=" + idTeam + ";", conn);
-                    command.ExecuteReader();
+                    reader.Close();
                 }
                 command = new SQLiteCommand("delete from teamxsponsor where id_team=" + idTeam + " and id_sponsor=" + availableSponsorsIndexes[0] + ";", conn);
                 command.ExecuteReader();
@@ -430,7 +473,7 @@ namespace EsportManager
 
         private void Window_Activated(object sender, EventArgs e)
         {
-            if (FormParent == null)
+            if (this.formType == 1)
             {
                 ShowRightComponents(1);
             }

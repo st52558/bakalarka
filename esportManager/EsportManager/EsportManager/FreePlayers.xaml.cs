@@ -150,7 +150,7 @@ namespace EsportManager
                             int playerValue = (salary * 100 / 3);
                             playerValue = playerValue / 100;
                             playerValue = playerValue * 100;
-                            command = new SQLiteCommand("update player set team_fk=" + teamId + ", contractEnd='" + date +"', value=" + playerValue + " where id_player=" + playerIds.ElementAt(FreePlayersGrid.SelectedIndex) + ";", conn);
+                            command = new SQLiteCommand("update player set team_fk=" + teamId + ", contractEnd='" + date +"', value=" + playerValue + ", salary=" + salary + " where id_player=" + playerIds.ElementAt(FreePlayersGrid.SelectedIndex) + ";", conn);
                             command.ExecuteReader();
                         }
                     }
