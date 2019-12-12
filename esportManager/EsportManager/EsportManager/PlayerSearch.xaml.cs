@@ -59,17 +59,17 @@ namespace EsportManager
 
         private void AddTournamentsToComboBox()
         {
-            /*using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
+            using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
             {
                 conn.Open();
-                SQLiteCommand command = new SQLiteCommand("select id_sekce, nazev from sekce;", conn);
+                SQLiteCommand command = new SQLiteCommand("select id_tournament, name from tournament;", conn);
                 SQLiteDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
                     tournaments.Add(new TournamentBasic() { ID = reader.GetInt32(0), Name = reader.GetString(1) });
                 }
                 reader.Close();
-            }*/
+            }
             TournamentsComboBox.Items.Clear();
             TournamentsComboBox.Items.Add("Všechny turnaje");
             for (int i = 0; i < tournaments.Count; i++)
@@ -84,7 +84,7 @@ namespace EsportManager
             using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
             {
                 conn.Open();
-                SQLiteCommand command = new SQLiteCommand("select id_sekce, zkratka from sekce;", conn);
+                SQLiteCommand command = new SQLiteCommand("select id_section, shortcut from section;", conn);
                 SQLiteDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
@@ -107,45 +107,45 @@ namespace EsportManager
             {
                 conn.Open();
                 SQLiteCommand command;
-                command = new SQLiteCommand("select sekce.zkratka, position_type.name, nick, player.name, surname, id_player from player join sekce on player.game=sekce.id_sekce join position_type on id_section=sekce.id_sekce and id_position_in_game=player.position;", conn);
+                command = new SQLiteCommand("select section.shortcut, position_type.name, nick, player.name, surname, id_player, team.shortcut from player join section on player.game=section.id_section join position_type on position_type.id_section=section.id_section and id_position_in_game=player.position join teamxsection on player.team_fk=teamxsection.id_teamxsection join team on team.id_team=teamxsection.id_team;", conn);
 
                 if (TeamsComboBox.SelectedIndex <= 0 && GameComboBox.SelectedIndex <= 0 && TournamentsComboBox.SelectedIndex <= 0) //není vybráno nic
                 {
-                    command = new SQLiteCommand("select sekce.zkratka, position_type.name, nick, player.name, surname, id_player from player join sekce on player.game=sekce.id_sekce join position_type on id_section=sekce.id_sekce and id_position_in_game=player.position;", conn);
+                    command = new SQLiteCommand("select section.shortcut, position_type.name, nick, player.name, surname, id_player, team.shortcut from player join section on player.game=section.id_section join position_type on position_type.id_section=section.id_section and id_position_in_game=player.position join teamxsection on player.team_fk=teamxsection.id_teamxsection join team on team.id_team=teamxsection.id_team;", conn);
                 }
                 else if (GameComboBox.SelectedIndex <= 0 && TournamentsComboBox.SelectedIndex <= 0) //je vybrán tým
                 {
-                    command = new SQLiteCommand("select sekce.zkratka, position_type.name, nick, player.name, surname, id_player from player join sekce on player.game=sekce.id_sekce join position_type on position_type.id_section=sekce.id_sekce and id_position_in_game=player.position join teamxsection on player.team_fk=teamxsection.id_teamxsection where teamxsection.id_team=" + teams.ElementAt(TeamsComboBox.SelectedIndex - 1).IdTeam + ";", conn);
+                    command = new SQLiteCommand("select section.shortcut, position_type.name, nick, player.name, surname, id_player, team.shortcut from player join section on player.game=section.id_section join position_type on position_type.id_section=section.id_section and id_position_in_game=player.position join teamxsection on player.team_fk=teamxsection.id_teamxsection join team on team.id_team=teamxsection.id_team where teamxsection.id_team=" + teams.ElementAt(TeamsComboBox.SelectedIndex - 1).IdTeam + ";", conn);
                 }
                 else if (TeamsComboBox.SelectedIndex <= 0 && TournamentsComboBox.SelectedIndex <= 0) //je vybraná hra
                 {
-                    command = new SQLiteCommand("select sekce.zkratka, position_type.name, nick, player.name, surname, id_player from player join sekce on player.game=sekce.id_sekce join position_type on position_type.id_section=sekce.id_sekce and id_position_in_game=player.position join teamxsection on player.team_fk=teamxsection.id_teamxsection where player.game=" + games.ElementAt(GameComboBox.SelectedIndex - 1).ID + ";", conn);
+                    command = new SQLiteCommand("select section.shortcut, position_type.name, nick, player.name, surname, id_player, team.shortcut from player join section on player.game=section.id_section join position_type on position_type.id_section=section.id_section and id_position_in_game=player.position join teamxsection on player.team_fk=teamxsection.id_teamxsection join team on team.id_team=teamxsection.id_team where player.game=" + games.ElementAt(GameComboBox.SelectedIndex - 1).ID + ";", conn);
                 }
                 else if (TeamsComboBox.SelectedIndex <= 0 && GameComboBox.SelectedIndex <= 0) //je vybrán turnaj
                 {
 
                     //command s tím že se vyberou hráči hrající ten turnaj
-                    //command = new SQLiteCommand("select sekce.zkratka, position_type.name, nick, player.name, surname, id_player from player join sekce on player.game=sekce.id_sekce join position_type on position_type.id_section=sekce.id_sekce and id_position_in_game=player.position join teamxsection on player.team_fk=teamxsection.id_teamxsection where player.game = " + games.ElementAt(GameComboBox.SelectedIndex - 1).ID + ";", conn);
+                    //command = new SQLiteCommand("select section.shortcut, position_type.name, nick, player.name, surname, id_player, team.shortcut from player join section on player.game=section.id_section join position_type on position_type.id_section=section.id_section and id_position_in_game=player.position join teamxsection on player.team_fk=teamxsection.id_teamxsection join team on team.id_team=teamxsection.id_team where player.game = " + games.ElementAt(GameComboBox.SelectedIndex - 1).ID + ";", conn);
                 }
                 else if (GameComboBox.SelectedIndex <= 0) //je vybrán tým a turnaj
                 {
-                    
-                    //command = new SQLiteCommand("select sekce.zkratka, position_type.name, nick, player.name, surname, id_player from player join sekce on player.game=sekce.id_sekce join position_type on position_type.id_section=sekce.id_sekce and id_position_in_game=player.position join teamxsection on player.team_fk=teamxsection.id_teamxsection where player.game = " + games.ElementAt(GameComboBox.SelectedIndex - 1).ID + ";", conn);
+
+                    //command = new SQLiteCommand("select section.shortcut, position_type.name, nick, player.name, surname, id_player, team.shortcut from player join section on player.game=section.id_section join position_type on position_type.id_section=section.id_section and id_position_in_game=player.position join teamxsection on player.team_fk=teamxsection.id_teamxsection join team on team.id_team=teamxsection.id_team where player.game = " + games.ElementAt(GameComboBox.SelectedIndex - 1).ID + ";", conn);
 
                 }
                 else if (TournamentsComboBox.SelectedIndex <= 0) //je vybrán tým a hra
                 {
-                    command = new SQLiteCommand("select sekce.zkratka, position_type.name, nick, player.name, surname, id_player from player join sekce on player.game=sekce.id_sekce join position_type on position_type.id_section=sekce.id_sekce and id_position_in_game=player.position join teamxsection on player.team_fk=teamxsection.id_teamxsection where player.game=" + games.ElementAt(GameComboBox.SelectedIndex - 1).ID + " and teamxsection.id_team = " + teams.ElementAt(TeamsComboBox.SelectedIndex - 1).IdTeam +";", conn);
+                    command = new SQLiteCommand("select section.shortcut, position_type.name, nick, player.name, surname, id_player, team.shortcut from player join section on player.game=section.id_section join position_type on position_type.id_section=section.id_section and id_position_in_game=player.position join teamxsection on player.team_fk=teamxsection.id_teamxsection join team on team.id_team=teamxsection.id_team where player.game=" + games.ElementAt(GameComboBox.SelectedIndex - 1).ID + " and teamxsection.id_team = " + teams.ElementAt(TeamsComboBox.SelectedIndex - 1).IdTeam +";", conn);
 
                 }
                 else if (TeamsComboBox.SelectedIndex <= 0) //je vybrán turnaj a hra
                 {
-                   // command = new SQLiteCommand("select sekce.zkratka, position_type.name, nick, player.name, surname, id_player from player join sekce on player.game=sekce.id_sekce join position_type on position_type.id_section=sekce.id_sekce and id_position_in_game=player.position join teamxsection on player.team_fk=teamxsection.id_teamxsection where player.game = " + games.ElementAt(GameComboBox.SelectedIndex - 1).ID + ";", conn);
+                    // command = new SQLiteCommand("select section.shortcut, position_type.name, nick, player.name, surname, id_player, team.shortcut from player join section on player.game=section.id_ssection join position_type on position_type.id_section=section.id_section and id_position_in_game=player.position join teamxsection on player.team_fk=teamxsection.id_teamxsection join team on team.id_team=teamxsection.id_team where player.game = " + games.ElementAt(GameComboBox.SelectedIndex - 1).ID + ";", conn);
 
                 }
                 else //je vybráno všechno
                 {
-                    //command = new SQLiteCommand("select sekce.zkratka, position_type.name, nick, player.name, surname, id_player from player join sekce on player.game=sekce.id_sekce join position_type on position_type.id_section=sekce.id_sekce and id_position_in_game=player.position join teamxsection on player.team_fk=teamxsection.id_teamxsection where player.game = " + games.ElementAt(GameComboBox.SelectedIndex - 1).ID + ";", conn);
+                    //command = new SQLiteCommand("select section.shortcut, position_type.name, nick, player.name, surname, id_player, team.shortcut from player join section on player.game=section.id_section join position_type on position_type.id_section=section.id_section and id_position_in_game=player.position join teamxsection on player.team_fk=teamxsection.id_teamxsection join team on team.id_team=teamxsection.id_team where player.game = " + games.ElementAt(GameComboBox.SelectedIndex - 1).ID + ";", conn);
                 }
                 players = new List<PlayersDataGrid>();
                 playerIds = new List<int>();
@@ -169,7 +169,7 @@ namespace EsportManager
                     {
                         prijmeni = reader.GetString(4);
                     }
-                    players.Add(new PlayersDataGrid() { Hra = reader.GetString(0), Pozice = reader.GetString(1), Nick = reader.GetString(2), Jmeno = jmeno, Prijmeni = prijmeni });
+                    players.Add(new PlayersDataGrid() { Hra = reader.GetString(0), Pozice = reader.GetString(1), Nick = reader.GetString(2), Jmeno = jmeno, Prijmeni = prijmeni, Tym = reader.GetString(6) });
                     playerIds.Add(reader.GetInt32(5));
                 }
                 reader.Close();
@@ -268,23 +268,25 @@ namespace EsportManager
 
         private void TournamentChanged(object sender, SelectionChangedEventArgs e)
         {
+            AddPlayersToGrid();
             AddTeamsToCB();
         }
 
         private void AddTeamsToCB()
         {
-            string sqlCommand = "select id_team, name from team ";
+            string sqlCommand = "select team.id_team, name from team";
             using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
             {
                 conn.Open();
                 if (TournamentsComboBox.SelectedIndex > 0)
                 {
-                    sqlCommand += "where propojení turnajů";
+                    sqlCommand += " join teamxsection on teamxsection.id_team=team.id_team join tournament_token on teamxsection.id_teamxsection=tournament_token.id_teamxsection where tournament_token.id_tournament_from=" + tournaments.ElementAt(TournamentsComboBox.SelectedIndex-1).ID;
                 }
                 
                 sqlCommand += " order by name;";
                 SQLiteCommand command = new SQLiteCommand(sqlCommand, conn);
                 SQLiteDataReader reader = command.ExecuteReader();
+                teams.Clear();
                 while (reader.Read())
                 {
                     teams.Add(new TeamBasic(reader.GetInt32(0), reader.GetString(1)));
@@ -299,6 +301,6 @@ namespace EsportManager
             }
             TeamsComboBox.SelectedIndex = 0;
         }
-
+        
     }
 }

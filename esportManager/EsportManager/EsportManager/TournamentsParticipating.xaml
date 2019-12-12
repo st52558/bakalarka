@@ -7,8 +7,8 @@
         mc:Ignorable="d"
         Title="TournamentsParticipating" Height="440" Width="500">
     <Grid>
-        <Label Name="TeamNameLabel" Content="Label" HorizontalAlignment="Center" Margin="0,20,0,0" VerticalAlignment="Top"/>
-        <ListBox Name="TournamentList" HorizontalAlignment="Left" Height="202" Margin="50,147,0,0" VerticalAlignment="Top" Width="374" MouseDoubleClick="ShowTournament"/>
+        <ListBox Name="TournamentList" HorizontalAlignment="Left" Height="298" Margin="50,51,0,0" VerticalAlignment="Top" Width="374" MouseDoubleClick="ShowTournament"/>
         <Button Name="CancelTournament" Content="Odhlásit" HorizontalAlignment="Center" Margin="0,0,0,20" VerticalAlignment="Bottom" Width="75" Click="CancelChosenTournament"/>
+        <ComboBox Name="SectionList" HorizontalAlignment="Left" Margin="50,10,0,0" VerticalAlignment="Top" Width="374" SelectionChanged="SectionChanged"/>
     </Grid>
 </Window>

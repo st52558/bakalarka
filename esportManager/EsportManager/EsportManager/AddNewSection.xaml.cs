@@ -69,7 +69,7 @@ namespace EsportManager
             using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
             {
                 conn.Open();
-                SQLiteCommand command = new SQLiteCommand("select id_sekce, nazev from sekce;", conn);
+                SQLiteCommand command = new SQLiteCommand("select id_section, name from section;", conn);
                 SQLiteDataReader reader = command.ExecuteReader();
                 bool availableSection;
                 while (reader.Read())

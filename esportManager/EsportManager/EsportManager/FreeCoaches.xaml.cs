@@ -54,7 +54,7 @@ namespace EsportManager
             using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
             {
                 conn.Open();
-                SQLiteCommand command = new SQLiteCommand("select id_sekce, nazev from sekce;", conn);
+                SQLiteCommand command = new SQLiteCommand("select id_section, name from section;", conn);
                 SQLiteDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
@@ -79,12 +79,12 @@ namespace EsportManager
                 SQLiteCommand command;
                 if (GamesComboBox.SelectedIndex <= 0)
                 {
-                    command = new SQLiteCommand("select sekce.zkratka, nick, coach.name, surname, id_coach from coach join sekce on coach.game=sekce.id_sekce where coach.team_fk is null;", conn);
+                    command = new SQLiteCommand("select section.shortcut, nick, coach.name, surname, id_coach from coach join section on coach.game=section.id_section where coach.team_fk is null;", conn);
                 }
                 else
                 {
                     int game = sections.ElementAt(GamesComboBox.SelectedIndex - 1).ID;
-                    command = new SQLiteCommand("select sekce.zkratka, nick, coach.name, surname, id_coach from coach join sekce on coach.game=sekce.id_sekce where coach.team_fk is null and coach.game=" + game + ";", conn);
+                    command = new SQLiteCommand("select section.shortcut, nick, coach.name, surname, id_coach from coach join section on coach.game=section.id_section where coach.team_fk is null and coach.game=" + game + ";", conn);
                 }
                 players = new List<CoachesDataGrid>();
                 playerIds = new List<int>();

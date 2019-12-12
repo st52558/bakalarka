@@ -16,12 +16,12 @@ namespace EsportManager
     public partial class MainGame : Window
     {
 
-        class TournamentsDataGrid
+        class MatchDataGrid
         {
+            public string Datum { get; set; }
+            public string Souper { get; set; }
             public string Turnaj { get; set; }
-            public string Od { get; set; }
-            public string Do { get; set; }
-            public string Místo { get; set; }
+            public string Misto { get; set; }
         }
 
         class PlayersDataGrid
@@ -259,6 +259,43 @@ namespace EsportManager
 
         private void NextDayClick(object sender, RoutedEventArgs e)
         {
+            // losování turnajů
+            int curYear = int.Parse(date.Remove(4, 6));
+            int curMonth = int.Parse(date.Remove(7, 3).Remove(0, 5));
+            int curDay = int.Parse(date.Remove(0, 8));
+            List<int> tournamentsToDraw = new List<int>();
+            int tournamentYear;
+            int tournamentMonth;
+            int tournamentDay;
+            using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + DatabaseName + ";"))
+            {
+                conn.Open();
+                SQLiteCommand command = new SQLiteCommand("select id_tournament, start_date, game from tournament where start_date>'" + date + "';", conn);
+                SQLiteDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    tournamentYear = int.Parse(reader.GetString(1).Remove(4, 6));
+                    tournamentMonth = int.Parse(reader.GetString(1).Remove(7, 3).Remove(0, 5));
+                    tournamentDay = int.Parse(reader.GetString(1).Remove(0, 8));
+                    if (tournamentMonth <= curMonth + 1)
+                    {
+                        //turnaj se hraje tenhle nebo příští měsíc
+                        SQLiteCommand command2 = new SQLiteCommand("select count(*) from '" + curYear + "match" + reader.GetInt32(2) + "' where id_tournament=" + reader.GetInt32(0) + ";", conn);
+                        SQLiteDataReader reader2 = command2.ExecuteReader();
+                        reader2.Read();
+                        if (reader2.GetInt32(0) == 0)
+                        {
+                            tournamentsToDraw.Add(reader.GetInt32(0));
+                        }
+                        reader2.Close();
+                    }
+                }
+                reader.Close();
+            }
+            //už vím turnaje, které jsou potřeba nalosovat
+            DrawTournaments(tournamentsToDraw);
+
+            // další den
             date = NextDay(date);
             DateLabel.Content = TransformDate(date);
             using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + DatabaseName + ";"))
@@ -269,6 +306,145 @@ namespace EsportManager
             }
             ChangePropertiesOfNextActionButton();
         }
+
+        private void DrawTournaments(List<int> tournamentsToDraw)
+        {
+            // nalosování turnaje s 10 týmy
+            int teams = 10;
+            int games = (teams - 1) * teams / 2; //single round robin, double až po losu
+            int playingDays = 2;
+            int weeks = 9;
+            double gamesPerDay = games / (weeks * playingDays);
+            int[,] draw = new int[games, 2];
+            // single round robin
+            int counter = 0;
+            for (int i = 0; i < teams; i++)
+            {
+                for (int j = i + 1; j < teams; j++)
+                {
+                    draw[counter, 0] = i + 1;
+                    draw[counter, 1] = j + 1;
+                    counter++;
+                }
+            }
+            // seřazení do kol
+            bool[,] roundUsed = new bool[teams, teams];
+            for (int i = 0; i < teams; i++)
+            {
+                roundUsed[i, i] = true;
+            }
+            int[,] rounds = new int[9, teams];
+
+            Random a = new Random(DateTime.Now.Ticks.GetHashCode());
+            List<int> randomList = new List<int>();
+            randomList.Clear();
+            int MyNumber = 0;
+            while (randomList.Count < games)
+            {
+                MyNumber = a.Next(0, 45);
+                if (!randomList.Contains(MyNumber))
+                    randomList.Add(MyNumber);
+            }
+
+            // procházení všech zápasů
+            for (int i = 0; i < games; i++)
+            {
+                // procházení kol
+                for (int j = 0; j < 9; j++)
+                {
+                    bool canGoToRound = true;
+                    // procházení týmů, které v kole hrají
+                    for (int k = 0; k < teams; k++)
+                    {
+                        // tým už v kole je
+                        if (draw[randomList.ElementAt(i), 0] == rounds[j, k] || draw[randomList.ElementAt(i), 1] == rounds[j, k])
+                        {
+                            canGoToRound = false;
+                            break;
+                        }
+                    }
+                    // ani jeden z týmů v kole nehraje
+                    if (canGoToRound)
+                    {
+                        for (int k = 0; k < teams; k++)
+                        {
+                            if (rounds[j, k] == 0)
+                            {
+                                rounds[j, k] = draw[randomList.ElementAt(i), 0];
+                                rounds[j, k + 1] = draw[randomList.ElementAt(i), 1];
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
+
+            }
+            bool isLegit = true;
+            for (int i = 0; i < 9; i++)
+            {
+                Console.WriteLine(rounds[i, 0] + " vs " + rounds[i, 1] + ", " + rounds[i, 2] + " vs " + rounds[i, 3] + ", " + rounds[i, 4] + " vs " + rounds[i, 5] + ", " + rounds[i, 6] + " vs " + rounds[i, 7] + ", " + rounds[i, 8] + " vs " + rounds[i, 9]);
+                if (rounds[i, 0] == 0 || rounds[i, 1] == 0 || rounds[i, 2] == 0 || rounds[i, 3] == 0 || rounds[i, 4] == 0 || rounds[i, 5] == 0 || rounds[i, 6] == 0 || rounds[i, 7] == 0 || rounds[i, 8] == 0 || rounds[i, 9] == 0)
+                {
+                    isLegit = false;
+                }
+            }
+            if (!isLegit)
+            {
+                DrawTournaments(tournamentsToDraw);
+            } else
+            {
+                bool doubleRoundRobin = true;
+                // teoretické udělání double round robin
+                int[,] finalDraw;
+                if (doubleRoundRobin)
+                {
+                    finalDraw = new int[games * 2, 2];
+                    int roundCounter = 0;
+                    int teamCounter = 0;
+                    for (int i = 0; i < games; i++)
+                    {
+
+                        finalDraw[i, 0] = rounds[roundCounter, teamCounter];
+                        finalDraw[i, 1] = rounds[roundCounter, teamCounter + 1];
+                        finalDraw[games + i, 0] = finalDraw[i, 1];
+                        finalDraw[games + i, 1] = finalDraw[i, 0];
+                        teamCounter += 2;
+                        if (teamCounter >= teams)
+                        {
+                            teamCounter = 0;
+                            roundCounter++;
+                        }
+                    }
+                }
+                else
+                {
+                    finalDraw = new int[games, 2];
+                    int roundCounter = 0;
+                    int teamCounter = 0;
+                    for (int i = 0; i < games; i++)
+                    {
+
+                        finalDraw[i, 0] = rounds[roundCounter, teamCounter];
+                        finalDraw[i, 1] = rounds[roundCounter, teamCounter + 1];
+                        teamCounter += 2;
+                        if (teamCounter >= teams)
+                        {
+                            teamCounter = 0;
+                            roundCounter++;
+                        }
+                    }
+                }
+
+                for (int i = 0; i < finalDraw.GetLength(0); i++)
+                {
+                    Console.WriteLine(finalDraw[i, 0] + " vs " + finalDraw[i, 1]);
+                }
+            }
+            
+            
+        }
+
 
         private void EndYearClick(object sender, RoutedEventArgs e)
         {
@@ -311,7 +487,6 @@ namespace EsportManager
                 conn.Open();
                 for (int i = 0; i < sectionsList.Count; i++)
                 {
-                    Console.WriteLine(sectionsList.ElementAt(i).ID);
                     List<PlayersDataGrid> players = new List<PlayersDataGrid>();
                     SQLiteCommand command = new SQLiteCommand("select nick, player.name, surname, position_type.name, energy from player join position_type on position_type.id_position_in_game=player.position and position_type.id_section=player.game where team_fk=" + sectionsList.ElementAt(i).ID, conn);
                     SQLiteDataReader reader = command.ExecuteReader();
@@ -386,36 +561,22 @@ namespace EsportManager
                 }
                 
             }
-            
-            /*players.Add(new PlayersDataGrid() { Nick = "Gunny", Jmeno = "František", Prijmeni = "Soldán", Pozice = "Jungle" });
-            players.Add(new PlayersDataGrid() { Nick = "BlackStar", Jmeno = "Mykola", Prijmeni = "Klebus", Pozice = "Support" });
-            
-            Section2PlayersList.ItemsSource = players;
-            Section3PlayersList.ItemsSource = players;
-            Section4PlayersList.ItemsSource = players;
-            Section5PlayersList.ItemsSource = players;
-            Section6PlayersList.ItemsSource = players;*/
         }
 
         private void AddAllTournaments()
         {
-            List<TournamentsDataGrid> tournaments = new List<TournamentsDataGrid>();
-            tournaments.Add(new TournamentsDataGrid() { Turnaj = "LOLEC turnaj", Od = "1. 1. 2011", Do = "31. 1. 2011", Místo = "Praha" });
-            tournaments.Add(new TournamentsDataGrid() { Turnaj = "LOLEC turnaj 2", Od = "1. 2. 2011", Do = "31. 2. 2011", Místo = "Brno" });
+            List<MatchDataGrid> tournaments = new List<MatchDataGrid>();
+            tournaments.Add(new MatchDataGrid() { Turnaj = "LOLEC turnaj", Datum = "1. 1. 2011", Misto = "Berlin", Souper = "Nekdo" });
             Section1TournamentsList.ItemsSource = tournaments;
-            Section2TournamentsList.ItemsSource = tournaments;
-            Section3TournamentsList.ItemsSource = tournaments;
-            Section4TournamentsList.ItemsSource = tournaments;
-            Section5TournamentsList.ItemsSource = tournaments;
-            Section6TournamentsList.ItemsSource = tournaments;
         }
 
         private void AddSectionsToList()
         {
+            sectionsList.Clear();
             using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + DatabaseName + ";"))
             {
                 conn.Open();
-                SQLiteCommand command = new SQLiteCommand("select teamxsection.id_teamxsection, id_sekce, nazev from sekce join teamxsection on teamxsection.id_section=id_sekce where id_team=" + idTeam + " order by id_sekce;", conn);
+                SQLiteCommand command = new SQLiteCommand("select teamxsection.id_teamxsection, section.id_section, name from section join teamxsection on teamxsection.id_section=section.id_section where id_team=" + idTeam + " order by section.id_section;", conn);
                 SQLiteDataReader reader = command.ExecuteReader();
                 int sectionBefore = -1;
                 while (reader.Read())
@@ -439,6 +600,13 @@ namespace EsportManager
         private void SetTabs()
         {
             int numberOfSections = GetNumberOfSections() + 1;
+            SectionTabs.Items.Clear();
+            SectionTabs.Items.Add(Section1);
+            SectionTabs.Items.Add(Section2);
+            SectionTabs.Items.Add(Section3);
+            SectionTabs.Items.Add(Section4);
+            SectionTabs.Items.Add(Section5);
+            SectionTabs.Items.Add(Section6);
             while (numberOfSections < SectionTabs.Items.Count)
             {
                 SectionTabs.Items.RemoveAt(numberOfSections);
@@ -508,6 +676,7 @@ namespace EsportManager
             // vyjede form s přidáním sekce
             AddNewSection win2 = new AddNewSection(DatabaseName);
             win2.Show();
+            
         }
 
         private void SetTabsDesign(TabItem tab, Grid body, TeamSectionBasic teamSectionBasic)
@@ -633,6 +802,7 @@ namespace EsportManager
         {
             SetLabels();
             AddSectionsToList();
+            SetTabs();
             AddAllTournaments();
             AddAllPlayers();
             ChangePropertiesOfNextActionButton();

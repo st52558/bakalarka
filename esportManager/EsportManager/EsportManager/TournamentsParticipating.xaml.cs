@@ -31,6 +31,7 @@ namespace EsportManager
             public int TokenValue { get; set; }
         }
 
+        List<TeamSectionBasic> sectionsList = new List<TeamSectionBasic>();
         string databaseName;
         int teamId;
         string date;
@@ -51,13 +52,50 @@ namespace EsportManager
                 reader.Close();
             }
             InitializeComponent();
-            SetAllLists();
+            SetComboBox();
+            
+        }
+
+        private void SetComboBox()
+        {
+            using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
+            {
+                conn.Open();
+                SQLiteCommand command = new SQLiteCommand("select teamxsection.id_teamxsection, section.id_section, name from section join teamxsection on teamxsection.id_section=section.id_section where id_team=" + teamId + " order by section.id_section;", conn);
+                SQLiteDataReader reader = command.ExecuteReader();
+                int sectionBefore = -1;
+                while (reader.Read())
+                {
+                    if (sectionBefore == reader.GetInt32(1))
+                    {
+                        //je to B tým
+                        sectionsList.Add(new TeamSectionBasic(reader.GetInt32(0), reader.GetInt32(1), reader.GetString(2) + " B"));
+                    }
+                    else
+                    {
+                        //je to A tým
+                        sectionsList.Add(new TeamSectionBasic(reader.GetInt32(0), reader.GetInt32(1), reader.GetString(2)));
+                    }
+
+                    sectionBefore = reader.GetInt32(1);
+                }
+                reader.Close();
+            }
+            if (sectionsList.Count > 0)
+            {
+                for (int i = 0; i < sectionsList.Count; i++)
+                {
+                    SectionList.Items.Add(sectionsList.ElementAt(i).sectionName); 
+                }
+                SectionList.SelectedIndex = 0;
+                SetAllLists();
+            }
         }
 
         private void SetAllLists()
         {
             tournamentsForSection1.Clear();
-            int index = 13;
+            int index = sectionsList.ElementAt(SectionList.SelectedIndex).ID;
             using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
             {
                 conn.Open();
@@ -65,7 +103,7 @@ namespace EsportManager
                 SQLiteDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    tournamentsForSection1.Add(new TournamentBasic() { ID = reader.GetInt32(0), Name = reader.GetString(1), StartDate = reader.GetString(2), EndDate = reader.GetString(3), PrizePool = reader.GetInt32(4), City = reader.GetString(5), TokenValue= reader.GetInt32(6) });
+                    tournamentsForSection1.Add(new TournamentBasic() { ID = reader.GetInt32(0), Name = reader.GetString(1), StartDate = TransformDate(reader.GetString(2)), EndDate = TransformDate(reader.GetString(3)), PrizePool = reader.GetInt32(4), City = reader.GetString(5), TokenValue= reader.GetInt32(6) });
                 }
                 reader.Close();
             }
@@ -131,6 +169,19 @@ namespace EsportManager
                 MessageBox.Show(allTeams, "Registrovaní do turnaje", MessageBoxButton.OK);
                 reader.Close();
             }
+        }
+
+        private void SectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            SetAllLists();
+        }
+
+        private string TransformDate(string v)
+        {
+            string year = v.Remove(4, 6);
+            string month = v.Remove(7, 3).Remove(0, 5);
+            string day = v.Remove(0, 8);
+            return day + ". " + month + ". " + year;
         }
     }
 }

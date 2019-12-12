@@ -53,7 +53,7 @@ namespace EsportManager
             using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
             {
                 conn.Open();
-                SQLiteCommand command = new SQLiteCommand("select id_sekce, nazev from sekce;", conn);
+                SQLiteCommand command = new SQLiteCommand("select id_section, name from section;", conn);
                 SQLiteDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
@@ -78,12 +78,12 @@ namespace EsportManager
                 SQLiteCommand command;
                 if (GamesComboBox.SelectedIndex <= 0)
                 {
-                    command = new SQLiteCommand("select sekce.zkratka, position_type.name, nick, player.name, surname, id_player from player join sekce on player.game=sekce.id_sekce join position_type on id_section=sekce.id_sekce and id_position_in_game=player.position where player.team_fk is null;", conn);
+                    command = new SQLiteCommand("select section.shortcut, position_type.name, nick, player.name, surname, id_player from player join section on player.game=section.id_section join position_type on position_type.id_section=section.id_section and id_position_in_game=player.position where player.team_fk is null;", conn);
                 }
                 else
                 {
                     int game = sections.ElementAt(GamesComboBox.SelectedIndex - 1).ID;
-                    command = new SQLiteCommand("select sekce.zkratka, position_type.name, nick, player.name, surname, id_player from player join sekce on player.game=sekce.id_sekce join position_type on id_section=sekce.id_sekce and id_position_in_game=player.position where player.team_fk is null and player.game=" + game + ";", conn);
+                    command = new SQLiteCommand("select section.shortcut, position_type.name, nick, player.name, surname, id_player from player join section on player.game=section.id_section join position_type on position_type.id_section=section.id_section and id_position_in_game=player.position where player.team_fk is null and player.game=" + game + ";", conn);
                 }
                 players = new List<PlayersDataGrid>();
                 playerIds = new List<int>();
