@@ -1,0 +1,106 @@
+Pokud není u otázky otazník je podle mì správnì.
+Než zaèneš zpochybòovat odpovìdi radìji se 3x zamysli.
+
+Otazník u konkrétní odpovìdi zvažuji samotnou jednu konkrétní odpovìï.
+
+Kódy uplatnìnte na stránce pro zobrazení testu.:
+https://fei-as.upceucebny.cz/usr/hudec/vyuka/sos/uts/
+
+-------------------//// 2017 ////-------------------
+
+termín 1 (u3wai4ai)
+
+1) A,B,F
+2) ? A,C
+3) A
+4) B
+5) C
+6) A
+7) E - protože adresa sítì je 172.17.176.0
+8) D
+9) D
+10) B
+11) A,B
+12) A,D
+13) A,C
+14) A,B
+
+termín 3a (weivaTh7) termín 3b (xaT4Gaer)
+
+1) B
+2) A,B,D
+3) A
+4) A
+5) D
+6) B,D
+7) B,C
+8) D
+9) A,B,C
+10) B
+11) C,D
+12) B
+13) D
+14) E
+
+termín 4a (Xe7JooCh) (xe3Aisai)
+
+1) B,D
+2) ? A,C,D
+3) A,E
+4) B
+5) A
+6) D
+7) A,B
+8) A,C,D
+9) A,D
+10) A
+11) A,B
+12) A
+13) ? A,C
+14) D
+
+termín 5 (ye1Phiep)
+
+1) B
+2) A,B
+3) ? A,B
+4) D
+5) E
+6) D
+7) B,C
+8) A
+9) B,D
+10) B
+11) B
+12) A,D
+13) A
+14) A
+15) A
+
+-------------------//// 2018 ////-------------------
+
+
+zápoètový týden - pondìlí (AeWom3ph)
+
+1) B - (díky data=journal a EXT3 žurnálování dat i metadat)
+2) A,D
+3) A
+4) A
+5) D
+6) B,D
+7) B,C
+8) ? E - v testu jsem mìl jednu chybu a myslím, že byla tady takže D to asi nebude
+9) A,B,C
+10) B
+11) ? B,C
+12) B
+13) D
+14) E
+
+Tito nevìdomky poskytli své testy a proto jim patøí dík:
+Martin Pavlíèek
+Jan Èapek
+Šarlota Konvièková
+Lukáš Pírko
+Ondøej Burda
+Roman Štìpánek - (já vìdomì)

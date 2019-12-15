@@ -1,0 +1,34 @@
+Motivace				
+Pøehled technologií
+	programovací jazyky		
+	databázové systémy		
+Návrh systému
+	inspirace podobnými aplikacemi	
+	použité technologie		
+	návrh programu
+		funkèní požadavky
+		nefunkèní požadavky
+		grafický design
+	návrh databáze			
+Implementace hlavní aplikace
+	správa týmu
+		sponzoøi
+		sekce
+		turnaje
+	øešení simulací
+		zápasy
+		chování manažerù
+		chování hráèù
+	použité algoritmy
+		hodnota a smlouva hráèe
+		losování turnajù
+Vývoj komunitou (editaèní aplikace)
+	aktualizace soupisek
+	pøidání nových her
+	vytváøení vlastních hráèù a týmù
+	editace souèasných a vytváøení nových turnajù
+Prostor pro další vývoj
+	možnost online hry
+	vìk hráèù (ukonèní kariéry)
+	generování nových hráèù
+	možnost zmìny obtížnosti hry

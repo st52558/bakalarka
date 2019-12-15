@@ -29,6 +29,8 @@ namespace EsportManager
             InitializeComponent();
             BitmapImage image = new BitmapImage(new Uri(System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + "/pictures/menu.jpg", UriKind.Absolute));
             Background.Source = image;
+            
+            
         }
 
         private void LoadGameClick(object sender, RoutedEventArgs e)

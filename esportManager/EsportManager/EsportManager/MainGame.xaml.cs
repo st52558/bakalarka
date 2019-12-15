@@ -45,7 +45,7 @@ namespace EsportManager
             SetLabels();
             AddSectionsToList();
             SetTabs();
-            AddAllTournaments();
+            AddAllMatches();
             AddAllPlayers();
             ChangePropertiesOfNextActionButton();
             NonPlayerTeamsActions();
@@ -309,15 +309,29 @@ namespace EsportManager
 
         private void DrawTournaments(List<int> tournamentsToDraw)
         {
-            // nalosování turnaje s 10 týmy
-            int teams = 10;
-            int games = (teams - 1) * teams / 2; //single round robin, double až po losu
-            int playingDays = 2;
-            int weeks = 9;
-            double gamesPerDay = games / (weeks * playingDays);
-            int[,] draw = new int[games, 2];
-            // single round robin
-            int counter = 0;
+            using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + DatabaseName + ";"))
+            {
+                conn.Open();
+                SQLiteCommand command = new SQLiteCommand("select start_date, playing_days, n_of_teams, end_date, game from tournament where id_tournament=" + tournamentsToDraw.ElementAt(1) + ";", conn);
+                SQLiteDataReader reader = command.ExecuteReader();
+                reader.Read();
+                int game = reader.GetInt32(4);
+                int startYear = int.Parse(reader.GetString(0).Remove(4, 6));
+                int startMonth = int.Parse(reader.GetString(0).Remove(7, 3).Remove(0, 5));
+                int startDay = int.Parse(reader.GetString(0).Remove(0, 8));
+                int endYear = int.Parse(reader.GetString(3).Remove(4, 6));
+                int endMonth = int.Parse(reader.GetString(3).Remove(7, 3).Remove(0, 5));
+                int endDay = int.Parse(reader.GetString(3).Remove(0, 8));
+                DateTime startDate = new DateTime(startYear, startMonth, startDay);
+                DateTime endDate = new DateTime(endYear, endMonth, endDay);
+                int weeks = (int)Math.Ceiling((endDate - startDate).TotalDays/7);
+                string playingDays = reader.GetString(1);
+                int teams = reader.GetInt32(2);
+                reader.Close();
+                int games = (teams - 1) * teams / 2; //single round robin, double až po losu
+                int[,] draw = new int[games, 2];
+                // single round robin
+                int counter = 0;
             for (int i = 0; i < teams; i++)
             {
                 for (int j = i + 1; j < teams; j++)
@@ -334,72 +348,92 @@ namespace EsportManager
                 roundUsed[i, i] = true;
             }
             int[,] rounds = new int[9, teams];
-
-            Random a = new Random(DateTime.Now.Ticks.GetHashCode());
-            List<int> randomList = new List<int>();
-            randomList.Clear();
-            int MyNumber = 0;
-            while (randomList.Count < games)
+            bool isLegit = false;
+            while (!isLegit)
             {
-                MyNumber = a.Next(0, 45);
-                if (!randomList.Contains(MyNumber))
-                    randomList.Add(MyNumber);
-            }
-
-            // procházení všech zápasů
-            for (int i = 0; i < games; i++)
-            {
-                // procházení kol
-                for (int j = 0; j < 9; j++)
+                isLegit = true;
+                Random a = new Random(DateTime.Now.Ticks.GetHashCode());
+                List<int> randomList = new List<int>();
+                randomList.Clear();
+                int MyNumber = 0;
+                while (randomList.Count < games)
                 {
-                    bool canGoToRound = true;
-                    // procházení týmů, které v kole hrají
-                    for (int k = 0; k < teams; k++)
+                    MyNumber = a.Next(0, 45);
+                    if (!randomList.Contains(MyNumber))
+                        randomList.Add(MyNumber);
+                }
+                    for (int i = 0; i < randomList.Count; i++)
                     {
-                        // tým už v kole je
-                        if (draw[randomList.ElementAt(i), 0] == rounds[j, k] || draw[randomList.ElementAt(i), 1] == rounds[j, k])
-                        {
-                            canGoToRound = false;
-                            break;
-                        }
+                        Console.WriteLine(randomList.ElementAt(i));
                     }
-                    // ani jeden z týmů v kole nehraje
-                    if (canGoToRound)
+                    // procházení všech zápasů
+                    for (int i = 0; i < games; i++)
                     {
+                    // procházení kol
+                    for (int j = 0; j < 9; j++)
+                    {
+                        bool canGoToRound = true;
+                        // procházení týmů, které v kole hrají
                         for (int k = 0; k < teams; k++)
                         {
-                            if (rounds[j, k] == 0)
+                            // tým už v kole je
+                            if (draw[randomList.ElementAt(i), 0] == rounds[j, k] || draw[randomList.ElementAt(i), 1] == rounds[j, k])
                             {
-                                rounds[j, k] = draw[randomList.ElementAt(i), 0];
-                                rounds[j, k + 1] = draw[randomList.ElementAt(i), 1];
+                                canGoToRound = false;
                                 break;
                             }
                         }
-                        break;
+                        // ani jeden z týmů v kole nehraje
+                        if (canGoToRound)
+                        {
+                                int teamCounter = 0;
+                                while (rounds[j,teamCounter] != 0)
+                                {
+                                    teamCounter++;
+                                }
+                                rounds[j, teamCounter] = draw[randomList.ElementAt(i), 0];
+                                rounds[j, teamCounter + 1] = draw[randomList.ElementAt(i), 1];
+                                break;
+                        }
                     }
                 }
-
-            }
-            bool isLegit = true;
-            for (int i = 0; i < 9; i++)
-            {
-                Console.WriteLine(rounds[i, 0] + " vs " + rounds[i, 1] + ", " + rounds[i, 2] + " vs " + rounds[i, 3] + ", " + rounds[i, 4] + " vs " + rounds[i, 5] + ", " + rounds[i, 6] + " vs " + rounds[i, 7] + ", " + rounds[i, 8] + " vs " + rounds[i, 9]);
-                if (rounds[i, 0] == 0 || rounds[i, 1] == 0 || rounds[i, 2] == 0 || rounds[i, 3] == 0 || rounds[i, 4] == 0 || rounds[i, 5] == 0 || rounds[i, 6] == 0 || rounds[i, 7] == 0 || rounds[i, 8] == 0 || rounds[i, 9] == 0)
+                for (int i = 0; i < 9; i++)
                 {
-                    isLegit = false;
+                    Console.WriteLine(rounds[i, 0] + " vs " + rounds[i, 1] + ", " + rounds[i, 2] + " vs " + rounds[i, 3] + ", " + rounds[i, 4] + " vs " + rounds[i, 5] + ", " + rounds[i, 6] + " vs " + rounds[i, 7] + ", " + rounds[i, 8] + " vs " + rounds[i, 9]);
+                    if (rounds[i, 0] == 0 || rounds[i, 1] == 0 || rounds[i, 2] == 0 || rounds[i, 3] == 0 || rounds[i, 4] == 0 || rounds[i, 5] == 0 || rounds[i, 6] == 0 || rounds[i, 7] == 0 || rounds[i, 8] == 0 || rounds[i, 9] == 0)
+                    {
+                        isLegit = false;
+                    }
                 }
             }
-            if (!isLegit)
-            {
-                DrawTournaments(tournamentsToDraw);
-            } else
-            {
-                bool doubleRoundRobin = true;
-                // teoretické udělání double round robin
-                int[,] finalDraw;
-                if (doubleRoundRobin)
+            bool doubleRoundRobin = true;
+            // teoretické udělání double round robin
+            int[,] finalDraw;
+                double gamesPerDay;
+            if (doubleRoundRobin)
                 {
-                    finalDraw = new int[games * 2, 2];
+                    gamesPerDay = games*2 / (weeks * playingDays.Length);
+                finalDraw = new int[games * 2, 2];
+                int roundCounter = 0;
+                int teamCounter = 0;
+                for (int i = 0; i < games; i++)
+                {
+                    finalDraw[i, 0] = rounds[roundCounter, teamCounter];
+                    finalDraw[i, 1] = rounds[roundCounter, teamCounter + 1];
+                    finalDraw[games + i, 0] = finalDraw[i, 1];
+                    finalDraw[games + i, 1] = finalDraw[i, 0];
+                    teamCounter += 2;
+                    if (teamCounter >= teams)
+                    {
+                        teamCounter = 0;
+                        roundCounter++;
+                    }
+                }
+            }
+            else
+            {
+             gamesPerDay = games / (weeks * playingDays.Length);
+            finalDraw = new int[games, 2];
                     int roundCounter = 0;
                     int teamCounter = 0;
                     for (int i = 0; i < games; i++)
@@ -407,8 +441,6 @@ namespace EsportManager
 
                         finalDraw[i, 0] = rounds[roundCounter, teamCounter];
                         finalDraw[i, 1] = rounds[roundCounter, teamCounter + 1];
-                        finalDraw[games + i, 0] = finalDraw[i, 1];
-                        finalDraw[games + i, 1] = finalDraw[i, 0];
                         teamCounter += 2;
                         if (teamCounter >= teams)
                         {
@@ -417,32 +449,74 @@ namespace EsportManager
                         }
                     }
                 }
-                else
-                {
-                    finalDraw = new int[games, 2];
-                    int roundCounter = 0;
-                    int teamCounter = 0;
-                    for (int i = 0; i < games; i++)
-                    {
-
-                        finalDraw[i, 0] = rounds[roundCounter, teamCounter];
-                        finalDraw[i, 1] = rounds[roundCounter, teamCounter + 1];
-                        teamCounter += 2;
-                        if (teamCounter >= teams)
-                        {
-                            teamCounter = 0;
-                            roundCounter++;
-                        }
-                    }
-                }
-
                 for (int i = 0; i < finalDraw.GetLength(0); i++)
                 {
                     Console.WriteLine(finalDraw[i, 0] + " vs " + finalDraw[i, 1]);
                 }
+                DateTime date = startDate;
+                int matchCounter = 0;
+                command = new SQLiteCommand("select id_teamxsection from tournament_token where id_tournament_to=" + tournamentsToDraw.ElementAt(1) + " order by seed", conn);
+                reader = command.ExecuteReader();
+                int[] realIds = new int[teams];
+                for (int i = 0; i < teams; i++)
+                {
+                    reader.Read();
+                    realIds[i] = reader.GetInt32(0);
+                }
+                reader.Close();
+                while (date.CompareTo(endDate) <= 0)
+                {
+                    char dayOfWeek;
+                    switch (date.DayOfWeek)
+                    {
+                        case DayOfWeek.Sunday:
+                            dayOfWeek = '7';
+                            break;
+                        case DayOfWeek.Monday:
+                            dayOfWeek = '1';
+                            break;
+                        case DayOfWeek.Tuesday:
+                            dayOfWeek = '2';
+                            break;
+                        case DayOfWeek.Wednesday:
+                            dayOfWeek = '3';
+                            break;
+                        case DayOfWeek.Thursday:
+                            dayOfWeek = '4';
+                            break;
+                        case DayOfWeek.Friday:
+                            dayOfWeek = '5';
+                            break;
+                        case DayOfWeek.Saturday:
+                            dayOfWeek = '6';
+                            break;
+                        default:
+                            dayOfWeek = '0';
+                            break;
+                    }
+                    if (playingDays.Contains(dayOfWeek))
+                    {
+                        string separator = "-";
+                        string separator2 = "-";
+                        if (date.Month < 10)
+                        {
+                             separator += "0";
+                        }
+                        if (date.Day < 10)
+                        {
+                            separator2 += "0";
+                        }
+                        string stringDate = date.Year + separator + date.Month + separator2 + date.Day;
+                        for (int i = 0; i < gamesPerDay; i++)
+                        {
+                            command = new SQLiteCommand("insert into '" + date.Year + "match" + game + "' ('id_teamxsection_home', 'id_teamxsection_away', 'match_date', 'id_tournament') values (" + realIds[finalDraw[matchCounter,0]-1] + "," + realIds[finalDraw[matchCounter, 1] - 1] + ",'" + stringDate + "'," + tournamentsToDraw.ElementAt(1) + ");", conn);
+                            command.ExecuteReader();
+                            matchCounter++;
+                        }
+                    }
+                    date = date.AddDays(1);
+                }
             }
-            
-            
         }
 
 
@@ -563,11 +637,63 @@ namespace EsportManager
             }
         }
 
-        private void AddAllTournaments()
+        private void AddAllMatches()
         {
-            List<MatchDataGrid> tournaments = new List<MatchDataGrid>();
-            tournaments.Add(new MatchDataGrid() { Turnaj = "LOLEC turnaj", Datum = "1. 1. 2011", Misto = "Berlin", Souper = "Nekdo" });
-            Section1TournamentsList.ItemsSource = tournaments;
+            
+            using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + DatabaseName + ";"))
+            {
+                conn.Open();
+                SQLiteCommand command;
+                SQLiteDataReader reader;
+                string year = date.Remove(4, 6);
+                
+                for (int i = 0; i < sectionsList.Count; i++)
+                {
+                    List<MatchDataGrid> tournaments = new List<MatchDataGrid>();
+                    string matchTableName = year + "match" + sectionsList.ElementAt(i).sectionID;
+                    command = new SQLiteCommand("select tournament.shortcut, match_date, id_teamxsection_home, id_teamxsection_away, tournament.city_fk from '" + matchTableName + "' join tournament on tournament.id_tournament='" + matchTableName + "'.id_tournament where id_teamxsection_home=" + sectionsList.ElementAt(i).ID + " or id_teamxsection_away=" + sectionsList.ElementAt(i).ID + ";", conn);
+                    reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        SQLiteCommand command2;
+                        if (reader.GetInt32(2) == sectionsList.ElementAt(i).ID)
+                        {
+                            command2 = new SQLiteCommand("select shortcut from team join teamxsection on team.id_team=teamxsection.id_team where teamxsection.id_teamxsection=" + reader.GetInt32(3), conn);
+                        } else
+                        {
+                            command2 = new SQLiteCommand("select shortcut from team join teamxsection on team.id_team=teamxsection.id_team where teamxsection.id_teamxsection=" + reader.GetInt32(2), conn);
+                        }
+                        SQLiteDataReader reader2 = command2.ExecuteReader();
+                        reader2.Read();
+                        tournaments.Add(new MatchDataGrid() { Turnaj = reader.GetString(0), Datum = reader.GetString(1), Misto = reader.GetInt32(4).ToString(), Souper = reader2.GetString(0) });
+                    }
+                    switch (i)
+                    {
+                        case 0:
+                            Section1TournamentsList.ItemsSource = tournaments;
+                            break;
+                        case 1:
+                            Section2TournamentsList.ItemsSource = tournaments;
+                            break;
+                        case 2:
+                            Section3TournamentsList.ItemsSource = tournaments;
+                            break;
+                        case 3:
+                            Section4TournamentsList.ItemsSource = tournaments;
+                            break;
+                        case 4:
+                            Section5TournamentsList.ItemsSource = tournaments;
+                            break;
+                        case 5:
+                            Section6TournamentsList.ItemsSource = tournaments;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+                
+            
         }
 
         private void AddSectionsToList()
@@ -803,7 +929,7 @@ namespace EsportManager
             SetLabels();
             AddSectionsToList();
             SetTabs();
-            AddAllTournaments();
+            AddAllMatches();
             AddAllPlayers();
             ChangePropertiesOfNextActionButton();
             NonPlayerTeamsActions();

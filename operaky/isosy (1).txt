@@ -1,0 +1,22 @@
+Eupahn7d
+1. b - až do dne poškození (-3)
+2. a,c - cow, ext4 - žurnál
+3. d - podle mì jediná správná možnost, aèkoli výsledný link nebude fungovat (ale návratová hodnota pøíkazu je 0),
+	teoreticky mùže fungovat i e, ale není jisté jestli /home/tmp/data.tmp již neexistuje (ls -ld)
+	u ostatních pøíkazù bez -s jsou problémy s jinými souborovými systemy (mount), 
+	POZOR na tmp (pwd øíká /home takže /home/tmp) a /tmp (poze /tmp), tento problém se objevuje ve více testech
+4. b - /proc/sys/vm/swappiness
+5. a - l - level RAIDu, n - poèet diskù, x - poèet extra diskù
+6. d - adresa sítì je 50.100.128.0 a adresa broadcastu 50.100.191.255 (takže sít +1 až broadcast -1)
+7. a, b - je potøeba do proc/sys/net/ipv4/ip_forward vypsat 1 a poté všechny pakety pøeposlat 
+8. a, c - : znaèí subinterface, nakonci pøíkazù nemusí být up (doplnuje se samo), up ip addr musí být vždy dev, 
+	POZOR obèas píše nesmyslné adresy (10.123.321.10 - oktet má 8 bitù = 2 na 8 = 256 = max hodnota 255 (protože poèítáme od 0))
+9. a, d - route add -net ip maska <dev> iface - dev nemusí být, ale POZOR napø na R nebo špatnì pøepsanou masku z prefixu nebo sí
+	ip route add ip/prefix dev iface - dev musí být vždy 
+	POZOR obèas píše smìrování sítì, ale nenapíše adresu sítì, ale totální bullshit adresu -> ipcalculator (https://www.calculator.net/ip-subnet-calculator.html - ukáže pøesnou sí) 
+10. a - snaží se zlepšit - jedinì algoritmus red (posílá zprávy ještì než dojde k pøehlcení linky, tcp protokolem), ostatní protokoly by jen brzdily provoz
+	POZOR na jednotky -> tc man -> hledat "units"
+11. a, b - usigned 32bit int -> max 10 èíslic, kladných
+12. a - Linux umí vše :D
+13. c - -i = install, apt bez apt-get asi nema rad tak pozor
+14. d - chown lze spustit pouze jako root -> nutnost sudo nebo uid = 0

@@ -1,0 +1,22 @@
+Cain9aiX
+1. b - až do dne poškození
+2. e,f - google, iso9660 je na cd, fat je podle hudce trapnej proto tam je
+3. c,e - tady pozor na to, že odkaz musí být i funkèní takže -s musí existovat soubor/adresáø na který se odkazuje
+	možnost a je dost ošemetná, protože mùže fungovat, pokud budu v /usr/local
+4. a - google...
+5. b - adresa sítì je 10.11.0.0, takže +1
+6. c,d - nejprve za vložím na zaèátek pro oba porty zákaz, potom vloží ještì pøed zákaz povolení na localhost
+	(-I vkláda na zaèítek øetìzce, -A na konec)
+7. a,c - ifconfig iface ip, -implicitnì up, ip addr ip dev iface; pøíkaz na aktivaci rozhranní - musí být dev a spravna adresa
+8. b,d - route add -net ip mask <dev> iface - dev nemusí být, ip route add ip/prefix dev iface - dev musí být
+	POZOR na zadané sítové adresy
+9. b - routers - smìrovaèe -> brána, dále následuje adresa (nìjaká)
+10. a,c  - pokud parametrem démona je stejný démon -> obsluhuje vše sám, pokud jiný -> pøedává se superdémonovi (obì možnosti), 
+	nobody.tty -> tty je skupina
+11. b - z ramdisku lze zavést i systém takže musí být už zaveden pøed jádrem
+12. e - https://cs.wikipedia.org/wiki/Runlevel
+	POZOR - otazky který k èemu
+13. c - nejspíše nikde jsem se nedoèetl že by to nìkdo dìlal
+14. b,d - všichni mohou rwx, ale kdokoliv z others si mùže mazat jen na co má vlastnictví (sticky bit)
+15. d - sudo chown, nebo uid=0
+ 
