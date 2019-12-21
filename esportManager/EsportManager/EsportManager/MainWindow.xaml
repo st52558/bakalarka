@@ -10,8 +10,7 @@
         <Image Name="Background" Margin="0,0,0,0" Stretch="Fill" />
         <Button Name="NewGame"  Content="Nová hra" Margin="325,50,325,0" FontSize="25" VerticalAlignment="Top" Height="50" Click="NewGame_Click" Style="{DynamicResource MyButtonStyle}"/>
         <Button Name="LoadGame" Content="Načíst hru" Margin="325,150,325,0" FontSize="25" VerticalAlignment="Top"  Height="50" Click="LoadGameClick"/>
-        <Button Name="Help" Content="Návod" Margin="325,250,325,0" FontSize="25" VerticalAlignment="Top" Height="50" Click="Help_Click"/>
+        <Button Name="Help" Content="Discord" Margin="325,250,325,0" FontSize="25" VerticalAlignment="Top" Height="50" Click="Help_Click"/>
         <Button Name="QuitGame" Content="Ukončit hru" Margin="325,350,325,0" FontSize="25" VerticalAlignment="Top"  Height="50" Click="Quit"/>
-        
     </Grid>
 </Window>

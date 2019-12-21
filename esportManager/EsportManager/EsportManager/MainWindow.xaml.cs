@@ -48,6 +48,7 @@ namespace EsportManager
 
         private void Help_Click(object sender, RoutedEventArgs e)
         {
+            System.Diagnostics.Process.Start("https://discord.gg/GukBbV");
             Manual win2 = new Manual();
             win2.Show();
         }
