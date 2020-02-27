@@ -38,7 +38,7 @@ namespace TeamEdit
             using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\test.db;"))
             {
                 conn.Open();
-                SQLiteCommand command = new SQLiteCommand("select id_sekce,nazev from sekce", conn);
+                SQLiteCommand command = new SQLiteCommand("select ID_SECTION,NAME from SECTION", conn);
                 SQLiteDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
@@ -68,15 +68,8 @@ namespace TeamEdit
 
         private void AddSectionClick(object sender, RoutedEventArgs e)
         {
-            using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\test.db;"))
-            {
-                conn.Open();
-                
-                SQLiteCommand command = new SQLiteCommand("insert into tymxsekce (tym_id_tym,sekce_id_sekce) values (" + selectedTeamId + "," + sectionList.ElementAt(SectionsCB.SelectedIndex).IdSection + ")", conn);
-                SQLiteDataReader reader = command.ExecuteReader();
-                
-            }
-            parent.GetAllSectionsToListBox();
+            parent.sqlStatements.Add("insert into teamxsection (id_team,id_section) values (" + selectedTeamId + "," + sectionList.ElementAt(SectionsCB.SelectedIndex).IdSection + ")");
+            //parent.GetAllSectionsToListBox();
             this.Close();
         }
 

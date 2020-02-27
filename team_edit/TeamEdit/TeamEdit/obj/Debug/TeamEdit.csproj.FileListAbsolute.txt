@@ -50,7 +50,6 @@ C:\Users\Gunny\Documents\GitHub\bakalarka\team_edit\TeamEdit\TeamEdit\obj\Debug\
 C:\Users\Gunny\Documents\GitHub\bakalarka\team_edit\TeamEdit\TeamEdit\obj\Debug\TeamEdit.g.resources
 C:\Users\Gunny\Documents\GitHub\bakalarka\team_edit\TeamEdit\TeamEdit\obj\Debug\TeamEdit.Properties.Resources.resources
 C:\Users\Gunny\Documents\GitHub\bakalarka\team_edit\TeamEdit\TeamEdit\obj\Debug\TeamEdit.csproj.GenerateResource.cache
-C:\Users\Gunny\Documents\GitHub\bakalarka\team_edit\TeamEdit\TeamEdit\obj\Debug\TeamEdit.csproj.CoreCompileInputs.cache
 C:\Users\Gunny\Documents\GitHub\bakalarka\team_edit\TeamEdit\TeamEdit\obj\Debug\TeamEdit.csproj.CopyComplete
 C:\Users\st52558\Desktop\bakalarka\team_edit\TeamEdit\TeamEdit\bin\Debug\TeamEdit.exe.config
 C:\Users\st52558\Desktop\bakalarka\team_edit\TeamEdit\TeamEdit\bin\Debug\TeamEdit.exe

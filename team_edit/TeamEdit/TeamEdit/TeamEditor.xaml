@@ -11,7 +11,7 @@
         <TextBox Name="NameBox" HorizontalAlignment="Left" Height="30" Margin="77,30,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="195" TextChanged="NameChange"/>
         <Label Name="NameLabel" Content="Name:" Height="30" HorizontalAlignment="Left" HorizontalContentAlignment="Right" Margin="10,30,0,0" VerticalAlignment="Top" Width="65"/>
         <Label Name="ShortcutLabel" Content="Shortcut:" Height="30" HorizontalAlignment="Left" HorizontalContentAlignment="Right" Margin="10,420,0,0" VerticalAlignment="Top" Width="65"/>
-        <TextBox Name="ShortcutBox" HorizontalAlignment="Left" Height="30" Margin="77,420,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="195"/>
+        <TextBox Name="ShortcutBox" HorizontalAlignment="Left" Height="30" Margin="77,420,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="195" MaxLength="3"/>
         <ComboBox Name="NationalityCB" Margin="347,30,10,0" VerticalAlignment="Top" Height="30" Width="195" SelectionChanged="NationChange"/>
         <ComboBox Name="ResidencyCB" Margin="347,90,10,0" VerticalAlignment="Top" Height="30" Width="195"/>
         <TextBox Name="ManagerTB" Height="30" Margin="367,150,30,0" TextWrapping="Wrap"  VerticalAlignment="Top"/>

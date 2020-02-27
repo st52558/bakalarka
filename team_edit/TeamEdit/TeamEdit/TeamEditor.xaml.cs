@@ -22,6 +22,7 @@ namespace TeamEdit
     /// </summary>
     public partial class TeamEditor : Window
     {
+        public List<string> sqlStatements = new List<string>();
         List<Nation> nationList = new List<Nation>();
         List<City> cityList = new List<City>();
         List<TeamSection> teamSectionList = new List<TeamSection>();
@@ -87,7 +88,7 @@ namespace TeamEdit
             {
                 conn.Open();
 
-                SQLiteCommand command = new SQLiteCommand("select count(*) from sekce", conn);
+                SQLiteCommand command = new SQLiteCommand("select count(*) from section", conn);
                 SQLiteDataReader reader = command.ExecuteReader();
                 reader.Read();
                 sections = reader.GetInt32(0) * 2;
@@ -137,7 +138,7 @@ namespace TeamEdit
             {
                 conn.Open();
 
-                SQLiteCommand command = new SQLiteCommand("select tymxsekce.id_tym_sekce,zkratka from tymxsekce join sekce on tymxsekce.sekce_id_sekce=sekce.id_sekce where tymxsekce.tym_id_tym=" + selectedTeamId, conn);
+                SQLiteCommand command = new SQLiteCommand("select teamxsection.id_teamxsection,shortcut from teamxsection join section on teamxsection.id_section=section.id_section where teamxsection.id_team=" + selectedTeamId, conn);
                 SQLiteDataReader reader = command.ExecuteReader();
 
                 while (reader.Read())
@@ -181,12 +182,13 @@ namespace TeamEdit
             {
                 
                 conn.Open();
-                SQLiteCommand command = new SQLiteCommand("select * from tym where id_tym =" + chosenTeam, conn);
+                SQLiteCommand command = new SQLiteCommand("select name,id_city_fk,logo, shortcut from v_team_edit where id_team =" + chosenTeam, conn);
                 SQLiteDataReader reader = command.ExecuteReader();
                 reader.Read();
-                AddLogo((byte[])reader[3]);
-                SetDefaultCountryAndCity(reader.GetInt32(2));
-                NameBox.Text = reader.GetString(1);
+                AddLogo((byte[])reader[2]);
+                SetDefaultCountryAndCity(reader.GetInt32(1));
+                NameBox.Text = reader.GetString(0);
+                ShortcutBox.Text = reader.GetString(3);
             }
         }
 
@@ -257,13 +259,13 @@ namespace TeamEdit
             {
                 conn.Open();
                 //zjistit počet nepoužitelných sekcí
-                SQLiteCommand command = new SQLiteCommand("SELECT count(*) FROM (SELECT SEKCE_id_sekce,count(SEKCE_id_sekce) FROM TYMxSEKCE WHERE TYM_id_tym = " + selectedTeamId + " GROUP BY SEKCE_id_sekce) WHERE `count(SEKCE_id_sekce)`>=2", conn);
+                SQLiteCommand command = new SQLiteCommand("SELECT count(*) FROM (SELECT ID_SECTION,count(ID_SECTION) FROM TEAMXSECTION WHERE ID_TEAM = " + selectedTeamId + " GROUP BY ID_SECTION) WHERE `count(ID_SECTION)`>=2", conn);
                 SQLiteDataReader reader = command.ExecuteReader();
                 reader.Read();
                 notAvailableSections = new int[reader.GetInt32(0)];
                 reader.Close();
                 //přidat je do pole
-                command.CommandText = "SELECT SEKCE_id_sekce FROM (SELECT SEKCE_id_sekce,count(SEKCE_id_sekce) FROM TYMxSEKCE WHERE TYM_id_tym = " + selectedTeamId + " GROUP BY SEKCE_id_sekce) WHERE `count(SEKCE_id_sekce)`>=2";
+                command.CommandText = "SELECT ID_SECTION FROM (SELECT ID_SECTION,count(ID_SECTION) FROM TEAMXSECTION WHERE ID_TEAM = " + selectedTeamId + " GROUP BY ID_SECTION) WHERE `count(ID_SECTION)`>=2";
                 reader = command.ExecuteReader();
                 int counter = 0;
                 while (reader.Read())
@@ -330,6 +332,7 @@ namespace TeamEdit
                // SQLiteCommand command = new SQLiteCommand("update tym set nazev='" + NameBox.Text + "', id_stat_fk=" + nationList.ElementAt(NationalityCB.SelectedIndex).IdNation + ", logo=" + logoByte + " where id_tym=" + selectedTeamId, conn);
                 SQLiteDataReader reader = command.ExecuteReader();
             }*/
+
             this.Close();
         }
 
