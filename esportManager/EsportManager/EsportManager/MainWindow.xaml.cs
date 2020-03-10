@@ -48,9 +48,6 @@ namespace EsportManager
 
         private void Help_Click(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start("https://discord.gg/GukBbV");
-            Manual win2 = new Manual();
-            win2.Show();
         }
 
         private void NewGame_Click(object sender, RoutedEventArgs e)
@@ -64,6 +61,21 @@ namespace EsportManager
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             
+        }
+
+        private void Facebook_Click(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://www.facebook.com/Blue-Time-Games-100409108142240/");
+        }
+
+        private void Discord_Click(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://discord.gg/mZZKkkW");
+        }
+
+        private void Twitter_Click(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://twitter.com/BlueTimeGames");
         }
     }
 }

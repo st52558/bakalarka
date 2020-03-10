@@ -20,23 +20,15 @@ namespace EsportManager
     /// </summary>
     public partial class TournamentsParticipating : Window
     {
-        class TournamentBasic
-        {
-            public int ID { get; set; }
-            public string Name { get; set; }
-            public string StartDate { get; set; }
-            public string EndDate { get; set; }
-            public int PrizePool { get; set; }
-            public string City { get; set; }
-            public int TokenValue { get; set; }
-        }
+        
 
         List<TeamSectionBasic> sectionsList = new List<TeamSectionBasic>();
         string databaseName;
         int teamId;
+        int sectionId;
         string date;
 
-        List<TournamentBasic> tournamentsForSection1 = new List<TournamentBasic>();
+        List<Tournament> tournamentsForSection = new List<Tournament>();
         public TournamentsParticipating(string database)
         {
             databaseName = database;
@@ -94,16 +86,21 @@ namespace EsportManager
 
         private void SetAllLists()
         {
-            tournamentsForSection1.Clear();
-            int index = sectionsList.ElementAt(SectionList.SelectedIndex).ID;
+            tournamentsForSection.Clear();
+            sectionId = sectionsList.ElementAt(SectionList.SelectedIndex).ID;
             using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
             {
                 conn.Open();
-                SQLiteCommand command = new SQLiteCommand("select id_tournament_to, tournament.name, tournament.start_date, tournament.end_date, prize_pool, mesto.nazev, token_value from tournament_token join tournament on tournament.id_tournament=tournament_token.id_tournament_to join mesto on tournament.city_fk=id_mesto where id_teamxsection=" + index + ";", conn);
+                SQLiteCommand command = new SQLiteCommand("select id_tournament_to, tournament.name, tournament.start_date, tournament.end_date, prize_pool, mesto.nazev, token_value, tournament.drawn from tournament_token join tournament on tournament.id_tournament=tournament_token.id_tournament_to join mesto on tournament.city_fk=id_mesto where id_teamxsection=" + sectionId + ";", conn);
                 SQLiteDataReader reader = command.ExecuteReader();
+                bool drawn = false;
                 while (reader.Read())
                 {
-                    tournamentsForSection1.Add(new TournamentBasic() { ID = reader.GetInt32(0), Name = reader.GetString(1), StartDate = TransformDate(reader.GetString(2)), EndDate = TransformDate(reader.GetString(3)), PrizePool = reader.GetInt32(4), City = reader.GetString(5), TokenValue= reader.GetInt32(6) });
+                    if (reader.GetInt32(7) == 1)
+                    {
+                        drawn = true;
+                    }
+                    tournamentsForSection.Add(new Tournament(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetInt32(4), reader.GetString(5), reader.GetInt32(6),drawn));
                 }
                 reader.Close();
             }
@@ -112,10 +109,13 @@ namespace EsportManager
 
         private void AddAllListsToTournamentListBoxes()
         {
+            int index = SectionList.SelectedIndex;
             TournamentList.Items.Clear();
-            for (int i = 0; i < tournamentsForSection1.Count; i++)
             {
-                TournamentList.Items.Add(tournamentsForSection1.ElementAt(i).Name + ", " + tournamentsForSection1.ElementAt(i).StartDate + " - " + tournamentsForSection1.ElementAt(i).EndDate + ", " + tournamentsForSection1.ElementAt(i).PrizePool + "$, " + tournamentsForSection1.ElementAt(i).City);
+                for (int i = 0; i < tournamentsForSection.Count; i++)
+                {
+                    TournamentList.Items.Add(tournamentsForSection.ElementAt(i).Name + ", " + tournamentsForSection.ElementAt(i).DateFrom + " - " + tournamentsForSection.ElementAt(i).DateTo + ", " + tournamentsForSection.ElementAt(i).PrizePool + "$, " + tournamentsForSection.ElementAt(i).City);
+                }
             }
         }
 
@@ -125,18 +125,32 @@ namespace EsportManager
             {
                 return;
             }
-            MessageBoxResult result = MessageBox.Show("Vážně se chcete odhlásit z turnaje? Bude Vás to stát " + tournamentsForSection1.ElementAt(TournamentList.SelectedIndex).TokenValue + "$.", "Chystáte se odhlásit z turnaje", MessageBoxButton.YesNo);
+            if (tournamentsForSection.ElementAt(TournamentList.SelectedIndex).Drawn)
+            {
+                MessageBox.Show("Z tohoto turnaje se nelze odhlásit. Turnaj je již nalosován", "Chystáte se odhlásit z turnaje", MessageBoxButton.OK);
+                return;
+            }
+            if (IsMoreThanTwoMonths(date, tournamentsForSection.ElementAt(TournamentList.SelectedIndex).DateFrom))
+            {
+                tournamentsForSection.ElementAt(TournamentList.SelectedIndex).TokenValue = 0;
+            }
+            MessageBoxResult result = MessageBox.Show("Vážně se chcete odhlásit z turnaje? Bude Vás to stát " + tournamentsForSection.ElementAt(TournamentList.SelectedIndex).TokenValue + "$.", "Chystáte se odhlásit z turnaje", MessageBoxButton.YesNo);
             if (result != MessageBoxResult.Yes)
             {
                 return;
             }
-            
             using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
             {
                 conn.Open();
-                SQLiteCommand command = new SQLiteCommand("update team set budget=budget-" + tournamentsForSection1.ElementAt(TournamentList.SelectedIndex).TokenValue + " where id_team=" + teamId + ";", conn);
+                SQLiteCommand command = new SQLiteCommand("update team set budget=budget-" + tournamentsForSection.ElementAt(TournamentList.SelectedIndex).TokenValue + " where id_team=" + teamId + ";", conn);
                 command.ExecuteReader();
-                command = new SQLiteCommand("delete from tournament_token where id_tournament_to=" + tournamentsForSection1.ElementAt(TournamentList.SelectedIndex).ID +" and id_teamxsection=14;", conn);
+                if (IsMoreThanTwoMonths(date, tournamentsForSection.ElementAt(TournamentList.SelectedIndex).DateFrom))
+                {
+                    command = new SQLiteCommand("delete from tournament_token where id_tournament_to=" + tournamentsForSection.ElementAt(TournamentList.SelectedIndex).ID + " and id_teamxsection=" +  sectionId + ";", conn);
+                } else
+                {
+                    command = new SQLiteCommand("update tournament_token set id_teamxsection=21 where id_teamxsection=" + sectionId + ";", conn);
+                }
                 command.ExecuteReader();
             }
             SetAllLists();
@@ -153,7 +167,7 @@ namespace EsportManager
             using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
             {
                 conn.Open();
-                SQLiteCommand command = new SQLiteCommand("select team.name, tournament.name from tournament_token join tournament on tournament.id_tournament=tournament_token.id_tournament_to join teamxsection on teamxsection.id_teamxsection=tournament_token.id_teamxsection join team on teamxsection.id_team=team.id_team where tournament_token.id_tournament_to=" + tournamentsForSection1.ElementAt(TournamentList.SelectedIndex).ID + ";", conn);
+                SQLiteCommand command = new SQLiteCommand("select team.name, tournament.name from tournament_token join tournament on tournament.id_tournament=tournament_token.id_tournament_to join teamxsection on teamxsection.id_teamxsection=tournament_token.id_teamxsection join team on teamxsection.id_team=team.id_team where tournament_token.id_tournament_to=" + tournamentsForSection.ElementAt(TournamentList.SelectedIndex).ID + ";", conn);
                 SQLiteDataReader reader = command.ExecuteReader();
                 int counter = 1;
                 string allTeams = "";
@@ -182,6 +196,20 @@ namespace EsportManager
             string month = v.Remove(7, 3).Remove(0, 5);
             string day = v.Remove(0, 8);
             return day + ". " + month + ". " + year;
+        }
+
+        private bool IsMoreThanTwoMonths(string first, string second)
+        {
+            int fyear = int.Parse(first.Remove(4, 6));
+            int fmonth = int.Parse(first.Remove(7, 3).Remove(0, 5));
+            int fday = int.Parse(first.Remove(0, 8));
+            int syear = int.Parse(second.Remove(4, 6));
+            int smonth = int.Parse(second.Remove(7, 3).Remove(0, 5));
+            int sday = int.Parse(second.Remove(0, 8));
+            DateTime firstDate = new DateTime(fyear, fmonth, fday);
+            DateTime secondDate = new DateTime(syear, smonth, sday);
+            firstDate = firstDate.AddMonths(2);
+            return firstDate.CompareTo(secondDate) < 0;
         }
     }
 }

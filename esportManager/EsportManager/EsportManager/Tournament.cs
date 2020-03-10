@@ -14,6 +14,10 @@ namespace EsportManager
         public string DateFrom { get; set; }
         public string DateTo { get; set; }
         public int CancelFee { get; set; }
+        public int PrizePool { get; set; }
+        public string City { get; set; }
+        public int TokenValue { get; set; }
+        public bool Drawn { get; set; }
 
         public Tournament(int iD, string shortcut, string dateFrom, string dateTo, int cancelFee)
         {
@@ -22,6 +26,18 @@ namespace EsportManager
             DateFrom = dateFrom;
             DateTo = dateTo;
             CancelFee = cancelFee;
+        }
+
+        public Tournament(int iD, string name, string dateFrom, string dateTo, int prizePool, string city, int tokenValue, bool drawn)
+        {
+            ID = iD;
+            Name = name;
+            DateFrom = dateFrom;
+            DateTo = dateTo;
+            PrizePool = prizePool;
+            City = city;
+            TokenValue = tokenValue;
+            Drawn = drawn;
         }
     }
 }

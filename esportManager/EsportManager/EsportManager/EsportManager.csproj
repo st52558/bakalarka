@@ -60,6 +60,8 @@
     <Reference Include="System.Data.SQLite.Linq, Version=1.0.111.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Data.SQLite.Linq.1.0.111.0\lib\net46\System.Data.SQLite.Linq.dll</HintPath>
     </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -84,6 +86,10 @@
     <Compile Include="FreeCoaches.xaml.cs">
       <DependentUpon>FreeCoaches.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Match.xaml.cs">
+      <DependentUpon>Match.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Player.cs" />
     <Compile Include="PlayerSearch.xaml.cs">
       <DependentUpon>PlayerSearch.xaml</DependentUpon>
     </Compile>
@@ -127,6 +133,10 @@
     <Page Include="FreeCoaches.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Match.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="PlayerSearch.xaml">
       <Generator>MSBuild:Compile</Generator>

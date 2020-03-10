@@ -1,0 +1,22 @@
+﻿<Window x:Class="EsportManager.Match"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:EsportManager"
+        mc:Ignorable="d"
+        Background="LightGray"
+        Title="Match" Height="450" Width="800">
+    <Grid Name="Panel">
+        <Label Name="TournamentName" FontSize="30" Content="Label" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Margin="90,0,0,0" VerticalAlignment="Top" Width="610"/>
+        <Label Name="HomeName" FontSize="30" Content="Label" Width="325" HorizontalContentAlignment="Left" HorizontalAlignment="Left" Margin="40,30,0,0" VerticalAlignment="Top"/>
+        <Label Name="Score" FontSize="30" Content="Label" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Margin="240,280,0,0" VerticalAlignment="Top" Width="310" Visibility="Hidden"/>
+        <Label Name="AwayName" FontSize="30" Content="Label" Width="325" HorizontalContentAlignment="Right" HorizontalAlignment="Left" Margin="425,30,0,0" VerticalAlignment="Top"/>
+        <Border Name="HomeBorder" Visibility="Hidden" BorderThickness="1" BorderBrush="Black" Height="200" Width="200" Margin="40,80,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+        <Image Name="HomeLogo" HorizontalAlignment="Left" Height="200" Width="200" Margin="40,80,0,0" VerticalAlignment="Top"/>
+        <Border Name="AwayBorder" Visibility="Hidden" BorderThickness="1" BorderBrush="Black" Height="200" Width="200" Margin="550,80,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+        <Image Name="AwayLogo" HorizontalAlignment="Left" Height="200" Width="200" Margin="550,80,0,100" VerticalAlignment="Top"/>
+        
+        <Button Name="PlayMatch" Content="Odehrát zápas" HorizontalAlignment="Left" Margin="345,350,0,0" VerticalAlignment="Top" Width="100" Height="25" Click="PlayMatchClick"/>
+    </Grid>
+</Window>
