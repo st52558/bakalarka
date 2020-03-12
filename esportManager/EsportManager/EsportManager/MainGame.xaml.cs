@@ -267,7 +267,11 @@ namespace EsportManager
                 SQLiteCommand command = new SQLiteCommand("select sum(monthly_payment) from sponsor2 join teamxsponsor on teamxsponsor.id_sponsor=sponsor2.id_sponsor and teamxsponsor.id_team=" + idTeam + ";", conn);
                 SQLiteDataReader reader = command.ExecuteReader();
                 reader.Read();
-                int income = reader.GetInt32(0);
+                int income = 0;
+                if (reader[0].GetType() != typeof(DBNull))
+                {
+                     income = reader.GetInt32(0);
+                }
                 reader.Close();
                 command = new SQLiteCommand("select sum(salary) from player join teamxsection on teamxsection.id_team=player.team_fk and teamxsection.id_team=" + idTeam + ";", conn);
                 reader = command.ExecuteReader();
@@ -312,7 +316,7 @@ namespace EsportManager
                 reader.Close();
             }
             //už vím turnaje, které jsou potřeba nalosovat
-            DrawTournaments(tournamentsToDraw);
+            //DrawTournaments(tournamentsToDraw);
 
             // další den
             date = NextDay(date);

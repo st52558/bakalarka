@@ -8,10 +8,41 @@
         Title="TournamentInfoGroup" Height="450" Width="800">
     <Grid>
 
-        <DataGrid HorizontalAlignment="Left" Height="350" Margin="10,60,0,0" VerticalAlignment="Top" Width="440"/>
+        <DataGrid Name="Standings" HorizontalAlignment="Left" Height="350" Margin="10,60,0,0" VerticalAlignment="Top" Width="440" AutoGenerateColumns="False" FontSize="20">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Postup"
+                          Binding="{Binding TournamentTo}"/>
+                <DataGridTextColumn Header="#"
+                          Binding="{Binding Position}"/>
+                <DataGridTextColumn Header="Název týmu"
+                          Binding="{Binding TeamName}"/>
+                <DataGridTextColumn Header="Z"
+                          Binding="{Binding MatchesPlayed}"/>
+                <DataGridTextColumn Header="V"
+                          Binding="{Binding MatchesWon}"/>
+                <DataGridTextColumn Header="P"
+                          Binding="{Binding MatchesLost}"/>
+                <DataGridTextColumn Header="VM"
+                          Binding="{Binding MapsWon}"/>
+                <DataGridTextColumn Header="PM"
+                          Binding="{Binding MapsLost}"/>
+            </DataGrid.Columns>
+            <DataGrid.CellStyle>
+                <Style TargetType="{x:Type DataGridCell}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding TournamentTo}" Value="LEC2G">
+                            <Setter Property="Background" Value="AliceBlue" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding TournamentTo}" Value="LEC1P">
+                            <Setter Property="Background" Value="LightCyan" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.CellStyle>
+        </DataGrid>
         <Label Name="TournamentName"  HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="10,10,0,0" VerticalAlignment="Top" Height="45" Width="440" FontSize="20"/>
-        <Label Content="Odehrané zápasy" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="500,24,0,0" VerticalAlignment="Top" Height="31" Width="130" FontSize="14"/>
-        <Label Content="Nadcházející zápasy" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="640,24,0,0" VerticalAlignment="Top" Height="31" Width="130" FontSize="14"/>
+        <TextBlock TextWrapping="WrapWithOverflow" HorizontalAlignment="Left" TextAlignment="Center" Text="Poslední odehrané zápasy" Margin="500,10,0,0" VerticalAlignment="Top" Height="45" Width="130" FontSize="14"/>
+        <TextBlock TextWrapping="WrapWithOverflow" HorizontalAlignment="Left" TextAlignment="Center" Text="Nadcházející zápasy" Margin="640,10,0,0" VerticalAlignment="Top" Height="45" Width="130" FontSize="14"/>
         <Grid Name="MatchesPlayed" HorizontalAlignment="Left" Height="345" Margin="500,65,0,0" VerticalAlignment="Top" Width="130" Background="AliceBlue"/>
         <Grid Name="MatchesIncoming" HorizontalAlignment="Left" Height="345" Margin="640,65,0,0" VerticalAlignment="Top" Width="130" Background="LightSalmon"/>
 
