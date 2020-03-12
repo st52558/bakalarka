@@ -164,7 +164,7 @@ namespace EsportManager
             {
                 return;
             }
-            using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
+            /* using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
             {
                 conn.Open();
                 SQLiteCommand command = new SQLiteCommand("select team.name, tournament.name from tournament_token join tournament on tournament.id_tournament=tournament_token.id_tournament_to join teamxsection on teamxsection.id_teamxsection=tournament_token.id_teamxsection join team on teamxsection.id_team=team.id_team where tournament_token.id_tournament_to=" + tournamentsForSection.ElementAt(TournamentList.SelectedIndex).ID + ";", conn);
@@ -182,7 +182,9 @@ namespace EsportManager
                 }
                 MessageBox.Show(allTeams, "Registrovaní do turnaje", MessageBoxButton.OK);
                 reader.Close();
-            }
+            }*/
+            TournamentInfoGroup win2 = new TournamentInfoGroup(databaseName,tournamentsForSection.ElementAt(TournamentList.SelectedIndex).ID);
+            win2.Show();
         }
 
         private void SectionChanged(object sender, SelectionChangedEventArgs e)

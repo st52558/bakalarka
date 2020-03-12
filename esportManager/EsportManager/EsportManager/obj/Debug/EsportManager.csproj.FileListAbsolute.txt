@@ -107,3 +107,5 @@ C:\Users\st52558\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportMa
 C:\Users\st52558\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportManager\obj\Debug\Training.baml
 C:\Users\Gunny\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportManager\obj\Debug\Match.g.cs
 C:\Users\Gunny\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportManager\obj\Debug\Match.baml
+C:\Users\Gunny\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportManager\obj\Debug\TournamentInfoGroup.g.cs
+C:\Users\Gunny\Documents\GitHub\bakalarka\esportManager\EsportManager\EsportManager\obj\Debug\TournamentInfoGroup.baml

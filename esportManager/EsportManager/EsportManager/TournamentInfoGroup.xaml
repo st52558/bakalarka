@@ -1,0 +1,20 @@
+﻿<Window x:Class="EsportManager.TournamentInfoGroup"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:EsportManager"
+        mc:Ignorable="d"
+        Title="TournamentInfoGroup" Height="450" Width="800">
+    <Grid>
+
+        <DataGrid HorizontalAlignment="Left" Height="350" Margin="10,60,0,0" VerticalAlignment="Top" Width="440"/>
+        <Label Name="TournamentName"  HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="10,10,0,0" VerticalAlignment="Top" Height="45" Width="440" FontSize="20"/>
+        <Label Content="Odehrané zápasy" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="500,24,0,0" VerticalAlignment="Top" Height="31" Width="130" FontSize="14"/>
+        <Label Content="Nadcházející zápasy" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="640,24,0,0" VerticalAlignment="Top" Height="31" Width="130" FontSize="14"/>
+        <Grid Name="MatchesPlayed" HorizontalAlignment="Left" Height="345" Margin="500,65,0,0" VerticalAlignment="Top" Width="130" Background="AliceBlue"/>
+        <Grid Name="MatchesIncoming" HorizontalAlignment="Left" Height="345" Margin="640,65,0,0" VerticalAlignment="Top" Width="130" Background="LightSalmon"/>
+
+
+    </Grid>
+</Window>

@@ -116,6 +116,9 @@
     </Compile>
     <Compile Include="TeamSectionBasic.cs" />
     <Compile Include="Tournament.cs" />
+    <Compile Include="TournamentInfoGroup.xaml.cs">
+      <DependentUpon>TournamentInfoGroup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TournamentsParticipating.xaml.cs">
       <DependentUpon>TournamentsParticipating.xaml</DependentUpon>
     </Compile>
@@ -179,6 +182,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="TeamSearch.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="TournamentInfoGroup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
