@@ -133,7 +133,11 @@ namespace EsportManager
                 }
             }
             Standings.ItemsSource = standings;
-
+            DataGridRow aaa = Standings.ItemContainerGenerator.ContainerFromItem(Standings.SelectedItem) as DataGridRow;
+            if (aaa != null)
+            {
+                aaa.FontSize = 11;
+            }
             /*foreach (TournamentStandings item in Standings.ItemsSource)
             {
                 var row = Standings.ItemContainerGenerator.ContainerFromItem(item) as DataGridRow;
