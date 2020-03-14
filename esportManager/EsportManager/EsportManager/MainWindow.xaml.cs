@@ -37,6 +37,7 @@ namespace EsportManager
         {
             LoadGame win2 = new LoadGame();
             win2.MainWindow = this;
+            win2.Topmost = true;
             this.IsEnabled = false;
             win2.Show();
         }
@@ -54,6 +55,7 @@ namespace EsportManager
         {
             NewGame win2 = new NewGame();
             win2.Mainwindow = this;
+            win2.Topmost = true;
             this.IsEnabled = false;
             win2.Show();
         }

@@ -123,6 +123,7 @@
       <DependentUpon>TournamentsParticipating.xaml</DependentUpon>
     </Compile>
     <Compile Include="TournamentStandings.cs" />
+    <Compile Include="TournamentTeam.cs" />
     <Compile Include="Training.xaml.cs">
       <DependentUpon>Training.xaml</DependentUpon>
     </Compile>

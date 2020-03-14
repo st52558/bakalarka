@@ -290,6 +290,8 @@ namespace EsportManager
         {
             // odehrávání zápasů
             PlayAllOtherMatches();
+            // vyhodnocení ukončených turnajů
+            FinishTournaments();
             // losování turnajů
             int curYear = int.Parse(date.Remove(4, 6));
             int curMonth = int.Parse(date.Remove(7, 3).Remove(0, 5));
@@ -328,6 +330,71 @@ namespace EsportManager
                 command.ExecuteReader();
             }
             ChangePropertiesOfNextActionButton();
+        }
+
+        private void FinishTournaments()
+        {
+            using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + DatabaseName + ";"))
+            {
+                string ex = "";
+                conn.Open();
+                SQLiteCommand command = new SQLiteCommand("select id_tournament, prize_pool, pp_teams, pp_dividing, game from tournament where end_date='" + date + "';", conn);
+                SQLiteDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    ex += FinishTournament(reader.GetInt32(0), reader.GetInt32(1), reader.GetInt32(2), reader.GetInt32(3), reader.GetInt32(4));
+                }
+                reader.Close();
+                command = new SQLiteCommand(ex, conn);
+                command.ExecuteReader();
+            }
+        }
+
+        private string FinishTournament(int idTournament, int prizePool, int ppTeams, int ppDividing, int game)
+        {
+            TournamentStandings standings;
+            string ret = "";
+            using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + DatabaseName + ";"))
+            {
+                conn.Open();
+                standings = new TournamentStandings(DatabaseName, idTournament);
+                SQLiteCommand command2 = new SQLiteCommand("select m.id_teamxsection_home, m.id_teamxsection_away, m.home_score, m.away_score from '" + date.Substring(0,4) + "match" + game + "' m where id_tournament=" + idTournament + ";", conn);
+                SQLiteDataReader reader2 = command2.ExecuteReader();
+                while (reader2.Read())
+                {
+                    // výpočet pro tabulku
+                    standings.SetPlayedMatch(reader2.GetInt32(0), reader2.GetInt32(1), reader2.GetInt32(2), reader2.GetInt32(3));
+                }
+                reader2.Close();
+                standings.CreateStandings();
+                if (ppDividing == 1)
+                {
+                    //přidat týmu, který má teamxsection
+                    for (int i = 0; i < standings.standings.Count; i++)
+                    {
+                        // najít jakému týmu patří a tomu vložit prize_pool/standings.standings.count
+                        //standings.standings.ElementAt(i).IdTeamSection;
+                    }
+                } else if (ppDividing == 2)
+                {
+                    double ppDiv = 1.0;
+                    for (int i = 0; i < standings.standings.Count-1; i++)
+                    {
+                        ppDiv /= 2;
+                        
+                        // najít jakému týmu patří a tomu vložit prize_pool*ppDiv
+                        //standings.standings.ElementAt(i).IdTeamSection;
+                    }
+                    // najít jakému týmu patří a tomu vložit prize_pool*ppDiv
+                    //standings.standings.ElementAt(standings.standings.Count - 1);
+                }
+                for (int i = 0; i < standings.standings.Count; i++)
+                {
+                    ret +="update tournament_token set id_teamxsection=" + standings.standings.ElementAt(i).IdTeamSection + " where id_tournament_from=" + idTournament + " and tournament_from_position=" + standings.standings.ElementAt(i).Position + ";";
+                    
+                }
+            }
+            return ret;
         }
 
         private void PlayAllOtherMatches()
@@ -382,186 +449,235 @@ namespace EsportManager
         {
             for (int tourToDraw = 0; tourToDraw < tournamentsToDraw.Count; tourToDraw++)
             {
-
-            
-            using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + DatabaseName + ";"))
-            {
-                conn.Open();
-                SQLiteCommand command = new SQLiteCommand("select start_date, playing_days, n_of_teams, end_date, game, system from tournament where id_tournament=" + tournamentsToDraw.ElementAt(tourToDraw) + ";", conn);
-                SQLiteDataReader reader = command.ExecuteReader();
-                reader.Read();
-                int game = reader.GetInt32(4);
-                int startYear = int.Parse(reader.GetString(0).Remove(4, 6));
-                int startMonth = int.Parse(reader.GetString(0).Remove(7, 3).Remove(0, 5));
-                int startDay = int.Parse(reader.GetString(0).Remove(0, 8));
-                int endYear = int.Parse(reader.GetString(3).Remove(4, 6));
-                int endMonth = int.Parse(reader.GetString(3).Remove(7, 3).Remove(0, 5));
-                int endDay = int.Parse(reader.GetString(3).Remove(0, 8));
-                DateTime startDate = new DateTime(startYear, startMonth, startDay);
-                DateTime endDate = new DateTime(endYear, endMonth, endDay);
-                int weeks = (int)Math.Ceiling((endDate - startDate).TotalDays / 7);
-                string playingDays = reader.GetString(1);
-                int system = reader.GetInt32(5);
-                int teams = reader.GetInt32(2);
-                bool oddTeams = teams % 2 == 1;
-                if (oddTeams)
+                using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + DatabaseName + ";"))
                 {
-                    teams++;
-                }
-                reader.Close();
-                int games = (teams - 1) * teams / 2; //single round robin, double až po losu
-                int[,] drawTeams = new int[teams / 2, 2];
-                // single round robin
-                for (int i = 0; i < teams / 2; i++)
-                {
-                    drawTeams[i, 0] = i;
-                    drawTeams[i, 1] = i + teams / 2;
-                }
-                // [počet kol,počet zápasů v kole]
-                int[,] draw = new int[teams - 1, teams];
-                for (int i = 0; i < teams - 1; i++)
-                {
-                    for (int j = 0; j < teams; j++)
+                    conn.Open();
+                    SQLiteCommand command = new SQLiteCommand("select start_date, playing_days, n_of_teams, end_date, game, system from tournament where id_tournament=" + tournamentsToDraw.ElementAt(tourToDraw) + ";", conn);
+                    SQLiteDataReader reader = command.ExecuteReader();
+                    reader.Read();
+                    int game = reader.GetInt32(4);
+                    int startYear = int.Parse(reader.GetString(0).Remove(4, 6));
+                    int startMonth = int.Parse(reader.GetString(0).Remove(7, 3).Remove(0, 5));
+                    int startDay = int.Parse(reader.GetString(0).Remove(0, 8));
+                    int endYear = int.Parse(reader.GetString(3).Remove(4, 6));
+                    int endMonth = int.Parse(reader.GetString(3).Remove(7, 3).Remove(0, 5));
+                    int endDay = int.Parse(reader.GetString(3).Remove(0, 8));
+                    DateTime startDate = new DateTime(startYear, startMonth, startDay);
+                    DateTime endDate = new DateTime(endYear, endMonth, endDay);
+                    int weeks = (int)Math.Ceiling((endDate - startDate).TotalDays / 7);
+                    string playingDays = reader.GetString(1);
+                    int system = reader.GetInt32(5);
+                    int teams = reader.GetInt32(2);
+                    bool oddTeams = teams % 2 == 1;
+                    int[,] finalDraw = null;
+                    
+                    reader.Close();
+                    if (system==1 || system == 2)
                     {
-                        if (j % 2 == 0)
+                        if (oddTeams)
                         {
-                            draw[i, j] = drawTeams[j / 2, 0];
+                            teams++;
                         }
+
+                        int games = (teams - 1) * teams / 2; //single round robin, double až po losu
+                        int[,] drawTeams = new int[teams / 2, 2];
+                        // single round robin
+                        for (int i = 0; i < teams / 2; i++)
+                        {
+                            drawTeams[i, 0] = i;
+                            drawTeams[i, 1] = i + teams / 2;
+                        }
+
+                        // [počet kol,počet zápasů v kole]
+                        int[,] draw = new int[teams - 1, teams];
+                        for (int i = 0; i < teams - 1; i++)
+                        {
+                            for (int j = 0; j < teams; j++)
+                            {
+                                if (j % 2 == 0)
+                                {
+                                    draw[i, j] = drawTeams[j / 2, 0];
+                                }
+                                else
+                                {
+                                    draw[i, j] = drawTeams[j / 2, 1];
+                                }
+                            }
+                            int temp = drawTeams[0, 1];
+                            for (int j = 0; j < teams / 2 - 1; j++)
+                            {
+                                drawTeams[j, 1] = drawTeams[j + 1, 1];
+                            }
+                            drawTeams[teams / 2 - 1, 1] = drawTeams[teams / 2 - 1, 0];
+                            for (int j = teams / 2 - 1; j > 1; j--)
+                            {
+                                drawTeams[j, 0] = drawTeams[j - 1, 0];
+                            }
+                            drawTeams[1, 0] = temp;
+                        }
+                        for (int i = 0; i < teams - 1; i++)
+                        {
+                            if (i % 2 == 1)
+                            {
+                                for (int j = 0; j < teams / 2; j++)
+                                {
+                                    int temp = draw[i, j * 2];
+                                    draw[i, j * 2] = draw[i, j * 2 + 1];
+                                    draw[i, j * 2 + 1] = temp;
+                                }
+                            }
+                        }
+                        // je double round robin
+                        if (system == 2)
+                        {
+                            if (oddTeams)
+                            {
+                                finalDraw = new int[(teams - 2) * (teams-1), 2];
+                            } else
+                            {
+                                finalDraw = new int[(teams - 1) * teams, 2];
+                            }
+                            
+                            int counter = 0;
+                            for (int i = 0; i < teams - 1; i++)
+                            {
+                                for (int j = 0; j < teams; j=j+2)
+                                {
+                                    if (!oddTeams || (draw[i, j] != teams - 1 && draw[i, j + 1] != teams - 1))
+                                    {
+                                        finalDraw[counter, 0] = draw[i, j];
+                                        finalDraw[counter, 1] = draw[i, j + 1];
+                                        finalDraw[counter + finalDraw.GetLength(0)/2, 0] = draw[i, j + 1];
+                                        finalDraw[counter + finalDraw.GetLength(0)/2, 1] = draw[i, j];
+                                        counter++;
+                                    }
+                                }
+                            }
+                        }
+                        // single round robin
                         else
                         {
-                            draw[i, j] = drawTeams[j / 2, 1];
+                            if (oddTeams)
+                            {
+                                finalDraw = new int[(teams - 2) * (teams - 1) / 2, 2];
+                            }
+                            else
+                            {
+                                finalDraw = new int[(teams - 1) * teams / 2, 2];
+                            }
+                            int counter = 0;
+                            for (int i = 0; i < teams - 1; i++)
+                            {
+                                for (int j = 0; j < teams / 2; j++)
+                                {
+                                    if (!oddTeams || (draw[i, j] != teams - 1 && draw[i, j + 1] != teams - 1))
+                                    {
+                                        finalDraw[counter, 0] = draw[i, j];
+                                        finalDraw[counter, 1] = draw[i, j + 1];
+                                        counter++;
+                                    }
+                                }
+                            }
                         }
-                    }
-                    int temp = drawTeams[0, 1];
-                    for (int j = 0; j < teams / 2 - 1; j++)
-                    {
-                        drawTeams[j, 1] = drawTeams[j + 1, 1];
-                    }
-                    drawTeams[teams / 2 - 1, 1] = drawTeams[teams / 2 - 1, 0];
-                    for (int j = teams / 2 - 1; j > 1; j--)
-                    {
-                        drawTeams[j, 0] = drawTeams[j - 1, 0];
-                    }
-                    drawTeams[1, 0] = temp;
-                }
-                for (int i = 0; i < teams - 1; i++)
-                {
-                    if (i % 2 == 1)
-                    {
-                        for (int j = 0; j < teams / 2; j++)
+                        if (oddTeams)
                         {
-                            int temp = draw[i, j * 2];
-                            draw[i, j * 2] = draw[i, j * 2 + 1];
-                            draw[i, j * 2 + 1] = temp;
+                            teams--;
                         }
                     }
-                }
+                    if (system == 3)
+                    {
+                        double b = 2;
+                        while (teams > b)
+                        {
+                            b = Math.Pow(b, 2);
+                        }
+                        int numOfByeTeams = (int)b - teams;
+                        for (int i = 0; i < b/2; i++)
+                        {
+                            if (i >= numOfByeTeams)
+                            {
 
-                // je double round robin
-                int[,] finalDraw = null;
-                if (system == 2)
-                {
-                    finalDraw = new int[(teams - 1) * teams, 2];
-                    int counter = 0;
-                    for (int i = 0; i < teams - 1; i++)
-                    {
-                        for (int j = 0; j < teams; j=j+2)
-                        {
-                            finalDraw[counter, 0] = draw[i, j];
-                            finalDraw[counter, 1] = draw[i, j + 1];
-                            finalDraw[counter + (teams - 1) * teams/2, 0] = draw[i, j + 1];
-                            finalDraw[counter + (teams - 1) * teams / 2, 1] = draw[i, j];
-                            counter++;
+                            }
                         }
                     }
-                }
-                else
-                {
-                    finalDraw = new int[(teams - 1) * teams / 2, 2];
-                    int counter = 0;
-                    for (int i = 0; i < teams - 1; i++)
+                    
+                    command = new SQLiteCommand("select id_teamxsection from tournament_token where id_tournament_to=" + tournamentsToDraw.ElementAt(tourToDraw) + " order by seed", conn);
+                    reader = command.ExecuteReader();
+                    int[] realIds = new int[teams];
+                    for (int i = 0; i < teams; i++)
                     {
-                        for (int j = 0; j < teams / 2; j++)
-                        {
-                            finalDraw[counter, 0] = draw[i, j];
-                            finalDraw[counter, 1] = draw[i, j + 1];
-                            counter++;
-                        }
+                        reader.Read();
+                        realIds[i] = reader.GetInt32(0);
                     }
-                }
-                command = new SQLiteCommand("select id_teamxsection from tournament_token where id_tournament_to=" + tournamentsToDraw.ElementAt(tourToDraw) + " order by seed", conn);
-                reader = command.ExecuteReader();
-                int[] realIds = new int[teams];
-                for (int i = 0; i < teams; i++)
-                {
-                    reader.Read();
-                    realIds[i] = reader.GetInt32(0);
-                }
-                reader.Close();
-                DateTime date = startDate;
-                int[] daysPlaying = new int[7];
-                for (int i = 0; i < daysPlaying.Length; i++)
-                {
-                    daysPlaying[i] = int.Parse(playingDays.Substring(i, 1));
-                }
-                int matchCounter = 0;
-                while (date.CompareTo(endDate) <= 0)
-                {
-                    int dayOfWeek;
-                    switch (date.DayOfWeek)
+                    reader.Close();
+                    DateTime date = startDate;
+                    int[] daysPlaying = new int[7];
+                    for (int i = 0; i < daysPlaying.Length; i++)
                     {
-                        case DayOfWeek.Sunday:
-                            dayOfWeek = 6;
-                            break;
-                        case DayOfWeek.Monday:
-                            dayOfWeek = 0;
-                            break;
-                        case DayOfWeek.Tuesday:
-                            dayOfWeek = 1;
-                            break;
-                        case DayOfWeek.Wednesday:
-                            dayOfWeek = 2;
-                            break;
-                        case DayOfWeek.Thursday:
-                            dayOfWeek = 3;
-                            break;
-                        case DayOfWeek.Friday:
-                            dayOfWeek = 4;
-                            break;
-                        case DayOfWeek.Saturday:
-                            dayOfWeek = 5;
-                            break;
-                        default:
-                            dayOfWeek = -1;
-                            break;
+                        daysPlaying[i] = int.Parse(playingDays.Substring(i, 1));
                     }
-                    if (daysPlaying[dayOfWeek] != 0)
+                    int matchCounter = 0;
+                    while (date.CompareTo(endDate) <= 0)
                     {
-                        int matchesInDay = daysPlaying[dayOfWeek];
-                        string separator = "-";
-                        string separator2 = "-";
-                        if (date.Month < 10)
+                        int dayOfWeek;
+                        switch (date.DayOfWeek)
                         {
-                            separator += "0";
+                            case DayOfWeek.Sunday:
+                                dayOfWeek = 6;
+                                break;
+                            case DayOfWeek.Monday:
+                                dayOfWeek = 0;
+                                break;
+                            case DayOfWeek.Tuesday:
+                                dayOfWeek = 1;
+                                break;
+                            case DayOfWeek.Wednesday:
+                                dayOfWeek = 2;
+                                break;
+                            case DayOfWeek.Thursday:
+                                dayOfWeek = 3;
+                                break;
+                            case DayOfWeek.Friday:
+                                dayOfWeek = 4;
+                                break;
+                            case DayOfWeek.Saturday:
+                                dayOfWeek = 5;
+                                break;
+                            default:
+                                dayOfWeek = -1;
+                                break;
                         }
-                        if (date.Day < 10)
+                        if (daysPlaying[dayOfWeek] != 0)
                         {
-                            separator2 += "0";
+                            int matchesInDay = daysPlaying[dayOfWeek];
+                            string separator = "-";
+                            string separator2 = "-";
+                            if (date.Month < 10)
+                            {
+                                separator += "0";
+                            }
+                            if (date.Day < 10)
+                            {
+                                separator2 += "0";
+                            }
+                            string stringDate = date.Year + separator + date.Month + separator2 + date.Day;
+                            for (int i = 0; i < matchesInDay; i++)
+                            {
+                                if (matchCounter < finalDraw.GetLength(0))
+                                {
+                                    command = new SQLiteCommand("insert into '" + date.Year + "match" + game + "' ('id_teamxsection_home', 'id_teamxsection_away', 'match_date', 'id_tournament') values (" + realIds[finalDraw[matchCounter, 0]] + "," + realIds[finalDraw[matchCounter, 1]] + ",'" + stringDate + "'," + tournamentsToDraw.ElementAt(tourToDraw) + ");", conn);
+                                    command.ExecuteReader();
+                                    matchCounter++;
+                                }
+                                
+                            }
                         }
-                        string stringDate = date.Year + separator + date.Month + separator2 + date.Day;
-                        for (int i = 0; i < matchesInDay; i++)
-                        {
-                            command = new SQLiteCommand("insert into '" + date.Year + "match" + game + "' ('id_teamxsection_home', 'id_teamxsection_away', 'match_date', 'id_tournament') values (" + realIds[finalDraw[matchCounter, 0]] + "," + realIds[finalDraw[matchCounter, 1]] + ",'" + stringDate + "'," + tournamentsToDraw.ElementAt(tourToDraw) + ");", conn);
-                            command.ExecuteReader();
-                            matchCounter++;
-                        }
+                        date = date.AddDays(1);
                     }
-                    date = date.AddDays(1);
-                }
-                command = new SQLiteCommand("update tournament set drawn=1 where id_tournament=" + tournamentsToDraw.ElementAt(tourToDraw) + ";", conn);
-                command.ExecuteReader();
+                    command = new SQLiteCommand("update tournament set drawn=1 where id_tournament=" + tournamentsToDraw.ElementAt(tourToDraw) + ";", conn);
+                    command.ExecuteReader();
                     Console.WriteLine("HOTOVO " + tourToDraw);
-            }
+                }
             }
         }
 
@@ -988,6 +1104,8 @@ namespace EsportManager
         private void ShowTraining(object sender, RoutedEventArgs e)
         {
             Training win2 = new Training();
+            win2.Topmost = true;
+            this.IsEnabled = false;
             win2.Show();
         }
     }

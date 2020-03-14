@@ -33,7 +33,7 @@ namespace EsportManager
                 score = s;
             }
         }
-        List<TournamentStandings> standings = new List<TournamentStandings>();
+        TournamentStandings standings;
         List<MatchDataGrid> playedMatches = new List<MatchDataGrid>();
         string databaseName;
         int tournament;
@@ -114,25 +114,8 @@ namespace EsportManager
 
         private void CreateStandings()
         {
-            standings = standings.OrderByDescending(o => o.MatchesWon).ToList();
-            for (int i = 0; i < standings.Count; i++)
-            {
-                standings.ElementAt(i).Position = i + 1;
-            }
-            List<int> tournamentsColours = new List<int>();
-            using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
-            {
-                conn.Open();
-                SQLiteCommand command = new SQLiteCommand("select tournament.shortcut, tournament_from_position, tournament.id_tournament from tournament_token join tournament on tournament_token.id_tournament_to=tournament.id_tournament where id_tournament_from=" + tournament + ";", conn);
-                SQLiteDataReader reader = command.ExecuteReader();
-                
-                while (reader.Read())
-                {
-                    standings.ElementAt(reader.GetInt32(1)-1).TournamentTo = reader.GetString(0);
-                    tournamentsColours.Add(reader.GetInt32(2));
-                }
-            }
-            Standings.ItemsSource = standings;
+            standings.CreateStandings();
+            Standings.ItemsSource = standings.standings;
 
             /*foreach (TournamentStandings item in Standings.ItemsSource)
             {
@@ -150,6 +133,7 @@ namespace EsportManager
 
         private void SetPlayedMatches()
         {
+            
             int counter = 0;
             using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
             {
@@ -159,36 +143,7 @@ namespace EsportManager
                 while (reader.Read())
                 {
                     // výpočet pro tabulku
-                    for (int j = 0; j < standings.Count; j++)
-                    {
-                        if (reader.GetInt32(2) == standings.ElementAt(j).IdTeamSection)
-                        {
-                            if (reader.GetInt32(5) > reader.GetInt32(6))
-                            {
-                                standings.ElementAt(j).MatchesWon++;
-                            } else
-                            {
-                                standings.ElementAt(j).MatchesLost++;
-                            }
-                            standings.ElementAt(j).MatchesPlayed++;
-                            standings.ElementAt(j).MapsWon += reader.GetInt32(5);
-                            standings.ElementAt(j).MapsLost += reader.GetInt32(6);
-                        }
-                        else if (reader.GetInt32(3) == standings.ElementAt(j).IdTeamSection)
-                        {
-                            if (reader.GetInt32(6) > reader.GetInt32(5))
-                            {
-                                standings.ElementAt(j).MatchesWon++;
-                            }
-                            else
-                            {
-                                standings.ElementAt(j).MatchesLost++;
-                            }
-                            standings.ElementAt(j).MatchesPlayed++;
-                            standings.ElementAt(j).MapsWon += reader.GetInt32(6);
-                            standings.ElementAt(j).MapsLost += reader.GetInt32(5);
-                        }
-                    }
+                    standings.SetPlayedMatch(reader.GetInt32(2), reader.GetInt32(3), reader.GetInt32(5), reader.GetInt32(6));
                     // vizuální stránka
                     if (counter < 7)
                     {
@@ -256,13 +211,15 @@ namespace EsportManager
                 TournamentName.Content = reader.GetString(0);
                 idSection = reader.GetInt32(1);
                 reader.Close();
-                command = new SQLiteCommand("select tournament_token.id_teamxsection,team.name from tournament_token join teamxsection on teamxsection.id_teamxsection=tournament_token.id_teamxsection join team on team.id_team=teamxsection.id_team where id_tournament_to=" + tournament + ";", conn);
+                standings = new TournamentStandings(databaseName, tournament);
+                /*command = new SQLiteCommand("select tournament_token.id_teamxsection,team.name from tournament_token join teamxsection on teamxsection.id_teamxsection=tournament_token.id_teamxsection join team on team.id_team=teamxsection.id_team where id_tournament_to=" + tournament + ";", conn);
                 reader = command.ExecuteReader();
+                standings = new TournamentStandings(databaseName,tournament);
                 while (reader.Read())
                 {
-                    standings.Add(new TournamentStandings(reader.GetInt32(0), reader.GetString(1)));
+                    standings.standings.Add(new TournamentTeam(reader.GetInt32(0), reader.GetString(1)));
                 }
-                reader.Close();
+                reader.Close();*/
             }
         }
     }
