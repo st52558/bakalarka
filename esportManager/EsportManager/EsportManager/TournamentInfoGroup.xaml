@@ -27,18 +27,6 @@
                 <DataGridTextColumn Header="PM"
                           Binding="{Binding MapsLost}"/>
             </DataGrid.Columns>
-            <DataGrid.CellStyle>
-                <Style TargetType="{x:Type DataGridCell}">
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding TournamentTo}" Value="LEC2G">
-                            <Setter Property="Background" Value="AliceBlue" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding TournamentTo}" Value="LEC1P">
-                            <Setter Property="Background" Value="LightCyan" />
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </DataGrid.CellStyle>
         </DataGrid>
         <Label Name="TournamentName"  HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="10,10,0,0" VerticalAlignment="Top" Height="45" Width="440" FontSize="20"/>
         <TextBlock TextWrapping="WrapWithOverflow" HorizontalAlignment="Left" TextAlignment="Center" Text="Poslední odehrané zápasy" Margin="500,10,0,0" VerticalAlignment="Top" Height="45" Width="130" FontSize="14"/>
