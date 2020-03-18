@@ -303,7 +303,7 @@ namespace EsportManager
             using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + DatabaseName + ";"))
             {
                 conn.Open();
-                SQLiteCommand command = new SQLiteCommand("select id_tournament, start_date from tournament where start_date>'" + date + "' and drawn=0;", conn);
+                SQLiteCommand command = new SQLiteCommand("select id_tournament, start_date, n_of_teams from tournament where start_date>'" + date + "' and drawn=0;", conn);
                 SQLiteDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
@@ -312,13 +312,20 @@ namespace EsportManager
                     tournamentDay = int.Parse(reader.GetString(1).Remove(0, 8));
                     if (tournamentMonth <= curMonth + 1)
                     {
-                        tournamentsToDraw.Add(reader.GetInt32(0));
+                        SQLiteCommand command2 = new SQLiteCommand("select count(id_teamxsection) from tournament_token where id_tournament_to=" + reader.GetInt32(0) + ";", conn);
+                        SQLiteDataReader reader2 = command2.ExecuteReader();
+                        reader2.Read();
+                        if (reader.GetInt32(2) == reader2.GetInt32(0))
+                        {
+                            tournamentsToDraw.Add(reader.GetInt32(0));
+                        }
+                        reader2.Close();
                     }
                 }
                 reader.Close();
             }
             //už vím turnaje, které jsou potřeba nalosovat
-            //DrawTournaments(tournamentsToDraw);
+            DrawTournaments(tournamentsToDraw);
 
             // další den
             date = NextDay(date);
@@ -354,45 +361,11 @@ namespace EsportManager
         {
             TournamentStandings standings;
             string ret = "";
-            using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + DatabaseName + ";"))
+            standings = new TournamentStandings(DatabaseName, idTournament, prizePool, ppTeams, ppDividing);
+            for (int i = 0; i < standings.standings.Count; i++)
             {
-                conn.Open();
-                standings = new TournamentStandings(DatabaseName, idTournament);
-                SQLiteCommand command2 = new SQLiteCommand("select m.id_teamxsection_home, m.id_teamxsection_away, m.home_score, m.away_score from '" + date.Substring(0,4) + "match" + game + "' m where id_tournament=" + idTournament + ";", conn);
-                SQLiteDataReader reader2 = command2.ExecuteReader();
-                while (reader2.Read())
-                {
-                    // výpočet pro tabulku
-                    standings.SetPlayedMatch(reader2.GetInt32(0), reader2.GetInt32(1), reader2.GetInt32(2), reader2.GetInt32(3));
-                }
-                reader2.Close();
-                standings.CreateStandings();
-                if (ppDividing == 1)
-                {
-                    //přidat týmu, který má teamxsection
-                    for (int i = 0; i < standings.standings.Count; i++)
-                    {
-                        // najít jakému týmu patří a tomu vložit prize_pool/standings.standings.count
-                        //standings.standings.ElementAt(i).IdTeamSection;
-                    }
-                } else if (ppDividing == 2)
-                {
-                    double ppDiv = 1.0;
-                    for (int i = 0; i < standings.standings.Count-1; i++)
-                    {
-                        ppDiv /= 2;
-                        
-                        // najít jakému týmu patří a tomu vložit prize_pool*ppDiv
-                        //standings.standings.ElementAt(i).IdTeamSection;
-                    }
-                    // najít jakému týmu patří a tomu vložit prize_pool*ppDiv
-                    //standings.standings.ElementAt(standings.standings.Count - 1);
-                }
-                for (int i = 0; i < standings.standings.Count; i++)
-                {
-                    ret +="update tournament_token set id_teamxsection=" + standings.standings.ElementAt(i).IdTeamSection + " where id_tournament_from=" + idTournament + " and tournament_from_position=" + standings.standings.ElementAt(i).Position + ";";
-                    
-                }
+                ret += "update tournament_token set id_teamxsection=" + standings.standings.ElementAt(i).IdTeamSection + " where id_tournament_from=" + idTournament + " and tournament_from_position=" + standings.standings.ElementAt(i).Position + ";";
+                ret += "update team set budget = budget + " + standings.standings.ElementAt(i).PrizePool + " where id_team=" + standings.standings.ElementAt(i).IdTeam + ";";
             }
             return ret;
         }
@@ -470,7 +443,9 @@ namespace EsportManager
                     int teams = reader.GetInt32(2);
                     bool oddTeams = teams % 2 == 1;
                     int[,] finalDraw = null;
-                    
+                    int[,] futureMatches = null;
+
+
                     reader.Close();
                     if (system==1 || system == 2)
                     {
@@ -586,24 +561,91 @@ namespace EsportManager
                     }
                     if (system == 3)
                     {
-                        double b = 2;
-                        while (teams > b)
+                        int teamsInRound = 2;
+                        while (teams > teamsInRound)
                         {
-                            b = Math.Pow(b, 2);
+                            teamsInRound = teamsInRound * 2;
                         }
-                        int numOfByeTeams = (int)b - teams;
-                        for (int i = 0; i < b/2; i++)
+                        int numOfByeTeams = teamsInRound - teams;
+                        // lost 1. kola play-off
+                        finalDraw = new int[(teamsInRound / 2)-numOfByeTeams, 2];
+                        int counter = 0;
+                        for (int i = teamsInRound / 2; i > numOfByeTeams; i--)
                         {
-                            if (i >= numOfByeTeams)
+                            finalDraw[counter, 0] = teamsInRound - i;
+                            finalDraw[counter, 1] = i - 1;
+                            counter++;
+                        }
+                        // při 6 týmech finaldraw=2,5;3,4
+                        // los ostatních kol
+                        futureMatches = new int[(teamsInRound / 2) - 1, 6];
+                        // 0-zápas který určí domácí tým
+                        // 1-zápas který určí hostující tým
+                        // 2-tým který bude domácí
+                        // 3-tým který bude hostující
+                        int byeTeamsUsed = 0;
+                        int finalDrawUsed = 0;
+                        int lastByeTeam = numOfByeTeams - 1;
+                        int lastFinalDraw = finalDraw.GetLength(0) - 1;
+                        int futureMatchesCounter = 0;
+                        for (int i = 0; i < (teamsInRound/2)-1; i++)
+                        {
+                            // bye tým bude hrát proti už hrajícímu týmu
+                            if (byeTeamsUsed <= lastByeTeam && finalDrawUsed <= lastFinalDraw)
                             {
-
+                                futureMatches[i, 0] = -1;
+                                futureMatches[i, 1] = lastFinalDraw;
+                                futureMatches[i, 2] = byeTeamsUsed;
+                                futureMatches[i, 3] = -1;
+                                futureMatches[i, 4] = -1;
+                                futureMatches[i, 5] = -1;
+                                byeTeamsUsed++;
+                                lastFinalDraw--;
+                            }
+                            // bye tým bude hrát proti jinému bye týmu
+                            else if (byeTeamsUsed < lastByeTeam)
+                            {
+                                futureMatches[i, 0] = -1;
+                                futureMatches[i, 1] = -1;
+                                futureMatches[i, 2] = byeTeamsUsed;
+                                futureMatches[i, 3] = lastByeTeam;
+                                futureMatches[i, 4] = -1;
+                                futureMatches[i, 5] = -1;
+                                byeTeamsUsed++;
+                                lastByeTeam--;
+                            } 
+                            // doplnění zbytku hrajících týmů v 1. kole
+                            else if (finalDrawUsed < lastFinalDraw)
+                            {
+                                futureMatches[i, 0] = finalDrawUsed;
+                                futureMatches[i, 1] = lastFinalDraw;
+                                futureMatches[i, 2] = -1;
+                                futureMatches[i, 3] = -1;
+                                futureMatches[i, 4] = -1;
+                                futureMatches[i, 5] = -1;
+                                finalDrawUsed++;
+                                lastFinalDraw--;
+                            }
+                            else
+                            {
+                                futureMatches[i, 0] = -1;
+                                futureMatches[i, 1] = -1;
+                                futureMatches[i, 2] = -1;
+                                futureMatches[i, 3] = -1;
+                                futureMatches[i, 4] = futureMatchesCounter;
+                                futureMatchesCounter++;
+                                futureMatches[i, 5] = futureMatchesCounter;
+                                futureMatchesCounter++;
                             }
                         }
+
                     }
                     
                     command = new SQLiteCommand("select id_teamxsection from tournament_token where id_tournament_to=" + tournamentsToDraw.ElementAt(tourToDraw) + " order by seed", conn);
                     reader = command.ExecuteReader();
                     int[] realIds = new int[teams];
+                    int[] realIdMatches = new int[finalDraw.GetLength(0)];
+                    int[] realIdFuture = new int[futureMatches.GetLength(0)];
                     for (int i = 0; i < teams; i++)
                     {
                         reader.Read();
@@ -661,12 +703,58 @@ namespace EsportManager
                                 separator2 += "0";
                             }
                             string stringDate = date.Year + separator + date.Month + separator2 + date.Day;
+                            int typeH=0, typeA=0, idH = 0,idA = 0;
                             for (int i = 0; i < matchesInDay; i++)
                             {
                                 if (matchCounter < finalDraw.GetLength(0))
                                 {
                                     command = new SQLiteCommand("insert into '" + date.Year + "match" + game + "' ('id_teamxsection_home', 'id_teamxsection_away', 'match_date', 'id_tournament') values (" + realIds[finalDraw[matchCounter, 0]] + "," + realIds[finalDraw[matchCounter, 1]] + ",'" + stringDate + "'," + tournamentsToDraw.ElementAt(tourToDraw) + ");", conn);
                                     command.ExecuteReader();
+                                    command = new SQLiteCommand("select last_insert_rowid()",conn);
+                                    reader = command.ExecuteReader();
+                                    reader.Read();
+                                    realIdMatches[matchCounter] = reader.GetInt32(0);
+                                    reader.Close();
+                                    matchCounter++;
+                                } else if (matchCounter < finalDraw.GetLength(0) + futureMatches.GetLength(0))
+                                {
+                                    if (futureMatches[matchCounter - finalDraw.GetLength(0), 0] != -1)
+                                    {
+                                        typeH = 1;
+                                        idH = realIdMatches[futureMatches[matchCounter - finalDraw.GetLength(0), 0]];
+                                    } 
+                                    else if (futureMatches[matchCounter - finalDraw.GetLength(0), 2] != -1)
+                                    {
+                                        typeH = 2;
+                                        idH = realIds[futureMatches[matchCounter - finalDraw.GetLength(0), 2]];
+                                    } 
+                                    else if (futureMatches[matchCounter - finalDraw.GetLength(0), 4] != -1)
+                                    {
+                                        typeH = 3;
+                                        idH = realIdFuture[futureMatches[matchCounter - finalDraw.GetLength(0), 4]];
+                                    }
+                                    if (futureMatches[matchCounter - finalDraw.GetLength(0), 1] != -1)
+                                    {
+                                        typeA = 1;
+                                        idA = realIdMatches[futureMatches[matchCounter - finalDraw.GetLength(0), 1]];
+                                    }
+                                    else if (futureMatches[matchCounter - finalDraw.GetLength(0), 3] != -1)
+                                    {
+                                        typeA = 2;
+                                        idA = realIds[futureMatches[matchCounter - finalDraw.GetLength(0), 3]];
+                                    }
+                                    else if (futureMatches[matchCounter - finalDraw.GetLength(0), 5] != -1)
+                                    {
+                                        typeA = 3;
+                                        idA = realIdFuture[futureMatches[matchCounter - finalDraw.GetLength(0), 5]];
+                                    }
+                                    command = new SQLiteCommand("insert into '" + date.Year + "future_match" + game + "' ('id_home', 'id_away', 'type_home', 'type_away', 'date') values (" + idH + "," + idA + "," + typeH + "," + typeA + ",'" + stringDate + "');", conn);
+                                    command.ExecuteReader();
+                                    command = new SQLiteCommand("select last_insert_rowid()", conn);
+                                    reader = command.ExecuteReader();
+                                    reader.Read();
+                                    realIdFuture[matchCounter - finalDraw.GetLength(0)] = reader.GetInt32(0);
+                                    reader.Close();
                                     matchCounter++;
                                 }
                                 

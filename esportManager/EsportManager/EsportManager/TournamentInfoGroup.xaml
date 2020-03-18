@@ -26,6 +26,8 @@
                           Binding="{Binding MapsWon}"/>
                 <DataGridTextColumn Header="PM"
                           Binding="{Binding MapsLost}"/>
+                <DataGridTextColumn Header="PrizePool"
+                          Binding="{Binding PrizePool}"/>
             </DataGrid.Columns>
         </DataGrid>
         <Label Name="TournamentName"  HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="10,10,0,0" VerticalAlignment="Top" Height="45" Width="440" FontSize="20"/>

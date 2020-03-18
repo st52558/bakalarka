@@ -114,21 +114,7 @@ namespace EsportManager
 
         private void CreateStandings()
         {
-            standings.CreateStandings();
             Standings.ItemsSource = standings.standings;
-
-            /*foreach (TournamentStandings item in Standings.ItemsSource)
-            {
-                var row = Standings.ItemContainerGenerator.ContainerFromItem(item) as DataGridRow;
-                if (item.TournamentTo == "LEC2G")
-                {
-                    row.Background = Brushes.Pink;
-                }
-                else
-                { 
-                    row.Background = Brushes.YellowGreen;
-                }
-            }*/
         }
 
         private void SetPlayedMatches()
@@ -205,21 +191,13 @@ namespace EsportManager
             using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
             {
                 conn.Open();
-                SQLiteCommand command = new SQLiteCommand("select name,game from tournament where id_tournament=" + tournament + ";", conn);
+                SQLiteCommand command = new SQLiteCommand("select name,game,prize_pool,pp_teams,pp_dividing from tournament where id_tournament=" + tournament + ";", conn);
                 SQLiteDataReader reader = command.ExecuteReader();
                 reader.Read();
                 TournamentName.Content = reader.GetString(0);
                 idSection = reader.GetInt32(1);
+                standings = new TournamentStandings(databaseName, tournament, reader.GetInt32(2), reader.GetInt32(3), reader.GetInt32(4));
                 reader.Close();
-                standings = new TournamentStandings(databaseName, tournament);
-                /*command = new SQLiteCommand("select tournament_token.id_teamxsection,team.name from tournament_token join teamxsection on teamxsection.id_teamxsection=tournament_token.id_teamxsection join team on team.id_team=teamxsection.id_team where id_tournament_to=" + tournament + ";", conn);
-                reader = command.ExecuteReader();
-                standings = new TournamentStandings(databaseName,tournament);
-                while (reader.Read())
-                {
-                    standings.standings.Add(new TournamentTeam(reader.GetInt32(0), reader.GetString(1)));
-                }
-                reader.Close();*/
             }
         }
     }
