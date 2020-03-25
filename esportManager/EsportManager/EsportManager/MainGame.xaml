@@ -23,7 +23,7 @@
             </MenuItem>
             <MenuItem Header="Tým">
                 <MenuItem Name="Sponsors" Header="Sponzoři" Click="ShowSponsors" />
-                <MenuItem Header="Přehled" />
+                <MenuItem Name="Overview" Header="Přehled" Click="ShowOverview" />
                 <MenuItem Header="Trénink" Click="ShowTraining" />
                 <MenuItem Header="Cestování" />
             </MenuItem>
@@ -42,38 +42,308 @@
         <TabControl Name="SectionTabs" Margin="0,0,0,0" DockPanel.Dock="Top">
             <TabItem Name="Section1">
                 <Grid Name="Section1Body">
-                    <DataGrid FontSize="12" Name="Section1PlayersList" HorizontalAlignment="Right" Width="300" Margin="0,0,20,0" IsReadOnly="True" CanUserDeleteRows="False" CanUserAddRows="False" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="True"/>
-                    <DataGrid FontSize="12" Name="Section1TournamentsList" HorizontalAlignment="Right" Width="300" Margin="0,0,340,0" IsReadOnly="True" CanUserAddRows="False" CanUserReorderColumns="True" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="True"/>
+                    <DataGrid FontSize="12" Name="Section1PlayersList" HorizontalAlignment="Right" Width="300" Margin="0,0,20,0" IsReadOnly="True" CanUserDeleteRows="False" CanUserAddRows="False" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="False" AutoGenerateColumns="False" MouseDoubleClick="OpenPlayer">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Pozice"
+                          Binding="{Binding PositionName}"/>
+                            <DataGridTextColumn Header="Nick"
+                          Binding="{Binding Nick}"/>
+                            <DataGridTextColumn Header="Jméno"
+                          Binding="{Binding Name}"/>
+                            <DataGridTextColumn Header="Příjmení"
+                          Binding="{Binding Surname}"/>
+                            <DataGridTextColumn Header="E"
+                          Binding="{Binding Energy}"/>
+                        </DataGrid.Columns>
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding PositionName}" Value="Trenér">
+                                        <Setter Property="Background" Value="LightSeaGreen"></Setter>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.RowStyle>
+                    </DataGrid>
+                    <DataGrid FontSize="12" Name="Section1TournamentsList" HorizontalAlignment="Right" Width="300" Margin="0,0,340,0" IsReadOnly="True" CanUserAddRows="False" CanUserReorderColumns="True" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="False" AutoGenerateColumns="False" MouseDoubleClick="OpenTournament">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Datum"
+                          Binding="{Binding Date}"/>
+                            <DataGridTextColumn Header="Soupeř"
+                          Binding="{Binding OpponentShortcut}"/>
+                            <DataGridTextColumn Header="Místo"
+                          Binding="{Binding City}"/>
+                            <DataGridTextColumn Header="Turnaj"
+                          Binding="{Binding Tournament}"/>
+                        </DataGrid.Columns>
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Won}" Value="1">
+                                        <Setter Property="Background" Value="LightSeaGreen"></Setter>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Won}" Value="2">
+                                        <Setter Property="Background" Value="LightSalmon"></Setter>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.RowStyle>
+                    </DataGrid>
                 </Grid>
             </TabItem>
             <TabItem Name="Section2">
                 <Grid Name="Section2Body">
-                    <DataGrid FontSize="12" Name="Section2PlayersList" HorizontalAlignment="Right" Width="300" Margin="0,0,20,0" IsReadOnly="True" CanUserDeleteRows="False" CanUserAddRows="False" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="True"/>
-                    <DataGrid FontSize="12" Name="Section2TournamentsList" HorizontalAlignment="Right" Width="300" Margin="0,0,340,0" IsReadOnly="True" CanUserAddRows="False" CanUserReorderColumns="True" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="True"/>
+                    <DataGrid FontSize="12" Name="Section2PlayersList" HorizontalAlignment="Right" Width="300" Margin="0,0,20,0" IsReadOnly="True" CanUserDeleteRows="False" CanUserAddRows="False" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="False" AutoGenerateColumns="False" MouseDoubleClick="OpenPlayer">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Pozice"
+                          Binding="{Binding PositionName}"/>
+                            <DataGridTextColumn Header="Nick"
+                          Binding="{Binding Nick}"/>
+                            <DataGridTextColumn Header="Jméno"
+                          Binding="{Binding Name}"/>
+                            <DataGridTextColumn Header="Příjmení"
+                          Binding="{Binding Surname}"/>
+                            <DataGridTextColumn Header="E"
+                          Binding="{Binding Energy}"/>
+                        </DataGrid.Columns>
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding PositionName}" Value="Trenér">
+                                        <Setter Property="Background" Value="LightSeaGreen"></Setter>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.RowStyle>
+                    </DataGrid>
+                    <DataGrid FontSize="12" Name="Section2TournamentsList" HorizontalAlignment="Right" Width="300" Margin="0,0,340,0" IsReadOnly="True" CanUserAddRows="False" CanUserReorderColumns="True" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="False" AutoGenerateColumns="False" MouseDoubleClick="OpenTournament">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Datum"
+                          Binding="{Binding Date}"/>
+                            <DataGridTextColumn Header="Soupeř"
+                          Binding="{Binding OpponentShortcut}"/>
+                            <DataGridTextColumn Header="Místo"
+                          Binding="{Binding City}"/>
+                            <DataGridTextColumn Header="Turnaj"
+                          Binding="{Binding Tournament}"/>
+                        </DataGrid.Columns>
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Won}" Value="1">
+                                        <Setter Property="Background" Value="LightSeaGreen"></Setter>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Won}" Value="2">
+                                        <Setter Property="Background" Value="LightSalmon"></Setter>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.RowStyle>
+                    </DataGrid>
                 </Grid>
             </TabItem>
             <TabItem Name="Section3">
                 <Grid Name="Section3Body">
-                    <DataGrid FontSize="12" Name="Section3PlayersList" HorizontalAlignment="Right" Width="300" Margin="0,0,20,0" IsReadOnly="True" CanUserDeleteRows="False" CanUserAddRows="False" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="True"/>
-                    <DataGrid FontSize="12" Name="Section3TournamentsList" HorizontalAlignment="Right" Width="300" Margin="0,0,340,0" IsReadOnly="True" CanUserAddRows="False" CanUserReorderColumns="True" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="True"/>
+                    <DataGrid FontSize="12" Name="Section3PlayersList" HorizontalAlignment="Right" Width="300" Margin="0,0,20,0" IsReadOnly="True" CanUserDeleteRows="False" CanUserAddRows="False" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="False" AutoGenerateColumns="False" MouseDoubleClick="OpenPlayer">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Pozice"
+                          Binding="{Binding PositionName}"/>
+                            <DataGridTextColumn Header="Nick"
+                          Binding="{Binding Nick}"/>
+                            <DataGridTextColumn Header="Jméno"
+                          Binding="{Binding Name}"/>
+                            <DataGridTextColumn Header="Příjmení"
+                          Binding="{Binding Surname}"/>
+                            <DataGridTextColumn Header="E"
+                          Binding="{Binding Energy}"/>
+                        </DataGrid.Columns>
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding PositionName}" Value="Trenér">
+                                        <Setter Property="Background" Value="LightSeaGreen"></Setter>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.RowStyle>
+                    </DataGrid>
+                    <DataGrid FontSize="12" Name="Section3TournamentsList" HorizontalAlignment="Right" Width="300" Margin="0,0,340,0" IsReadOnly="True" CanUserAddRows="False" CanUserReorderColumns="True" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="False" AutoGenerateColumns="False" MouseDoubleClick="OpenTournament">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Datum"
+                          Binding="{Binding Date}"/>
+                            <DataGridTextColumn Header="Soupeř"
+                          Binding="{Binding OpponentShortcut}"/>
+                            <DataGridTextColumn Header="Místo"
+                          Binding="{Binding City}"/>
+                            <DataGridTextColumn Header="Turnaj"
+                          Binding="{Binding Tournament}"/>
+                        </DataGrid.Columns>
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Won}" Value="1">
+                                        <Setter Property="Background" Value="LightSeaGreen"></Setter>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Won}" Value="2">
+                                        <Setter Property="Background" Value="LightSalmon"></Setter>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.RowStyle>
+                    </DataGrid>
                 </Grid>
             </TabItem>
             <TabItem Name="Section4">
                 <Grid Name="Section4Body">
-                    <DataGrid FontSize="12" Name="Section4PlayersList" HorizontalAlignment="Right" Width="300" Margin="0,0,20,0" IsReadOnly="True" CanUserDeleteRows="False" CanUserAddRows="False" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="True"/>
-                    <DataGrid FontSize="12" Name="Section4TournamentsList" HorizontalAlignment="Right" Width="300" Margin="0,0,340,0" IsReadOnly="True" CanUserAddRows="False" CanUserReorderColumns="True" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="True"/>
+                    <DataGrid FontSize="12" Name="Section4PlayersList" HorizontalAlignment="Right" Width="300" Margin="0,0,20,0" IsReadOnly="True" CanUserDeleteRows="False" CanUserAddRows="False" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="False" AutoGenerateColumns="False" MouseDoubleClick="OpenPlayer">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Pozice"
+                          Binding="{Binding PositionName}"/>
+                            <DataGridTextColumn Header="Nick"
+                          Binding="{Binding Nick}"/>
+                            <DataGridTextColumn Header="Jméno"
+                          Binding="{Binding Name}"/>
+                            <DataGridTextColumn Header="Příjmení"
+                          Binding="{Binding Surname}"/>
+                            <DataGridTextColumn Header="E"
+                          Binding="{Binding Energy}"/>
+                        </DataGrid.Columns>
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding PositionName}" Value="Trenér">
+                                        <Setter Property="Background" Value="LightSeaGreen"></Setter>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.RowStyle>
+                    </DataGrid>
+                    <DataGrid FontSize="12" Name="Section4TournamentsList" HorizontalAlignment="Right" Width="300" Margin="0,0,340,0" IsReadOnly="True" CanUserAddRows="False" CanUserReorderColumns="True" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="False" AutoGenerateColumns="False" MouseDoubleClick="OpenTournament">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Datum"
+                          Binding="{Binding Date}"/>
+                            <DataGridTextColumn Header="Soupeř"
+                          Binding="{Binding OpponentShortcut}"/>
+                            <DataGridTextColumn Header="Místo"
+                          Binding="{Binding City}"/>
+                            <DataGridTextColumn Header="Turnaj"
+                          Binding="{Binding Tournament}"/>
+                        </DataGrid.Columns>
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Won}" Value="1">
+                                        <Setter Property="Background" Value="LightSeaGreen"></Setter>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Won}" Value="2">
+                                        <Setter Property="Background" Value="LightSalmon"></Setter>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.RowStyle>
+                    </DataGrid>
                 </Grid>
             </TabItem>
             <TabItem Name="Section5">
                 <Grid Name="Section5Body">
-                    <DataGrid FontSize="12" Name="Section5PlayersList" HorizontalAlignment="Right" Width="300" Margin="0,0,20,0" IsReadOnly="True" CanUserDeleteRows="False" CanUserAddRows="False" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="True"/>
-                    <DataGrid FontSize="12" Name="Section5TournamentsList" HorizontalAlignment="Right" Width="300" Margin="0,0,340,0" IsReadOnly="True" CanUserAddRows="False" CanUserReorderColumns="True" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="True"/>
+                    <DataGrid FontSize="12" Name="Section5PlayersList" HorizontalAlignment="Right" Width="300" Margin="0,0,20,0" IsReadOnly="True" CanUserDeleteRows="False" CanUserAddRows="False" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="False" AutoGenerateColumns="False" MouseDoubleClick="OpenPlayer">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Pozice"
+                          Binding="{Binding PositionName}"/>
+                            <DataGridTextColumn Header="Nick"
+                          Binding="{Binding Nick}"/>
+                            <DataGridTextColumn Header="Jméno"
+                          Binding="{Binding Name}"/>
+                            <DataGridTextColumn Header="Příjmení"
+                          Binding="{Binding Surname}"/>
+                            <DataGridTextColumn Header="E"
+                          Binding="{Binding Energy}"/>
+                        </DataGrid.Columns>
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding PositionName}" Value="Trenér">
+                                        <Setter Property="Background" Value="LightSeaGreen"></Setter>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.RowStyle>
+                    </DataGrid>
+                    <DataGrid FontSize="12" Name="Section5TournamentsList" HorizontalAlignment="Right" Width="300" Margin="0,0,340,0" IsReadOnly="True" CanUserAddRows="False" CanUserReorderColumns="True" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="False" AutoGenerateColumns="False" MouseDoubleClick="OpenTournament">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Datum"
+                          Binding="{Binding Date}"/>
+                            <DataGridTextColumn Header="Soupeř"
+                          Binding="{Binding OpponentShortcut}"/>
+                            <DataGridTextColumn Header="Místo"
+                          Binding="{Binding City}"/>
+                            <DataGridTextColumn Header="Turnaj"
+                          Binding="{Binding Tournament}"/>
+                        </DataGrid.Columns>
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Won}" Value="1">
+                                        <Setter Property="Background" Value="LightSeaGreen"></Setter>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Won}" Value="2">
+                                        <Setter Property="Background" Value="LightSalmon"></Setter>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.RowStyle>
+                    </DataGrid>
                 </Grid>
             </TabItem>
             <TabItem Name="Section6">
                 <Grid Name="Section6Body">
-                    <DataGrid FontSize="12" Name="Section6PlayersList" HorizontalAlignment="Right" Width="300" Margin="0,0,20,0" IsReadOnly="True" CanUserDeleteRows="False" CanUserAddRows="False" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="True"/>
-                    <DataGrid FontSize="12" Name="Section6TournamentsList" HorizontalAlignment="Right" Width="300" Margin="0,0,340,0" IsReadOnly="True" CanUserAddRows="False" CanUserReorderColumns="True" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="True"/>
+                    <DataGrid FontSize="12" Name="Section6PlayersList" HorizontalAlignment="Right" Width="300" Margin="0,0,20,0" IsReadOnly="True" CanUserDeleteRows="False" CanUserAddRows="False" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="False" AutoGenerateColumns="False" MouseDoubleClick="OpenPlayer">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Pozice"
+                          Binding="{Binding PositionName}"/>
+                            <DataGridTextColumn Header="Nick"
+                          Binding="{Binding Nick}"/>
+                            <DataGridTextColumn Header="Jméno"
+                          Binding="{Binding Name}"/>
+                            <DataGridTextColumn Header="Příjmení"
+                          Binding="{Binding Surname}"/>
+                            <DataGridTextColumn Header="E"
+                          Binding="{Binding Energy}"/>
+                        </DataGrid.Columns>
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding PositionName}" Value="Trenér">
+                                        <Setter Property="Background" Value="LightSeaGreen"></Setter>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.RowStyle>
+                    </DataGrid>
+                    <DataGrid FontSize="12" Name="Section6TournamentsList" HorizontalAlignment="Right" Width="300" Margin="0,0,340,0" IsReadOnly="True" CanUserAddRows="False" CanUserReorderColumns="True" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="False" AutoGenerateColumns="False" MouseDoubleClick="OpenTournament">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Datum"
+                          Binding="{Binding Date}"/>
+                            <DataGridTextColumn Header="Soupeř"
+                          Binding="{Binding OpponentShortcut}"/>
+                            <DataGridTextColumn Header="Místo"
+                          Binding="{Binding City}"/>
+                            <DataGridTextColumn Header="Turnaj"
+                          Binding="{Binding Tournament}"/>
+                        </DataGrid.Columns>
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Won}" Value="1">
+                                        <Setter Property="Background" Value="LightSeaGreen"></Setter>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Won}" Value="2">
+                                        <Setter Property="Background" Value="LightSalmon"></Setter>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.RowStyle>
+                    </DataGrid>
                 </Grid>
             </TabItem>
 

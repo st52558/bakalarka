@@ -10,9 +10,9 @@
         <Label  Content="Název hry" HorizontalAlignment="Left" Margin="39,26,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.593,-1.405"/>
         <Label Content="Výběr týmu" HorizontalAlignment="Center" Margin="0,160,0,0" VerticalAlignment="Top"/>
         <TextBox Name="GameNameTB" HorizontalAlignment="Left" Height="23" Margin="112,29,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" TextChanged="GameNameChange" />
-        <ComboBox Name="NationsCB" HorizontalAlignment="Center" Margin="0,186,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="NationChangeComboBox"/>
-        <TextBox Name="TeamNameTW" HorizontalAlignment="Center" Height="23" Margin="0,223,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" TextChanged="TeamNameChangeTextView"/>
-        <ListBox Name="TeamListLB" HorizontalAlignment="Center" Height="155" Margin="0,251,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="TeamListLBClickInto" MouseDown="TeamListLB_MouseDown"/>
+        <ComboBox Name="NationsCB" HorizontalAlignment="Center" Margin="0,186,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="NationChangeComboBox" IsEnabled="False"/>
+        <TextBox Name="TeamNameTW" HorizontalAlignment="Center" Height="23" Margin="0,223,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" TextChanged="TeamNameChangeTextView" IsEnabled="False"/>
+        <ListBox Name="TeamListLB" HorizontalAlignment="Center" Height="155" Margin="0,251,0,0" VerticalAlignment="Top" Width="200" SelectionChanged="TeamListLBClickInto" MouseDown="TeamListLB_MouseDown"/>
         <Button Name="StartButton" Content="Uložit a spustit" HorizontalAlignment="Center" Margin="0,431,0,0" VerticalAlignment="Top" Width="96" Click="StartGame"/>
         <Label Content="Výběr databáze týmů" HorizontalAlignment="Center" Margin="0,81,0,0" VerticalAlignment="Top"/>
         <ComboBox Name="DatabaseComboBox" HorizontalAlignment="Center" Margin="0,112,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="DatabaseChanged"/>

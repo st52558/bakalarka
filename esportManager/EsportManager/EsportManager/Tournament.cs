@@ -18,6 +18,8 @@ namespace EsportManager
         public string City { get; set; }
         public int TokenValue { get; set; }
         public bool Drawn { get; set; }
+        public int IdSection { get; set; }
+        public string SectionName { get; set; }
 
         public Tournament(int iD, string shortcut, string dateFrom, string dateTo, int cancelFee)
         {
@@ -38,6 +40,11 @@ namespace EsportManager
             City = city;
             TokenValue = tokenValue;
             Drawn = drawn;
+        }
+
+        public Tournament()
+        {
+                
         }
     }
 }

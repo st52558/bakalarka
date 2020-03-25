@@ -7,6 +7,9 @@
         mc:Ignorable="d"
         Title="TeamSearch" Height="450" Width="400">
     <Grid>
-        
+        <ComboBox Name="TournamentsCB" HorizontalAlignment="Left" Margin="170,30,0,0" VerticalAlignment="Top" Width="200" SelectionChanged="TournamentChange"/>
+        <ComboBox Name="GamesCB" HorizontalAlignment="Left" Margin="20,30,0,0" VerticalAlignment="Top" Width="130" SelectionChanged="GameChange"/>
+        <ListBox Name="TeamsLB" HorizontalAlignment="Left" Height="334" Margin="20,70,0,0" VerticalAlignment="Top" Width="350" MouseDoubleClick="ShowTeamDetail"/>
+
     </Grid>
 </Window>

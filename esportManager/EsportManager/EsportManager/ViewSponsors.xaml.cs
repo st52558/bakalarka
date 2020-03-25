@@ -286,7 +286,7 @@ namespace EsportManager
         {
             ViewSponsors win2 = new ViewSponsors(2, databaseName);
             win2.FormParent = this;
-            win2.Show();
+            win2.ShowDialog();
         }
 
         private void SignContract1(object sender, RoutedEventArgs e)

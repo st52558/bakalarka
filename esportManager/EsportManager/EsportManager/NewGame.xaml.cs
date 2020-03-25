@@ -122,9 +122,9 @@ namespace EsportManager
                 SQLiteCommand command;
                 SQLiteDataReader reader;
                 conn.Open();
-                int nationID = nationList.ElementAt(NationsCB.SelectedIndex).IdNation;
-                if (nationID != 0)
-                {
+                if (NationsCB.SelectedIndex > -1) 
+                { 
+                    int nationID = nationList.ElementAt(NationsCB.SelectedIndex).IdNation;
                     command = new SQLiteCommand("select id_mesto from mesto where id_stat_fk=" + nationID, conn);
                     reader = command.ExecuteReader();
                     while (reader.Read())
@@ -197,16 +197,23 @@ namespace EsportManager
                 SQLiteCommand command = new SQLiteCommand("update info set id_team=" + teamList.ElementAt(TeamListLB.SelectedIndex).IdTeam + ", date='2019-01-01'", conn);
                 command.ExecuteReader();
                 MainGame win2 = new MainGame("./games/" + GameNameTB.Text + ".db");
-                win2.Show();
                 Mainwindow.Close();
                 this.Close();
+                win2.ShowDialog();
             }
         }
 
         private void DatabaseChanged(object sender, SelectionChangedEventArgs e)
         {
             GetAllNationsToComboBox();
-            
+            ComboBox c = (ComboBox)sender;
+            if (c.SelectedIndex > -1)
+            {
+                TeamNameTW.IsEnabled = true;
+                NationsCB.IsEnabled = true;
+                TeamNameTW.Text = "";
+                NationsCB.SelectedIndex = -1;
+            }
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

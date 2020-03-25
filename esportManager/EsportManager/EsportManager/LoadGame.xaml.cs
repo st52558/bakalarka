@@ -42,9 +42,9 @@ namespace EsportManager
         private void LoadGameClick(object sender, RoutedEventArgs e)
         {
             MainGame win2 = new MainGame("./games/" + GamesLB.SelectedItem.ToString() + ".db");
-            win2.Show();
             MainWindow.Close();
             this.Close();
+            win2.ShowDialog();
         }
 
         private void GameChange(object sender, SelectionChangedEventArgs e)

@@ -86,10 +86,14 @@
     <Compile Include="FreeCoaches.xaml.cs">
       <DependentUpon>FreeCoaches.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MatchDetail.cs" />
     <Compile Include="Match.xaml.cs">
       <DependentUpon>Match.xaml</DependentUpon>
     </Compile>
     <Compile Include="Player.cs" />
+    <Compile Include="PlayerDetail.xaml.cs">
+      <DependentUpon>PlayerDetail.xaml</DependentUpon>
+    </Compile>
     <Compile Include="PlayerSearch.xaml.cs">
       <DependentUpon>PlayerSearch.xaml</DependentUpon>
     </Compile>
@@ -111,11 +115,15 @@
     </Compile>
     <Compile Include="Team.cs" />
     <Compile Include="TeamBasic.cs" />
+    <Compile Include="TeamDetail.xaml.cs">
+      <DependentUpon>TeamDetail.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TeamSearch.xaml.cs">
       <DependentUpon>TeamSearch.xaml</DependentUpon>
     </Compile>
     <Compile Include="TeamSectionBasic.cs" />
     <Compile Include="Tournament.cs" />
+    <Compile Include="TournamentBracket.cs" />
     <Compile Include="TournamentInfoGroup.xaml.cs">
       <DependentUpon>TournamentInfoGroup.xaml</DependentUpon>
     </Compile>
@@ -140,6 +148,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Match.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PlayerDetail.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -182,6 +194,10 @@
     <Page Include="Simple Styles.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="TeamDetail.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="TeamSearch.xaml">
       <SubType>Designer</SubType>

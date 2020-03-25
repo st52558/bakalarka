@@ -33,17 +33,22 @@ namespace EsportManager
                 score = s;
             }
         }
-        TournamentStandings standings;
+        TournamentStandings standings = null;
+        TournamentBracket bracket = null;
         List<MatchDataGrid> playedMatches = new List<MatchDataGrid>();
         string databaseName;
         int tournament;
         int year;
         int idSection;
-        public TournamentInfoGroup(string databaseNameI, int tournamentI)
+        int system;
+        bool openNextForm;
+        public TournamentInfoGroup(string databaseNameI, int tournamentI, bool openNextFormI)
         {
+            WindowStartupLocation = WindowStartupLocation.CenterScreen;
             year = 2019;
             databaseName = databaseNameI;
             tournament = tournamentI;
+            openNextForm = openNextFormI;
             InitializeComponent();
             SetTournamentProperties();
             SetPlayedMatches();
@@ -114,12 +119,118 @@ namespace EsportManager
 
         private void CreateStandings()
         {
-            Standings.ItemsSource = standings.standings;
+            if (standings != null)
+            {
+                Standings.ItemsSource = standings.standings;
+            } 
+            else
+            {
+                Standings.Visibility = Visibility.Hidden;
+                if (system == 3)
+                {
+                    DrawBracket();
+                }
+            }
+           
+        }
+
+        private void DrawBracket()
+        {
+            string[] roundsNames = new string[5] { "1. kolo", "Osmifinále", "Čtvrtfinále", "Semifinále", "Finále" };
+            List<int> drawnObjects = new List<int>();
+            for (int i = 0; i < bracket.allMatches.Last().Round; i++)
+            {
+                Label l = new Label();
+                l.Content = roundsNames[5 - bracket.allMatches.Last().Round + i];
+                l.HorizontalAlignment = HorizontalAlignment.Left;
+                l.VerticalAlignment = VerticalAlignment.Top;
+                l.FontSize = 14;
+                l.Width = 100;
+                l.Margin = new Thickness(20 + (i * 120), 50, 0, 0);
+                l.HorizontalContentAlignment = HorizontalAlignment.Center;
+                MainGrid.Children.Add(l);
+            }
+            /*for (int i = 0; i < bracket.firstRound.Count; i++)
+            {
+                Label home = new Label();
+                if (bracket.allMatches.ElementAt(i).HomeTeam != null)
+                {
+                    home.Content = bracket.allMatches.ElementAt(i).HomeTeam.TeamName;
+                }
+                else
+                {
+                    home.Content = "TBD";
+                }
+                home.HorizontalAlignment = HorizontalAlignment.Left;
+                home.VerticalAlignment = VerticalAlignment.Top;
+                home.FontSize = 13;
+                home.Width = 100;
+                home.Margin = new Thickness(0, 70 + (i * 80), 0, 0);
+                home.HorizontalContentAlignment = HorizontalAlignment.Center;
+                MainGrid.Children.Add(home);
+                Label away = new Label();
+                if (bracket.allMatches.ElementAt(i).AwayTeam != null)
+                {
+                    away.Content = bracket.allMatches.ElementAt(i).AwayTeam.TeamName;
+                }
+                else
+                {
+                    away.Content = "TBD";
+                }
+                away.HorizontalAlignment = HorizontalAlignment.Left;
+                away.VerticalAlignment = VerticalAlignment.Top;
+                away.FontSize = 13;
+                away.Width = 100;
+                away.Margin = new Thickness(0, 100 + (i * 80), 0, 0);
+                away.HorizontalContentAlignment = HorizontalAlignment.Center;
+                MainGrid.Children.Add(away);
+            }*/
+            int lastMatchRound = 0;
+            int counter = 0;
+            for (int i = 0; i < bracket.allMatches.Count; i++)
+            {
+                if (lastMatchRound!= bracket.allMatches.ElementAt(i).Round)
+                {
+                    counter = 0;
+                }
+                Label home = new Label();
+                if (bracket.allMatches.ElementAt(i).HomeTeam != null)
+                {
+                    home.Content = bracket.allMatches.ElementAt(i).HomeTeam.TeamName;
+                }
+                else
+                {
+                    home.Content = "TBD";
+                }
+                home.HorizontalAlignment = HorizontalAlignment.Left;
+                home.VerticalAlignment = VerticalAlignment.Top;
+                home.FontSize = 13;
+                home.Width = 100;
+                home.Margin = new Thickness(20 + ((bracket.allMatches.ElementAt(i).Round-1) * 120), 70 + (counter * 80), 0, 0);
+                home.HorizontalContentAlignment = HorizontalAlignment.Center;
+                MainGrid.Children.Add(home);
+                Label away = new Label();
+                if (bracket.allMatches.ElementAt(i).AwayTeam != null)
+                {
+                    away.Content = bracket.allMatches.ElementAt(i).AwayTeam.TeamName;
+                } else
+                {
+                    away.Content = "TBD";
+                }
+                away.HorizontalAlignment = HorizontalAlignment.Left;
+                away.VerticalAlignment = VerticalAlignment.Top;
+                away.FontSize = 13;
+                away.Width = 100;
+                away.Margin = new Thickness(20 + ((bracket.allMatches.ElementAt(i).Round - 1) * 120), 100 + (counter * 80), 0, 0);
+                away.HorizontalContentAlignment = HorizontalAlignment.Center;
+                MainGrid.Children.Add(away);
+                lastMatchRound = bracket.allMatches.ElementAt(i).Round;
+                counter++;
+            }
         }
 
         private void SetPlayedMatches()
         {
-            
             int counter = 0;
             using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
             {
@@ -129,11 +240,14 @@ namespace EsportManager
                 while (reader.Read())
                 {
                     // výpočet pro tabulku
-                    standings.SetPlayedMatch(reader.GetInt32(2), reader.GetInt32(3), reader.GetInt32(5), reader.GetInt32(6));
+                    if (standings != null)
+                    {
+                        standings.SetPlayedMatch(reader.GetInt32(2), reader.GetInt32(3), reader.GetInt32(5), reader.GetInt32(6));
+                    }
+                    
                     // vizuální stránka
                     if (counter < 7)
                     {
-
                         byte[] data = (byte[])reader[0];
                         BitmapImage imageSource1 = new BitmapImage();
                         using (MemoryStream ms = new MemoryStream(data))
@@ -143,7 +257,6 @@ namespace EsportManager
                             imageSource1.CacheOption = BitmapCacheOption.OnLoad;
                             imageSource1.EndInit();
                         }   
-
                         data = (byte[])reader[1];
                         BitmapImage imageSource2 = new BitmapImage();
                         using (MemoryStream ms = new MemoryStream(data))
@@ -191,13 +304,30 @@ namespace EsportManager
             using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
             {
                 conn.Open();
-                SQLiteCommand command = new SQLiteCommand("select name,game,prize_pool,pp_teams,pp_dividing from tournament where id_tournament=" + tournament + ";", conn);
+                SQLiteCommand command = new SQLiteCommand("select name,game,prize_pool,pp_teams,pp_dividing,system from tournament where id_tournament=" + tournament + ";", conn);
                 SQLiteDataReader reader = command.ExecuteReader();
                 reader.Read();
                 TournamentName.Content = reader.GetString(0);
                 idSection = reader.GetInt32(1);
-                standings = new TournamentStandings(databaseName, tournament, reader.GetInt32(2), reader.GetInt32(3), reader.GetInt32(4));
+                system = reader.GetInt32(5);
+                if (system == 1 || system == 2)
+                {
+                    standings = new TournamentStandings(databaseName, tournament, reader.GetInt32(2), reader.GetInt32(3), reader.GetInt32(4));
+                } else if (system == 3)
+                {
+                    bracket = new TournamentBracket(databaseName, tournament);
+                }
                 reader.Close();
+            }
+        }
+
+        private void ShowTeamDetail(object sender, MouseButtonEventArgs e)
+        {
+            DataGrid d = (DataGrid)sender;
+            if (d.SelectedIndex > -1 && openNextForm)
+            {
+                TeamDetail win2 = new TeamDetail(databaseName, standings.standings.ElementAt(d.SelectedIndex).IdTeam);
+                win2.ShowDialog();
             }
         }
     }

@@ -7,9 +7,9 @@
         mc:Ignorable="d"
         Title="Training" Height="450" Width="608" ResizeMode="NoResize">
     <Grid Background="LightGray">
-        <Label Content="Ráno" HorizontalAlignment="Right" Margin="0,0,100,0" VerticalAlignment="Top"/>
+        <Label Content="Večer" HorizontalAlignment="Right" Margin="0,0,80,0" VerticalAlignment="Top"/>
         <Label Content="Odpoledne" HorizontalAlignment="Center" Margin="0,0,0,0" VerticalAlignment="Top"/>
-        <Label Content="Večer" HorizontalAlignment="Left" Margin="100,0,0,0" VerticalAlignment="Top"/>
+        <Label Content="Ráno" HorizontalAlignment="Left" Margin="80,0,0,0" VerticalAlignment="Top"/>
         <Grid Name="MondayMorningGrid" HorizontalAlignment="Left" Height="50" VerticalAlignment="Top" Width="200" Margin="0,20,0,0">
             <ComboBox Name="MondayMorningCB" HorizontalAlignment="Center" Margin="0,20,0,0" VerticalAlignment="Center" Width="120" SelectionChanged="MondayMorningTrainingChanged" />
         </Grid>

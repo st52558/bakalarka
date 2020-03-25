@@ -34,6 +34,7 @@ namespace EsportManager
         int awayScore;
         int bestOf;
         int idMatch;
+        int idWinner;
         List<Player> homePlayers = new List<Player>();
         List<Player> awayPlayers = new List<Player>();
         public Match(string database, int idT, int idS)
@@ -271,6 +272,41 @@ namespace EsportManager
                     conn.Open();
                     SQLiteCommand command = new SQLiteCommand("update '" + year + "match" + idSection + "' set home_score=" + homeScore + ", away_score=" + awayScore + " where id_match=" + idMatch + ";", conn);
                     command.ExecuteReader();
+                    command = new SQLiteCommand("select id_home,id_away,type_home,type_away from '" + year + "future_match" + idSection + "' where (id_home=" + idMatch + " and type_home=2) or (id_away=" + idMatch + " and type_away=2);", conn);
+                    SQLiteDataReader reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        SQLiteCommand command2;
+                        if (reader.GetInt32(0) == idMatch && reader.GetInt32(2) == 2)
+                        {
+                            command2 = new SQLiteCommand("update '" + year + "future_match" + idSection + "' set id_home=" + idWinner + ", type_home=1 where id_home=" + idMatch + ";", conn);
+                            command2.ExecuteReader();
+                        }
+                        else if (reader.GetInt32(1) == idMatch && reader.GetInt32(3) == 2)
+                        {
+                            command2 = new SQLiteCommand("update '" + year + "future_match" + idSection + "' set id_away=" + idWinner + ", type_away=1 where id_away=" + idMatch + ";", conn);
+                            command2.ExecuteReader();
+                        }
+                    }
+                    reader.Close();
+                    command = new SQLiteCommand("select id_home,id_away,date,id_tournament,id_match from '" + year + "future_match" + idSection + "' where type_home=1 and type_away=1;", conn);
+                    reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        SQLiteCommand command2 = new SQLiteCommand("insert into '" + year + "match" + idSection + "' ('id_teamxsection_home', 'id_teamxsection_away', 'match_date', 'id_tournament') values (" + reader.GetInt32(0) + ", " + reader.GetInt32(1) + ", " + reader.GetString(2) + ", " + reader.GetInt32(3) + ");", conn);
+                        command2.ExecuteReader();
+                        command2 = new SQLiteCommand("select last_insert_rowid()", conn);
+                        SQLiteDataReader reader2 = command2.ExecuteReader();
+                        reader2.Read();
+                        int idNewMatch = reader2.GetInt32(0);
+                        reader2.Close();
+                        command2 = new SQLiteCommand("update '" + year + "future_match" + idSection + "' set id_home=" + idNewMatch + ", type_home=2 where id_home=" + reader.GetInt32(4) + " and type_home=3;", conn);
+                        command2.ExecuteReader();
+                        command2 = new SQLiteCommand("update '" + year + "future_match" + idSection + "' set id_away=" + idNewMatch + ", type_away=2 where id_away=" + reader.GetInt32(4) + " and type_away=3;", conn);
+                        command2.ExecuteReader();
+                        command2 = new SQLiteCommand("delete from '" + year + "future_match" + idSection + "' where id_match=" + reader.GetInt32(4), conn);
+                        command2.ExecuteReader();
+                    }
                 }
                 this.Close();
                 } else
@@ -330,10 +366,12 @@ namespace EsportManager
                     PlayMatch.Content = "Pokračovat";
                     if (awayScore > homeScore)
                     {
+                        idWinner = awayTeam;
                         HomeLogo.Opacity = 0.1;
                         AwayBorder.Visibility = Visibility.Visible;
                     } else
                     {
+                        idWinner = homeTeam;
                         AwayLogo.Opacity = 0.1;
                         HomeBorder.Visibility = Visibility.Visible;
                     }

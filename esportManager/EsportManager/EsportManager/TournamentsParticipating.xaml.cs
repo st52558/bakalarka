@@ -183,8 +183,8 @@ namespace EsportManager
                 MessageBox.Show(allTeams, "Registrovaní do turnaje", MessageBoxButton.OK);
                 reader.Close();
             }*/
-            TournamentInfoGroup win2 = new TournamentInfoGroup(databaseName,tournamentsForSection.ElementAt(TournamentList.SelectedIndex).ID);
-            win2.Show();
+            TournamentInfoGroup win2 = new TournamentInfoGroup(databaseName,tournamentsForSection.ElementAt(TournamentList.SelectedIndex).ID,true);
+            win2.ShowDialog();
         }
 
         private void SectionChanged(object sender, SelectionChangedEventArgs e)

@@ -1,0 +1,45 @@
+﻿<Window x:Class="EsportManager.TeamDetail"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:EsportManager"
+        mc:Ignorable="d"
+        Title="TeamDetail" Height="450" Width="800" ResizeMode="NoResize">
+    <Grid>
+        <Image Name="TeamLogo" HorizontalAlignment="Left" Height="260" Width="260" Margin="10,10,0,0" VerticalAlignment="Top" />
+
+        <DataGrid Name="TournamentsGrid" HorizontalAlignment="Left" Height="134" Margin="10,275,0,0" VerticalAlignment="Top" Width="262" IsReadOnly="True" CanUserDeleteRows="False" CanUserAddRows="False" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="False" AutoGenerateColumns="False" MouseDoubleClick="ShowTournamentDetail">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Sekce"
+                          Binding="{Binding SectionName}"/>
+                <DataGridTextColumn Header="Turnaj"
+                          Binding="{Binding Name}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <DataGrid Name="PlayersGrid" HorizontalAlignment="Left" Height="344" Margin="277,65,0,0" VerticalAlignment="Top" Width="505" IsReadOnly="True" CanUserDeleteRows="False" CanUserAddRows="False" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="False" AutoGenerateColumns="False" MouseDoubleClick="ShowPlayerDetail">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Sekce"
+                          Binding="{Binding SectionName}"/>
+                <DataGridTextColumn Header="Pozice"
+                          Binding="{Binding PositionName}"/>
+                <DataGridTextColumn Header="Nick"
+                          Binding="{Binding Nick}"/>
+                <DataGridTextColumn Header="Jméno"
+                          Binding="{Binding Name}"/>
+                <DataGridTextColumn Header="Příjmení"
+                          Binding="{Binding Surname}"/>
+            </DataGrid.Columns>
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding PositionName}" Value="Trenér">
+                            <Setter Property="Background" Value="LightSeaGreen"></Setter>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.RowStyle>
+        </DataGrid>
+        <Label Name="TeamNameLabel" HorizontalAlignment="Left" FontSize="30" Margin="277,10,0,0" VerticalAlignment="Top" Height="50" Width="505"/>
+    </Grid>
+</Window>

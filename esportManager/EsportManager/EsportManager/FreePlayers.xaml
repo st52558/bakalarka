@@ -8,7 +8,19 @@
         Title="FreePlayers" Height="450" Width="409.325">
     <Grid>
         <ComboBox Name="GamesComboBox" HorizontalAlignment="Center" Margin="0,10,0,0" VerticalAlignment="Top" Width="300" SelectionChanged="GameChanged"/>
-        <DataGrid FontSize="12" Name="FreePlayersGrid" HorizontalAlignment="Center" Width="300" Margin="0,50,0,10" IsReadOnly="True" CanUserAddRows="False" CanUserReorderColumns="True" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="True" MouseDoubleClick="SignPlayer"/>
-
+        <DataGrid FontSize="12" Name="FreePlayersGrid" HorizontalAlignment="Center" Width="300" Margin="0,50,0,10" IsReadOnly="True" AutoGenerateColumns="False" CanUserAddRows="False" CanUserReorderColumns="True" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="False" MouseDoubleClick="SignPlayer">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Sekce"
+                          Binding="{Binding SectionName}"/>
+                <DataGridTextColumn Header="Pozice"
+                          Binding="{Binding PositionName}"/>
+                <DataGridTextColumn Header="Nick"
+                          Binding="{Binding Nick}"/>
+                <DataGridTextColumn Header="Jméno"
+                          Binding="{Binding Name}"/>
+                <DataGridTextColumn Header="Příjmení"
+                          Binding="{Binding Surname}"/>
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </Window>

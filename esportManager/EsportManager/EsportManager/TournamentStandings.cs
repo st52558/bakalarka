@@ -66,20 +66,20 @@ namespace EsportManager
             if (ppDividing == 1)
             {
                 //přidat týmu, který má teamxsection
-                for (int i = 0; i < standings.Count; i++)
+                for (int i = 0; i < ppTeams; i++)
                 {
-                    standings.ElementAt(i).PrizePool = (int)(prizePool / standings.Count);
+                    standings.ElementAt(i).PrizePool = (int)(prizePool / ppTeams);
                 }
             }
             else if (ppDividing == 2)
             {
                 double ppDiv = 1.0;
-                for (int i = 0; i < standings.Count - 1; i++)
+                for (int i = 0; i < ppTeams - 1; i++)
                 {
                     ppDiv /= 2;
                     standings.ElementAt(i).PrizePool = (int)(prizePool * ppDiv);
                 }
-                standings.ElementAt(standings.Count-1).PrizePool = (int)(prizePool * ppDiv);
+                standings.ElementAt(ppTeams - 1).PrizePool = (int)(prizePool * ppDiv);
             }
         }
 

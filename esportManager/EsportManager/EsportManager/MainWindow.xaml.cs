@@ -37,9 +37,7 @@ namespace EsportManager
         {
             LoadGame win2 = new LoadGame();
             win2.MainWindow = this;
-            win2.Topmost = true;
-            this.IsEnabled = false;
-            win2.Show();
+            win2.ShowDialog();
         }
 
         private void Quit(object sender, RoutedEventArgs e)
@@ -55,9 +53,7 @@ namespace EsportManager
         {
             NewGame win2 = new NewGame();
             win2.Mainwindow = this;
-            win2.Topmost = true;
-            this.IsEnabled = false;
-            win2.Show();
+            win2.ShowDialog();
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

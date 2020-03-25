@@ -15,29 +15,13 @@ namespace EsportManager
     /// </summary>
     public partial class MainGame : Window
     {
-
-        class MatchDataGrid
-        {
-            public string Datum { get; set; }
-            public string Souper { get; set; }
-            public string Turnaj { get; set; }
-            public string Misto { get; set; }
-        }
-
-        class PlayersDataGrid
-        {
-            public string Pozice { get; set; }
-            public string Nick { get; set; }
-            public string Jmeno { get; set; }
-            public string Prijmeni { get; set; }
-            public int E { get; set; }
-        }
         public string DatabaseName { get; set; }
         List<TeamSectionBasic> sectionsList = new List<TeamSectionBasic>();
         string date;
         int idTeam;
         int todaysMatchTeam;
         int matchTeamSection;
+        string teamName;
         public MainGame(string database)
         {
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
@@ -83,7 +67,8 @@ namespace EsportManager
 
                 while (reader.Read())
                 {
-                    TeamNameLabel.Content = reader.GetString(0);
+                    teamName = reader.GetString(0);
+                    TeamNameLabel.Content = teamName;
                     BudgetLabel.Content = reader.GetInt32(1) + "$";
                     byte[] data = (byte[])reader[2];
                     BitmapImage imageSource = new BitmapImage();
@@ -241,7 +226,7 @@ namespace EsportManager
         private void PlayMatch(object sender, RoutedEventArgs e)
         {
             Match win2 = new Match(DatabaseName, todaysMatchTeam, matchTeamSection);
-            win2.Show();
+            win2.ShowDialog();
         }
 
         private void SponsorContractExpired(object sender, RoutedEventArgs e)
@@ -748,7 +733,7 @@ namespace EsportManager
                                         typeA = 3;
                                         idA = realIdFuture[futureMatches[matchCounter - finalDraw.GetLength(0), 5]];
                                     }
-                                    command = new SQLiteCommand("insert into '" + date.Year + "future_match" + game + "' ('id_home', 'id_away', 'type_home', 'type_away', 'date') values (" + idH + "," + idA + "," + typeH + "," + typeA + ",'" + stringDate + "');", conn);
+                                    command = new SQLiteCommand("insert into '" + date.Year + "future_match" + game + "' ('id_home', 'id_away', 'type_home', 'type_away', 'date', 'id_tournament') values (" + idH + "," + idA + "," + typeH + "," + typeA + ",'" + stringDate + "'," + tournamentsToDraw.ElementAt(tourToDraw) + ");", conn);
                                     command.ExecuteReader();
                                     command = new SQLiteCommand("select last_insert_rowid()", conn);
                                     reader = command.ExecuteReader();
@@ -811,10 +796,10 @@ namespace EsportManager
                 conn.Open();
                 for (int i = 0; i < sectionsList.Count; i++)
                 {
-                    List<PlayersDataGrid> players = new List<PlayersDataGrid>();
-                    SQLiteCommand command = new SQLiteCommand("select nick, player.name, surname, position_type.name, energy from player join position_type on position_type.id_position_in_game=player.position and position_type.id_section=player.game where team_fk=" + sectionsList.ElementAt(i).ID, conn);
+                    List<Player> players = new List<Player>();
+                    SQLiteCommand command = new SQLiteCommand("select nick, player.name, surname, position_type.name, energy, id_player from player join position_type on position_type.id_position_in_game=player.position and position_type.id_section=player.game where team_fk=" + sectionsList.ElementAt(i).ID, conn);
                     SQLiteDataReader reader = command.ExecuteReader();
-                    string nick, jmeno, prijmeni, pozice;
+                    string nick, name, surname, position;
                     while (reader.Read())
                     {
                         if (reader.IsDBNull(0))
@@ -827,30 +812,37 @@ namespace EsportManager
                         }
                         if (reader.IsDBNull(1))
                         {
-                            jmeno = "";
+                            name = "";
                         }
                         else
                         {
-                            jmeno = reader.GetString(1);
+                            name = reader.GetString(1);
                         }
                         if (reader.IsDBNull(2))
                         {
-                            prijmeni = "";
+                            surname = "";
                         }
                         else
                         {
-                            prijmeni = reader.GetString(2);
+                            surname = reader.GetString(2);
                         }
                         if (reader.IsDBNull(3))
                         {
-                            pozice = "";
+                            position = "";
                         }
                         else
                         {
-                            pozice = reader.GetString(3);
+                            position = reader.GetString(3);
                         }
                         //players.Add(new PlayersDataGrid() { Nick = reader.GetString(0), Jmeno = reader.GetString(1), Prijmeni = reader.GetString(2), Pozice = reader.GetString(3) });
-                        players.Add(new PlayersDataGrid() { Pozice = pozice, Nick = nick, Jmeno = jmeno, Prijmeni = prijmeni, E = reader.GetInt32(4) });
+                        Player p = new Player();
+                        p.PositionName = position;
+                        p.Nick = nick;
+                        p.Name = name;
+                        p.Surname = surname;
+                        p.Energy = reader.GetInt32(4);
+                        p.IdPlayer = reader.GetInt32(5);
+                        players.Add(p);
                     }
 
                     reader.Close();
@@ -858,7 +850,13 @@ namespace EsportManager
                     reader = command.ExecuteReader();
                     while (reader.Read())
                     {
-                        players.Add(new PlayersDataGrid() { Pozice = "Trenér", Nick = reader.GetString(0), Jmeno = reader.GetString(1), Prijmeni = reader.GetString(2), E = 100 });
+                        Player p = new Player();
+                        p.PositionName = "Trenér";
+                        p.Nick = reader.GetString(0);
+                        p.Name = reader.GetString(1);
+                        p.Surname = reader.GetString(2);
+                        p.Energy = 100;
+                        players.Add(p);
                     }
                     switch (i)
                     {
@@ -900,24 +898,60 @@ namespace EsportManager
 
                 for (int i = 0; i < sectionsList.Count; i++)
                 {
-                    List<MatchDataGrid> tournaments = new List<MatchDataGrid>();
+                    List<MatchDetail> tournaments = new List<MatchDetail>();
                     string matchTableName = year + "match" + sectionsList.ElementAt(i).sectionID;
-                    command = new SQLiteCommand("select tournament.shortcut, match_date, id_teamxsection_home, id_teamxsection_away, tournament.city_fk from '" + matchTableName + "' join tournament on tournament.id_tournament='" + matchTableName + "'.id_tournament where id_teamxsection_home=" + sectionsList.ElementAt(i).ID + " or id_teamxsection_away=" + sectionsList.ElementAt(i).ID + ";", conn);
+                    command = new SQLiteCommand("select tournament.id_tournament, tournament.shortcut, match_date, id_teamxsection_home, id_teamxsection_away, tournament.city_fk, cities.name, home_score, away_score from '" + matchTableName + "' join tournament on tournament.id_tournament='" + matchTableName + "'.id_tournament join cities on cities.id_city=tournament.city_fk where id_teamxsection_home=" + sectionsList.ElementAt(i).ID + " or id_teamxsection_away=" + sectionsList.ElementAt(i).ID + " order by match_date desc;", conn);
                     reader = command.ExecuteReader();
                     while (reader.Read())
                     {
                         SQLiteCommand command2;
-                        if (reader.GetInt32(2) == sectionsList.ElementAt(i).ID)
+                        SQLiteDataReader reader2;
+                        MatchDetail m = new MatchDetail();
+                        if (reader.GetInt32(3) == sectionsList.ElementAt(i).ID)
                         {
-                            command2 = new SQLiteCommand("select shortcut from team join teamxsection on team.id_team=teamxsection.id_team where teamxsection.id_teamxsection=" + reader.GetInt32(3), conn);
+                            m.IdTxSHome = sectionsList.ElementAt(i).ID;
+                            m.HomeShortcut = teamName;
+                            command2 = new SQLiteCommand("select id_teamxsection, shortcut from team join teamxsection on team.id_team=teamxsection.id_team where teamxsection.id_teamxsection=" + reader.GetInt32(4), conn);
+                            reader2 = command2.ExecuteReader();
+                            reader2.Read();
+                            m.IdTxSAway = reader2.GetInt32(0);
+                            m.AwayShortcut = reader2.GetString(1);
+                            m.OpponentShortcut = reader2.GetString(1);
+                            if (reader[7].GetType() == typeof(DBNull)) { m.Won = 0; }
+                            else if (reader.GetInt32(7) > reader.GetInt32(8))
+                            {
+                                m.Won = 1;
+                            } else
+                            {
+                                m.Won = 2;
+                            }
                         }
                         else
                         {
-                            command2 = new SQLiteCommand("select shortcut from team join teamxsection on team.id_team=teamxsection.id_team where teamxsection.id_teamxsection=" + reader.GetInt32(2), conn);
+                            m.IdTxSAway = sectionsList.ElementAt(i).ID;
+                            m.AwayShortcut = teamName;
+                            command2 = new SQLiteCommand("select id_teamxsection, shortcut from team join teamxsection on team.id_team=teamxsection.id_team where teamxsection.id_teamxsection=" + reader.GetInt32(3), conn);
+                            reader2 = command2.ExecuteReader();
+                            reader2.Read();
+                            m.IdTxSHome = reader2.GetInt32(0);
+                            m.HomeShortcut = reader2.GetString(1);
+                            m.OpponentShortcut = reader2.GetString(1);
+                            if (reader[7].GetType() == typeof(DBNull)) { m.Won = 0; }
+                            else if (reader.GetInt32(8) > reader.GetInt32(7))
+                            {
+                                m.Won = 1;
+                            }
+                            else
+                            {
+                                m.Won = 2;
+                            }
                         }
-                        SQLiteDataReader reader2 = command2.ExecuteReader();
-                        reader2.Read();
-                        tournaments.Add(new MatchDataGrid() { Turnaj = reader.GetString(0), Datum = reader.GetString(1), Misto = reader.GetInt32(4).ToString(), Souper = reader2.GetString(0) });
+                        m.IdTournament = reader.GetInt32(0);
+                        m.Tournament = reader.GetString(1);
+                        m.Date = reader.GetString(2);
+                        m.IdCity = reader.GetInt32(5);
+                        m.City = reader.GetString(6);
+                        tournaments.Add(m);
                     }
                     switch (i)
                     {
@@ -1054,7 +1088,7 @@ namespace EsportManager
         {
             // vyjede form s přidáním sekce
             AddNewSection win2 = new AddNewSection(DatabaseName);
-            win2.Show();
+            win2.ShowDialog();
 
         }
 
@@ -1109,13 +1143,13 @@ namespace EsportManager
         private void ShowRegisteredTournaments(object sender, RoutedEventArgs e)
         {
             TournamentsParticipating win2 = new TournamentsParticipating(DatabaseName);
-            win2.Show();
+            win2.ShowDialog();
         }
 
         private void ShowSponsors(object sender, RoutedEventArgs e)
         {
             ViewSponsors win2 = new ViewSponsors(1, DatabaseName);
-            win2.Show();
+            win2.ShowDialog();
         }
 
         private void QuitGame(object sender, RoutedEventArgs e)
@@ -1127,7 +1161,7 @@ namespace EsportManager
         {
             Manual win2 = new Manual();
             //this.all
-            win2.Show();
+            win2.ShowDialog();
         }
 
         private void ShowFreeEmployees(object sender, RoutedEventArgs e)
@@ -1143,8 +1177,8 @@ namespace EsportManager
 
         private void ShowTeams(object sender, RoutedEventArgs e)
         {
-            TeamSearch win2 = new TeamSearch();
-            win2.Show();
+            TeamSearch win2 = new TeamSearch(DatabaseName);
+            win2.ShowDialog();
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -1155,13 +1189,13 @@ namespace EsportManager
         private void ShowFreePlyaers(object sender, RoutedEventArgs e)
         {
             FreePlayers win2 = new FreePlayers(DatabaseName);
-            win2.Show();
+            win2.ShowDialog();
         }
 
         private void ShowAllPlayers(object sender, RoutedEventArgs e)
         {
             PlayerSearch win2 = new PlayerSearch(DatabaseName);
-            win2.Show();
+            win2.ShowDialog();
         }
 
         private void Window_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -1191,10 +1225,40 @@ namespace EsportManager
 
         private void ShowTraining(object sender, RoutedEventArgs e)
         {
-            Training win2 = new Training();
-            win2.Topmost = true;
-            this.IsEnabled = false;
-            win2.Show();
+            Training win2 = new Training(DatabaseName);
+            win2.ShowDialog();
+        }
+
+        private void OpenTournament(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            DataGrid d = (DataGrid)sender;
+            if (d.SelectedIndex > -1)
+            {
+                List<MatchDetail> l = (List<MatchDetail>)d.ItemsSource;
+                TournamentInfoGroup win2 = new TournamentInfoGroup(DatabaseName, l.ElementAt(d.SelectedIndex).IdTournament, true);
+                win2.ShowDialog();
+            }
+                
+        }
+
+        private void OpenPlayer(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            DataGrid d = (DataGrid)sender;
+            if (d.SelectedIndex > -1)
+            {
+                List<Player> l = (List<Player>)d.ItemsSource;
+                if (l.ElementAt(d.SelectedIndex).IdPlayer != 0)
+                {
+                    PlayerDetail win2 = new PlayerDetail(DatabaseName, l.ElementAt(d.SelectedIndex).IdPlayer);
+                    win2.ShowDialog();
+                }
+            }
+        }
+
+        private void ShowOverview(object sender, RoutedEventArgs e)
+        {
+            TeamDetail win2 = new TeamDetail(DatabaseName, idTeam);
+            win2.ShowDialog();
         }
     }
 }
