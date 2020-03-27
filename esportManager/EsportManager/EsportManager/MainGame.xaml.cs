@@ -754,7 +754,6 @@ namespace EsportManager
             }
         }
 
-
         private void EndYearClick(object sender, RoutedEventArgs e)
         {
             ChangePropertiesOfNextActionButton();
@@ -1160,7 +1159,6 @@ namespace EsportManager
         private void ShowManual(object sender, RoutedEventArgs e)
         {
             Manual win2 = new Manual();
-            //this.all
             win2.ShowDialog();
         }
 
@@ -1212,7 +1210,7 @@ namespace EsportManager
             }*/
         }
 
-        private void Window_Activated(object sender, EventArgs e)
+        private void Refresh(int tabOpened)
         {
             SetLabels();
             AddSectionsToList();
@@ -1221,6 +1219,12 @@ namespace EsportManager
             AddAllPlayers();
             ChangePropertiesOfNextActionButton();
             NonPlayerTeamsActions();
+            SectionTabs.SelectedIndex = tabOpened;
+        }
+
+        private void Window_Activated(object sender, EventArgs e)
+        {
+            Refresh(SectionTabs.SelectedIndex);
         }
 
         private void ShowTraining(object sender, RoutedEventArgs e)

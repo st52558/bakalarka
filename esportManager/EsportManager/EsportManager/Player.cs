@@ -46,7 +46,7 @@ namespace EsportManager
 
         }
         // pro detail hráče
-        public Player(int id_player, string name, string nick, string surname, string teamName, string sectionName, string positionName, int salary, string contractEnd, int value, int idTeam, int individualSkill, int teamplaySkill)
+        public Player(int id_player, string name, string nick, string surname, string teamName, string sectionName, string positionName, int salary, string contractEnd, int value, int idTeam, int individualSkill, int teamplaySkill, int teamSection)
         {
             IdPlayer = id_player;
             Nick = nick;
@@ -62,6 +62,7 @@ namespace EsportManager
             IdTeam = idTeam;
             IndiSkill = individualSkill;
             TeamSkill = teamplaySkill;
+            IdTeamSection = teamSection;
         }
     }
 }

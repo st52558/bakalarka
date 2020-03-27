@@ -22,6 +22,7 @@
         <Label Content="Hodnota:" HorizontalAlignment="Left" HorizontalContentAlignment="Right" Margin="165,207,0,0" VerticalAlignment="Top" Width="95"/>
         <Label Name="Value" Content="Label" HorizontalAlignment="Left" Margin="265,207,0,0" VerticalAlignment="Top"/>
         <Button Name="PlayerAction" Content="Koupit" HorizontalAlignment="Left" Margin="145,239,0,0" VerticalAlignment="Top" Width="100"/>
+        <Button Name="PlayerMove" Content="Přeřadit" HorizontalAlignment="Left" Margin="290,239,0,0" VerticalAlignment="Top" Width="90" Visibility="Hidden" Click="MovePlayerToAnotherSection"/>
 
     </Grid>
 </Window>

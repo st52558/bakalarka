@@ -119,6 +119,7 @@ namespace EsportManager
                 {
                     PlayerDetail win2 = new PlayerDetail(databaseName, l.ElementAt(d.SelectedIndex).IdPlayer);
                     win2.ShowDialog();
+                    AddPlayersToGrid();
                 }
             }
         }

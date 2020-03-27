@@ -6,7 +6,7 @@
         mc:Ignorable="d"
         Title="MainGame" Height="450" Width="800" Closing="Window_Closing" IsEnabledChanged="Window_IsEnabledChanged" Activated="Window_Activated" ResizeMode="NoResize" Background="LightGray">
     <DockPanel>
-        <Menu DockPanel.Dock="Top" Height="20" VerticalAlignment="Top">
+        <Menu DockPanel.Dock="Top" Height="20" VerticalAlignment="Top" >
             <MenuItem Header="Hra">
                 <MenuItem Name="Manual" Header="Návod" Click="ShowManual" />
                 <Separator />
