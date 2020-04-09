@@ -15,6 +15,11 @@ Implementace hlavní aplikace
 		sponzoøi
 		sekce
 		turnaje
+		cestování
+	prohlížení
+		ligy
+		týmy
+		hráèi
 	øešení simulací
 		zápasy
 		chování manažerù

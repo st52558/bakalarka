@@ -121,12 +121,13 @@ namespace EsportManager
         {
             if (standings != null)
             {
+                //standings.CreateStandings();
                 Standings.ItemsSource = standings.standings;
             } 
             else
             {
                 Standings.Visibility = Visibility.Hidden;
-                if (system == 3)
+                if (system == 3 || system == 4)
                 {
                     DrawBracket();
                 }
@@ -136,6 +137,10 @@ namespace EsportManager
 
         private void DrawBracket()
         {
+            if (bracket.allMatches.Count > 0)
+            {
+
+            
             string[] roundsNames = new string[5] { "1. kolo", "Osmifinále", "Čtvrtfinále", "Semifinále", "Finále" };
             List<int> drawnObjects = new List<int>();
             for (int i = 0; i < bracket.allMatches.Last().Round; i++)
@@ -150,41 +155,6 @@ namespace EsportManager
                 l.HorizontalContentAlignment = HorizontalAlignment.Center;
                 MainGrid.Children.Add(l);
             }
-            /*for (int i = 0; i < bracket.firstRound.Count; i++)
-            {
-                Label home = new Label();
-                if (bracket.allMatches.ElementAt(i).HomeTeam != null)
-                {
-                    home.Content = bracket.allMatches.ElementAt(i).HomeTeam.TeamName;
-                }
-                else
-                {
-                    home.Content = "TBD";
-                }
-                home.HorizontalAlignment = HorizontalAlignment.Left;
-                home.VerticalAlignment = VerticalAlignment.Top;
-                home.FontSize = 13;
-                home.Width = 100;
-                home.Margin = new Thickness(0, 70 + (i * 80), 0, 0);
-                home.HorizontalContentAlignment = HorizontalAlignment.Center;
-                MainGrid.Children.Add(home);
-                Label away = new Label();
-                if (bracket.allMatches.ElementAt(i).AwayTeam != null)
-                {
-                    away.Content = bracket.allMatches.ElementAt(i).AwayTeam.TeamName;
-                }
-                else
-                {
-                    away.Content = "TBD";
-                }
-                away.HorizontalAlignment = HorizontalAlignment.Left;
-                away.VerticalAlignment = VerticalAlignment.Top;
-                away.FontSize = 13;
-                away.Width = 100;
-                away.Margin = new Thickness(0, 100 + (i * 80), 0, 0);
-                away.HorizontalContentAlignment = HorizontalAlignment.Center;
-                MainGrid.Children.Add(away);
-            }*/
             int lastMatchRound = 0;
             int counter = 0;
             for (int i = 0; i < bracket.allMatches.Count; i++)
@@ -227,6 +197,7 @@ namespace EsportManager
                 lastMatchRound = bracket.allMatches.ElementAt(i).Round;
                 counter++;
             }
+            }
         }
 
         private void SetPlayedMatches()
@@ -240,10 +211,10 @@ namespace EsportManager
                 while (reader.Read())
                 {
                     // výpočet pro tabulku
-                    if (standings != null)
+                    /*if (standings != null)
                     {
                         standings.SetPlayedMatch(reader.GetInt32(2), reader.GetInt32(3), reader.GetInt32(5), reader.GetInt32(6));
-                    }
+                    }*/
                     
                     // vizuální stránka
                     if (counter < 7)
@@ -304,18 +275,19 @@ namespace EsportManager
             using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
             {
                 conn.Open();
-                SQLiteCommand command = new SQLiteCommand("select name,game,prize_pool,pp_teams,pp_dividing,system from tournament where id_tournament=" + tournament + ";", conn);
+                SQLiteCommand command = new SQLiteCommand("select name,game,prize_pool,pp_teams,pp_dividing,system,drawn from tournament where id_tournament=" + tournament + ";", conn);
                 SQLiteDataReader reader = command.ExecuteReader();
                 reader.Read();
                 TournamentName.Content = reader.GetString(0);
                 idSection = reader.GetInt32(1);
                 system = reader.GetInt32(5);
-                if (system == 1 || system == 2)
+                bool drawn = reader.GetInt32(6) == 1;
+                if (system == 1 || system == 2 || system == 6)
                 {
-                    standings = new TournamentStandings(databaseName, tournament, reader.GetInt32(2), reader.GetInt32(3), reader.GetInt32(4));
-                } else if (system == 3)
+                    standings = new TournamentStandings(databaseName, tournament, reader.GetInt32(2), reader.GetInt32(3), reader.GetInt32(4), system);
+                } else if (system == 3 || system == 4)
                 {
-                    bracket = new TournamentBracket(databaseName, tournament);
+                    bracket = new TournamentBracket(databaseName, tournament, drawn, system);
                 }
                 reader.Close();
             }

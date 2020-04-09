@@ -83,9 +83,13 @@
     <Compile Include="AddNewSection.xaml.cs">
       <DependentUpon>AddNewSection.xaml</DependentUpon>
     </Compile>
+    <Compile Include="City.cs" />
+    <Compile Include="Coach.cs" />
+    <Compile Include="DailyTraining.cs" />
     <Compile Include="FreeCoaches.xaml.cs">
       <DependentUpon>FreeCoaches.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Game.cs" />
     <Compile Include="MatchDetail.cs" />
     <Compile Include="Match.xaml.cs">
       <DependentUpon>Match.xaml</DependentUpon>
@@ -113,6 +117,9 @@
     <Compile Include="NewGame.xaml.cs">
       <DependentUpon>NewGame.xaml</DependentUpon>
     </Compile>
+    <Compile Include="PowerRanking.xaml.cs">
+      <DependentUpon>PowerRanking.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Team.cs" />
     <Compile Include="TeamBasic.cs" />
     <Compile Include="TeamDetail.xaml.cs">
@@ -121,21 +128,23 @@
     <Compile Include="TeamSearch.xaml.cs">
       <DependentUpon>TeamSearch.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TeamSectionBasic.cs" />
+    <Compile Include="TeamSection.cs" />
     <Compile Include="Tournament.cs" />
     <Compile Include="TournamentBracket.cs" />
     <Compile Include="TournamentInfoGroup.xaml.cs">
       <DependentUpon>TournamentInfoGroup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TournamentsParticipating.xaml.cs">
-      <DependentUpon>TournamentsParticipating.xaml</DependentUpon>
+    <Compile Include="TournamentsShow.xaml.cs">
+      <DependentUpon>TournamentsShow.xaml</DependentUpon>
     </Compile>
     <Compile Include="TournamentStandings.cs" />
     <Compile Include="TournamentTeam.cs" />
     <Compile Include="Training.xaml.cs">
       <DependentUpon>Training.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TrainingTypes.cs" />
+    <Compile Include="Traveling.xaml.cs">
+      <DependentUpon>Traveling.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewSponsors.xaml.cs">
       <DependentUpon>ViewSponsors.xaml</DependentUpon>
     </Compile>
@@ -191,6 +200,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="PowerRanking.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Simple Styles.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -207,11 +220,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="TournamentsParticipating.xaml">
+    <Page Include="TournamentsShow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Training.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Traveling.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -27,11 +27,12 @@ namespace EsportManager
         int playerID;
         int reputation;
         int budget;
-        string day;
+        string date;
         public PlayerDetail(string databaseNameI, int playerI)
         {
             databaseName = databaseNameI;
             playerID = playerI;
+
             InitializeComponent();
             SetPlayerProperties();
         }
@@ -76,9 +77,9 @@ namespace EsportManager
                 Team.Content = player.TeamName;
                 Section.Content = player.SectionName;
                 Position.Content = player.PositionName;
-                Contract.Content = player.Salary;
+                Contract.Content = player.Salary + "$";
                 ContractEnd.Content = player.ContractEnd;
-                Value.Content = player.Value;
+                Value.Content = player.Value + "$";
 
                 command = new SQLiteCommand("select info.id_team, team.reputation, team.budget, info.date from info join team on info.id_team=team.id_team;", conn);
                 reader = command.ExecuteReader();
@@ -87,7 +88,7 @@ namespace EsportManager
                     myTeam = reader.GetInt32(0);
                     reputation = reader.GetInt32(1);
                     budget = reader.GetInt32(2);
-                    day = reader.GetString(3);
+                    date = reader.GetString(3);
                 }
                 reader.Close();
                 // zjištění akce která se bude s hráčem po stisknutí tlačítka dít
@@ -122,6 +123,18 @@ namespace EsportManager
 
         private void BuyPlayer(object sender, RoutedEventArgs e)
         {
+            int year = int.Parse(date.Substring(0, 4));
+            using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
+            {
+                conn.Open();
+                SQLiteCommand command = new SQLiteCommand("select count(*) from '" + year + "match" + player.SectionId + "' where date=" + date + " and (id_teamxsection_home=" + player.IdTeamSection + " or id_teamxsection_away=" + player.IdTeamSection + ");", conn);
+                SQLiteDataReader reader = command.ExecuteReader();
+                reader.Read();
+                if (reader.GetInt32(0)==0)
+                {
+                    MessageBox.Show("Nelze koupit hráče. Hráč má v tento den zápas.", "Podpis smlouvy", MessageBoxButton.OK);
+                }
+            }
             if ((player.IndiSkill + player.TeamSkill) / 2 < reputation - 10 || (player.IndiSkill + player.TeamSkill) / 2 > reputation + 10)
             {
                 MessageBox.Show("Hráč nemá zájem hrát ve vašem týmu", "Podpis smlouvy", MessageBoxButton.OK);
@@ -136,7 +149,6 @@ namespace EsportManager
                 MessageBoxResult result = MessageBox.Show("Chystáte se vykoupit hráče " + player.Nick + ". " + player.TeamName + " po Vás požaduje " + player.Value * 1.5 + "$. Jeho smlouva je na rok za " + newSalary + "$ měsíčně. Chcete smlouvu podepsat?", "Podpis smlouvy", MessageBoxButton.YesNo);
                 if (result == MessageBoxResult.Yes)
                 {
-                    int year = int.Parse(player.ContractEnd.Remove(4, 6));
                     year++;
                     player.ContractEnd = year.ToString() + player.ContractEnd.Remove(0, 4);
                     int playerValue = (newSalary * 100 / 3);
@@ -193,9 +205,9 @@ namespace EsportManager
                 MessageBoxResult result = MessageBox.Show("Chystáte se podepsat smlouvu s hráčem " + player.Nick + ". Jeho smlouva je na rok za " + newSalary + "$ měsíčně. Chcete smlouvu podepsat?", "Podpis smlouvy", MessageBoxButton.YesNo);
                 if (result == MessageBoxResult.Yes)
                 {
-                    int year = int.Parse(day.Substring(0,4));
+                    int year = int.Parse(date.Substring(0,4));
                     year++;
-                    player.ContractEnd = year.ToString() + day.Remove(0, 4);
+                    player.ContractEnd = year.ToString() + date.Remove(0, 4);
                     int playerValue = (newSalary * 100 / 3);
                     playerValue = playerValue / 100;
                     playerValue = playerValue * 100;

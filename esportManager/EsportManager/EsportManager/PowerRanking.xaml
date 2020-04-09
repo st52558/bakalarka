@@ -1,0 +1,27 @@
+﻿<Window x:Class="EsportManager.PowerRanking"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:EsportManager"
+        mc:Ignorable="d"
+        Title="PowerRanking" Height="390" Width="290" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <DataGrid Name="PowerRankingGrid" HorizontalAlignment="Left" Height="292" Margin="10,48,0,0"  IsReadOnly="True" CanUserDeleteRows="False" CanUserAddRows="False" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="False" VerticalAlignment="Top" Width="254" AutoGenerateColumns="False" MouseDoubleClick="ShowTeam">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="#" 
+                          Binding="{Binding PowerPosition}" />
+                <DataGridTextColumn Header="Název týmu" Width="140"
+                          Binding="{Binding TeamName}"/>
+                <DataGridTextColumn Header="V"
+                          Binding="{Binding Wins}"/>
+                <DataGridTextColumn Header="P"
+                          Binding="{Binding Loses}"/>
+                <DataGridTextColumn Header="H"
+                          Binding="{Binding PowerRanking}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <ComboBox Name="SectionsCB" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="254" SelectionChanged="SectionChanged" />
+
+    </Grid>
+</Window>

@@ -14,6 +14,8 @@ namespace EsportManager
         public string Nick { get; set; }
         public int IndiSkill { get; set; }
         public int TeamSkill { get; set; }
+        public int IndiPotencial { get; set; }
+        public int TeamPotencial { get; set; }
         public int PlayerCoop { get; set; }
         public int Position { get; set; }
         public string PositionName { get; set; }

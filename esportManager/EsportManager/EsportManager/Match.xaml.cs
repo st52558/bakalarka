@@ -24,17 +24,12 @@ namespace EsportManager
         string databaseName;
         string curDate;
         int idTeam;
-        int idSection;
-        int homeTeam;
-        int awayTeam;
         bool matchFinished;
+        bool playersInDestination;
         int nOfPlayers;
         bool positionRequired;
-        int homeScore;
-        int awayScore;
         int bestOf;
-        int idMatch;
-        int idWinner;
+        MatchDetail match;
         List<Player> homePlayers = new List<Player>();
         List<Player> awayPlayers = new List<Player>();
         public Match(string database, int idT, int idS)
@@ -42,12 +37,36 @@ namespace EsportManager
             InitializeComponent();
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
             matchFinished = false;
+            
             databaseName = database;
-            idSection = idS;
             idTeam = idT;
+            
             GetDate();
+            match = new MatchDetail(database, idS, curDate);
+            
             SetTeams();
             SetPlayers();
+            playersInDestination = PlayersInDest();
+        }
+
+        private bool PlayersInDest()
+        {
+            using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
+            {
+                int city;
+                conn.Open();
+                SQLiteCommand command = new SQLiteCommand("select id_city from teamxsection where id_teamxsection=" + idTeam + ";", conn);
+                SQLiteDataReader reader = command.ExecuteReader();
+                reader.Read();
+                city = reader.GetInt32(0);
+                reader.Close();
+                command = new SQLiteCommand("select city_fk from tournament where id_tournament=" + match.IdTournament + ";",conn);
+                reader = command.ExecuteReader();
+                reader.Read();
+                int city2 = reader.GetInt32(0);
+                reader.Close();
+                return city == city2;
+            }
         }
 
         private void SetPlayers()
@@ -55,7 +74,7 @@ namespace EsportManager
             using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
             {
                 conn.Open();
-                SQLiteCommand command = new SQLiteCommand("select position_required, n_o_players from section where id_section=" + idSection + ";", conn);
+                SQLiteCommand command = new SQLiteCommand("select position_required, n_o_players from section where id_section=" + match.IdGame + ";", conn);
                 SQLiteDataReader reader = command.ExecuteReader();
                 reader.Read();
                 if (reader.GetInt32(0) == 1) {
@@ -91,11 +110,11 @@ namespace EsportManager
             using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
             {
                 conn.Open();
-                SQLiteCommand command = new SQLiteCommand("select id_player, nick, position, playerCoop, individualSkill, teamplaySkill, energy, p.name from player join position_type p on p.id_section=player.game and p.id_position_in_game=player.position where team_fk=" + homeTeam + ";", conn);
+                SQLiteCommand command = new SQLiteCommand("select id_player, nick, position, playerCoop, individualSkill, teamplaySkill, energy, p.name from player join position_type p on p.id_section=player.game and p.id_position_in_game=player.position where team_fk=" + match.IdTxSHome + ";", conn);
                 SQLiteDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    homePlayers.Add(new Player(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(2), reader.GetInt32(3), reader.GetInt32(4), reader.GetInt32(5), reader.GetInt32(6), reader.GetString(7), homeTeam));  
+                    homePlayers.Add(new Player(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(2), reader.GetInt32(3), reader.GetInt32(4), reader.GetInt32(5), reader.GetInt32(6), reader.GetString(7), match.IdTxSHome));  
                 }
                 reader.Close();
             }
@@ -103,14 +122,15 @@ namespace EsportManager
             using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
             {
                 conn.Open();
-                SQLiteCommand command = new SQLiteCommand("select id_player, nick, position, playerCoop, individualSkill, teamplaySkill, energy, p.name from player join position_type p on p.id_section=player.game and p.id_position_in_game=player.position where team_fk=" + awayTeam + ";", conn);
+                SQLiteCommand command = new SQLiteCommand("select id_player, nick, position, playerCoop, individualSkill, teamplaySkill, energy, p.name from player join position_type p on p.id_section=player.game and p.id_position_in_game=player.position where team_fk=" + match.IdTxSAway + ";", conn);
                 SQLiteDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    awayPlayers.Add(new Player(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(2), reader.GetInt32(3), reader.GetInt32(4), reader.GetInt32(5), reader.GetInt32(6), reader.GetString(7), awayTeam));
+                    awayPlayers.Add(new Player(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(2), reader.GetInt32(3), reader.GetInt32(4), reader.GetInt32(5), reader.GetInt32(6), reader.GetString(7), match.IdTxSAway));
                 }
                 reader.Close();
             }
+
             if (positionRequired)
             {
                 int counter = 1;
@@ -130,7 +150,7 @@ namespace EsportManager
                                 {
                                     c.Items.Add(homePlayers.ElementAt(j).Nick);
                                     position = homePlayers.ElementAt(j).PositionName;
-                                    if (homeTeam != idTeam)
+                                    if (match.IdTxSHome != idTeam)
                                     {
                                         c.IsEnabled = false;
                                     }
@@ -153,7 +173,7 @@ namespace EsportManager
                                 if (awayPlayers.ElementAt(j).Position == int.Parse(c.Name.Substring(1, 1)))
                                 {
                                     c.Items.Add(awayPlayers.ElementAt(j).Nick);
-                                    if (awayTeam != idTeam)
+                                    if (match.IdTxSAway != idTeam)
                                     {
                                         c.IsEnabled = false;
                                     }
@@ -177,7 +197,7 @@ namespace EsportManager
                             for (int j = 0; j < homePlayers.Count; j++)
                             {
                                 c.Items.Add(homePlayers.ElementAt(j).Nick);
-                                if (homeTeam != idTeam)
+                                if (match.IdTxSHome != idTeam)
                                 {
                                     c.IsEnabled = false;
                                 }
@@ -188,7 +208,7 @@ namespace EsportManager
                             for (int j = 0; j < awayPlayers.Count; j++)
                             {
                                 c.Items.Add(awayPlayers.ElementAt(j).Nick);
-                                if (awayTeam != idTeam)
+                                if (match.IdTxSAway != idTeam)
                                 {
                                     c.IsEnabled = false;
                                 }
@@ -226,7 +246,7 @@ namespace EsportManager
             using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
             {
                 conn.Open();
-                SQLiteCommand command = new SQLiteCommand("select ta.name,tb.name,ta.logo,tb.logo,m.id_teamxsection_home,m.id_teamxsection_away,tour.games_best_of,tour.name,m.id_match from '" + year + "match" + idSection +"' m join teamxsection a on a.id_teamxsection=m.id_teamxsection_home join teamxsection b on b.id_teamxsection=m.id_teamxsection_away join team ta on ta.id_team=a.id_team join team tb on tb.id_team=b.id_team join tournament tour on tour.id_tournament=m.id_tournament where match_date='" + curDate + "' and (id_teamxsection_home="+idTeam+" or id_teamxsection_away=" + idTeam + ")", conn);
+                SQLiteCommand command = new SQLiteCommand("select ta.name,tb.name,ta.logo,tb.logo,m.id_teamxsection_home,m.id_teamxsection_away,tour.games_best_of,tour.name,m.id_match,a.power_ranking,b.power_ranking,tour.id_tournament from '" + year + "match" + match.IdGame + "' m join teamxsection a on a.id_teamxsection=m.id_teamxsection_home join teamxsection b on b.id_teamxsection=m.id_teamxsection_away join team ta on ta.id_team=a.id_team join team tb on tb.id_team=b.id_team join tournament tour on tour.id_tournament=m.id_tournament where match_date='" + curDate + "' and (id_teamxsection_home="+idTeam+" or id_teamxsection_away=" + idTeam + ")", conn);
                 SQLiteDataReader reader = command.ExecuteReader();
                 reader.Read();
                 HomeName.Content = reader.GetString(0);
@@ -251,11 +271,14 @@ namespace EsportManager
                     imageSource.EndInit();
                 }
                 AwayLogo.Source = imageSource;
-                homeTeam = reader.GetInt32(4);
-                awayTeam = reader.GetInt32(5);
+                match.IdTxSHome = reader.GetInt32(4);
+                match.IdTxSAway = reader.GetInt32(5);
                 bestOf = reader.GetInt32(6);
                 TournamentName.Content = reader.GetString(7);
-                idMatch = reader.GetInt32(8);
+                match.IdMatch = reader.GetInt32(8);
+                match.HomePowerRanking = reader.GetInt32(9);
+                match.AwayPowerRanking = reader.GetInt32(10);
+                match.IdTournament = reader.GetInt32(11);
                 reader.Close();
             }
         }
@@ -264,52 +287,38 @@ namespace EsportManager
         {
             int homeStrength = 0;
             int awayStrength = 0;
-            if (matchFinished)
+            if (!playersInDestination)
             {
+                MessageBox.Show("Hráči nejsou na místě konání zápasu. Zápas byl automaticky kontumován. Váš tým zaplatí pokutu 10000$.","Kontumace zápasu", MessageBoxButton.OK);
+                if (match.IdTxSHome == idTeam)
+                {
+                    match.AwayScore = bestOf;
+                } else
+                {
+                    match.HomeScore = bestOf;
+                }
                 using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
                 {
-                    int year = int.Parse(curDate.Substring(0, 4));
                     conn.Open();
-                    SQLiteCommand command = new SQLiteCommand("update '" + year + "match" + idSection + "' set home_score=" + homeScore + ", away_score=" + awayScore + " where id_match=" + idMatch + ";", conn);
-                    command.ExecuteReader();
-                    command = new SQLiteCommand("select id_home,id_away,type_home,type_away from '" + year + "future_match" + idSection + "' where (id_home=" + idMatch + " and type_home=2) or (id_away=" + idMatch + " and type_away=2);", conn);
+                    SQLiteCommand command = new SQLiteCommand("select id_team from teamxsection where id_teamxsection=" + idTeam + ";", conn);
                     SQLiteDataReader reader = command.ExecuteReader();
-                    while (reader.Read())
+                    int team=-1;
+                    if (reader.Read())
                     {
-                        SQLiteCommand command2;
-                        if (reader.GetInt32(0) == idMatch && reader.GetInt32(2) == 2)
-                        {
-                            command2 = new SQLiteCommand("update '" + year + "future_match" + idSection + "' set id_home=" + idWinner + ", type_home=1 where id_home=" + idMatch + ";", conn);
-                            command2.ExecuteReader();
-                        }
-                        else if (reader.GetInt32(1) == idMatch && reader.GetInt32(3) == 2)
-                        {
-                            command2 = new SQLiteCommand("update '" + year + "future_match" + idSection + "' set id_away=" + idWinner + ", type_away=1 where id_away=" + idMatch + ";", conn);
-                            command2.ExecuteReader();
-                        }
+                        team = reader.GetInt32(0);
                     }
                     reader.Close();
-                    command = new SQLiteCommand("select id_home,id_away,date,id_tournament,id_match from '" + year + "future_match" + idSection + "' where type_home=1 and type_away=1;", conn);
-                    reader = command.ExecuteReader();
-                    while (reader.Read())
-                    {
-                        SQLiteCommand command2 = new SQLiteCommand("insert into '" + year + "match" + idSection + "' ('id_teamxsection_home', 'id_teamxsection_away', 'match_date', 'id_tournament') values (" + reader.GetInt32(0) + ", " + reader.GetInt32(1) + ", " + reader.GetString(2) + ", " + reader.GetInt32(3) + ");", conn);
-                        command2.ExecuteReader();
-                        command2 = new SQLiteCommand("select last_insert_rowid()", conn);
-                        SQLiteDataReader reader2 = command2.ExecuteReader();
-                        reader2.Read();
-                        int idNewMatch = reader2.GetInt32(0);
-                        reader2.Close();
-                        command2 = new SQLiteCommand("update '" + year + "future_match" + idSection + "' set id_home=" + idNewMatch + ", type_home=2 where id_home=" + reader.GetInt32(4) + " and type_home=3;", conn);
-                        command2.ExecuteReader();
-                        command2 = new SQLiteCommand("update '" + year + "future_match" + idSection + "' set id_away=" + idNewMatch + ", type_away=2 where id_away=" + reader.GetInt32(4) + " and type_away=3;", conn);
-                        command2.ExecuteReader();
-                        command2 = new SQLiteCommand("delete from '" + year + "future_match" + idSection + "' where id_match=" + reader.GetInt32(4), conn);
-                        command2.ExecuteReader();
-                    }
+                    command = new SQLiteCommand("update team set budget=budget-10000 where id_team=" + team +";", conn);
+                    command.ExecuteReader();
                 }
+                match.UpdateMatches();
                 this.Close();
-                } else
+            }
+            else if (matchFinished)
+            {
+                match.UpdateMatches();
+                this.Close();
+            } else
             {
                 
                 for (int i = 0; i < Panel.Children.Count; i++)
@@ -353,25 +362,23 @@ namespace EsportManager
                 Score.Visibility = Visibility.Visible;
                 if (awayStrength > homeStrength)
                 {
-                    awayScore++;
+                    match.AwayScore++;
                     
                 } else
                 {
-                    homeScore++;
+                    match.HomeScore++;
                 }
-                Score.Content = homeScore + "-" + awayScore;
-                if (homeScore + awayScore == bestOf)
+                Score.Content = match.HomeScore + "-" + match.AwayScore;
+                if (match.HomeScore + match.AwayScore == bestOf)
                 {
                     matchFinished = true;
                     PlayMatch.Content = "Pokračovat";
-                    if (awayScore > homeScore)
+                    if (match.AwayScore > match.HomeScore)
                     {
-                        idWinner = awayTeam;
                         HomeLogo.Opacity = 0.1;
                         AwayBorder.Visibility = Visibility.Visible;
                     } else
                     {
-                        idWinner = homeTeam;
                         AwayLogo.Opacity = 0.1;
                         HomeBorder.Visibility = Visibility.Visible;
                     }

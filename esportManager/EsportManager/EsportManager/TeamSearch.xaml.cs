@@ -20,14 +20,9 @@ namespace EsportManager
     /// </summary>
     public partial class TeamSearch : Window
     {
-        class GameBasic
-        {
-            public int ID { get; set; }
-            public string Name { get; set; }
-        }
 
         List<Tournament> tournaments;
-        List<GameBasic> games;
+        List<Game> games;
         List<Team> teams;
         string databaseName;
 
@@ -35,7 +30,7 @@ namespace EsportManager
         {
             databaseName = databasename;
             tournaments = new List<Tournament>();
-            games = new List<GameBasic>();
+            games = new List<Game>();
             teams = new List<Team>();
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
             InitializeComponent();
@@ -54,10 +49,7 @@ namespace EsportManager
                 GamesCB.Items.Add("Všechny hry");
                 while (reader.Read())
                 {
-                    GameBasic g = new GameBasic();
-                    g.ID = reader.GetInt32(0);
-                    g.Name = reader.GetString(1);
-                    games.Add(g);
+                    games.Add(new Game(reader.GetInt32(0), reader.GetString(1)));
                 }
                 for (int i = 0; i < games.Count; i++)
                 {

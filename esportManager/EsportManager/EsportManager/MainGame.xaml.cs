@@ -16,7 +16,7 @@ namespace EsportManager
     public partial class MainGame : Window
     {
         public string DatabaseName { get; set; }
-        List<TeamSectionBasic> sectionsList = new List<TeamSectionBasic>();
+        List<TeamSection> sectionsList = new List<TeamSection>();
         string date;
         int idTeam;
         int todaysMatchTeam;
@@ -184,7 +184,7 @@ namespace EsportManager
                         NextActionButton.Content = "Zápas";
                         NextActionButton.Click += PlayMatch;
                         todaysMatchTeam = sectionsList.ElementAt(i).ID;
-                        matchTeamSection = sectionsList.ElementAt(i).sectionID;
+                        matchTeamSection = sectionsList.ElementAt(i).SectionID;
                         return;
                     }
                     reader.Close();
@@ -267,8 +267,48 @@ namespace EsportManager
                 command = new SQLiteCommand("update team set budget=budget+" + income + " where id_team=" + idTeam + ";", conn);
                 command.ExecuteReader();
             }
+            FillOpenTournaments();
             NextDayClick(sender, e);
             SetLabels();
+        }
+
+        private void FillOpenTournaments()
+        {
+            string year = date.Remove(4, 6);
+            string month = date.Remove(7, 3).Remove(0, 5);
+            int m = int.Parse(month) + 2;
+            month = m.ToString();
+            if (month.Length == 1)
+            {
+                month = "0" + month;
+            }
+            string date2 = year + "-" + month + "-01";
+            using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + DatabaseName + ";"))
+            {
+                List<int> tokens = new List<int>();
+                conn.Open();
+                SQLiteCommand command = new SQLiteCommand("select id_token from tournament_token join tournament on id_tournament_to=id_tournament where tournament.start_date > '" + date + "' and tournament.start_date < '" + date2 + "' and id_teamxsection is null and id_tournament_from is null;", conn);
+                SQLiteDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    tokens.Add(reader.GetInt32(0));
+                }
+                reader.Close();
+                command = new SQLiteCommand("select DISTINCT teamxsection.id_teamxsection from teamxsection left join tournament_token on teamxsection.id_teamxsection=tournament_token.id_teamxsection where tournament_token.id_teamxsection is null and teamxsection.id_team <>" + idTeam + " order by power_ranking desc;", conn);
+                reader = command.ExecuteReader();
+                int counter = 0;
+                while (reader.Read())
+                {
+                    if (tokens.Count == counter)
+                    {
+                        break;
+                    }
+                    SQLiteCommand command2 = new SQLiteCommand("update tournament_token set id_teamxsection=" + reader.GetInt32(0) + " where id_token=" + tokens.ElementAt(counter) + ";", conn);
+                    command2.ExecuteReader();
+                    counter++;
+                }
+                reader.Close();
+            }
         }
 
         private void NextDayClick(object sender, RoutedEventArgs e)
@@ -309,8 +349,30 @@ namespace EsportManager
                 }
                 reader.Close();
             }
-            //už vím turnaje, které jsou potřeba nalosovat
+            // už vím turnaje, které jsou potřeba nalosovat
             DrawTournaments(tournamentsToDraw);
+
+            // tréninky
+            using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + DatabaseName + ";"))
+            {
+                conn.Open();
+                for (int i = 0; i < sectionsList.Count; i++)
+                {
+                    SQLiteCommand command = new SQLiteCommand("select count(*) from '2019match1' where match_date='" + date + "' and id_teamxsection_home=" + sectionsList.ElementAt(i).ID + " or id_teamxsection_away=" + sectionsList.ElementAt(i).ID + ";", conn);
+                    SQLiteDataReader reader = command.ExecuteReader();
+                    reader.Read();
+                    int matches = reader.GetInt32(0);
+                    reader.Close();
+                    if (matches == 0)
+                    {
+                       DailyTraining(sectionsList.ElementAt(i).ID);
+                    }
+                    
+                }
+            }
+            FinishTournament(1, 1, 1, 1, 1, 2);
+            // platba za ubytování
+            PayingForAccommodations();
 
             // další den
             date = NextDay(date);
@@ -324,17 +386,203 @@ namespace EsportManager
             ChangePropertiesOfNextActionButton();
         }
 
+        private void PayingForAccommodations()
+        {
+            using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + DatabaseName + ";"))
+            {
+                conn.Open();
+                SQLiteCommand command = new SQLiteCommand("select teamxsection.id_city, team.id_city_fk from teamxsection join team on teamxsection.id_team=team.id_team where teamxsection.id_team=" + idTeam + ";", conn);
+                SQLiteDataReader reader = command.ExecuteReader();
+                int payment = 0;
+                while (reader.Read()) 
+                {
+                    if (reader.GetInt32(0) != reader.GetInt32(1))
+                    {
+                        payment += 1000;
+                    }
+                }
+                reader.Close();
+                command = new SQLiteCommand("update team set budget=budget-" + payment + " where id_team=" + idTeam + ";", conn);
+                command.ExecuteReader();
+            }
+            SetLabels();
+        }
+
+        private void DailyTraining(int section)
+        {
+            int year = int.Parse(date.Remove(4, 6));
+            int month = int.Parse(date.Remove(7, 3).Remove(0, 5));
+            int day = int.Parse(date.Remove(0, 8));
+            DateTime dateDate = new DateTime(year, month, day);
+            int dayOfWeek;
+            switch (dateDate.DayOfWeek)
+            {
+                case DayOfWeek.Sunday:
+                    dayOfWeek = 7;
+                    break;
+                case DayOfWeek.Monday:
+                    dayOfWeek = 1;
+                    break;
+                case DayOfWeek.Tuesday:
+                    dayOfWeek = 2;
+                    break;
+                case DayOfWeek.Wednesday:
+                    dayOfWeek = 3;
+                    break;
+                case DayOfWeek.Thursday:
+                    dayOfWeek = 4;
+                    break;
+                case DayOfWeek.Friday:
+                    dayOfWeek = 5;
+                    break;
+                case DayOfWeek.Saturday:
+                    dayOfWeek = 6;
+                    break;
+                default:
+                    dayOfWeek = 0;
+                    break;
+            }
+            Random random = new Random();
+            using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + DatabaseName + ";"))
+            {
+                List<Player> players = new List<Player>();
+                conn.Open();
+                SQLiteCommand command = new SQLiteCommand("select id_player, playerCoop, individualSkill, teamplaySkill, individualPotencial, teamplayPotencial, energy from player where team_fk=" + section + ";", conn);
+                SQLiteDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    Player p = new Player();
+                    p.IdPlayer = reader.GetInt32(0);
+                    p.PlayerCoop = reader.GetInt32(1);
+                    p.IndiSkill = reader.GetInt32(2);
+                    p.TeamSkill = reader.GetInt32(3);
+                    p.IndiPotencial = reader.GetInt32(4);
+                    p.TeamPotencial = reader.GetInt32(5);
+                    p.Energy = reader.GetInt32(6);
+                    players.Add(p);
+                }
+                reader.Close();
+                command = new SQLiteCommand("select id_coach, training from coach where team_fk=" + idTeam + ";", conn);
+                reader = command.ExecuteReader();
+                Coach coach = null;
+                if (reader.Read())
+                {
+                    coach = new Coach();
+                    coach.IdCoach = reader.GetInt32(0);
+                    coach.Training = reader.GetInt32(1);
+                }
+                reader.Close();
+                command = new SQLiteCommand("select type from training where day=" + dayOfWeek + ";", conn);
+                reader = command.ExecuteReader();
+                DailyTraining training = new DailyTraining();
+                while (reader.Read())
+                {
+                    /*
+                    0 - "Volno",
+                    1 - "Individuální",
+                    2 - "Analýza",
+                    3 - "Cvičný zápas"*/
+                    switch (reader.GetInt32(0))
+                    {
+                        case 0:
+                            training.FreeTime++;
+                            break;
+                        case 1:
+                            training.IndiTraining++;
+                            break;
+                        case 2:
+                            training.Analysis++;
+                            break;
+                        case 3:
+                            training.Scrims++;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                reader.Close();
+                int energyDown = training.Analysis + training.IndiTraining + training.Scrims * 3 - training.FreeTime - 3;
+                string com = "";
+                for (int i = 0; i < players.Count; i++)
+                {
+                    players.ElementAt(i).Energy = Math.Min(100, players.ElementAt(i).Energy - energyDown);
+                    if (players.ElementAt(i).Energy < 0)
+                    {
+                        players.ElementAt(i).IndiSkill -= 3;
+                        players.ElementAt(i).TeamSkill -= 3;
+                        players.ElementAt(i).Energy = 0;
+                    }
+                    // trénink v pořádku
+                    else
+                    {
+                        // volno
+                        for (int j = 0; j < training.FreeTime; j++)
+                        {
+                            if (random.Next(40) == 1)
+                            {
+                                Math.Max(players.ElementAt(i).TeamSkill--, 0);
+                            }
+                            if (random.Next(40) == 1)
+                            {
+                                Math.Max(players.ElementAt(i).IndiSkill--, 0);
+                            }
+                            if (random.Next(40) == 1)
+                            {
+                                Math.Max(players.ElementAt(i).PlayerCoop--,0);
+                            }
+                        }
+                        // scrimy
+                        for (int j = 0; j < training.Scrims; j++)
+                        {
+                            if (random.Next(120 - coach.Training) == 1)
+                            {
+                                Math.Min(players.ElementAt(i).TeamSkill++, players.ElementAt(i).TeamPotencial);
+                            }
+                            if (random.Next(120 - coach.Training) == 1)
+                            {
+                                Math.Min(players.ElementAt(i).IndiSkill++, players.ElementAt(i).IndiPotencial);
+                            }
+                            if (random.Next(2) == 1)
+                            {
+                                Math.Min(players.ElementAt(i).PlayerCoop++,100);
+                            }
+                        }
+                        // analýza
+                        for (int j = 0; j < training.Analysis; j++)
+                        {
+                            if (random.Next(100 - coach.Training) == 1)
+                            {
+                                Math.Min(players.ElementAt(i).TeamSkill++, players.ElementAt(i).TeamPotencial);
+                            }
+                        }
+                        // individuál
+                        for (int j = 0; j < training.Analysis; j++)
+                        {
+                            if (random.Next(100 - coach.Training) == 1)
+                            {
+                                Math.Min(players.ElementAt(i).IndiSkill++, players.ElementAt(i).IndiPotencial);
+                            }
+                        }
+                    }
+                    com += "update player set playerCoop=" + players.ElementAt(i).PlayerCoop + ", individualSkill=" + players.ElementAt(i).IndiSkill + ", teamplaySkill=" + players.ElementAt(i).TeamSkill + ", energy=" + players.ElementAt(i).Energy + " where id_player=" + players.ElementAt(i).IdPlayer + ";";
+                    
+                }
+                command = new SQLiteCommand(com, conn);
+                command.ExecuteReader();
+            }
+        }
+
         private void FinishTournaments()
         {
             using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + DatabaseName + ";"))
             {
                 string ex = "";
                 conn.Open();
-                SQLiteCommand command = new SQLiteCommand("select id_tournament, prize_pool, pp_teams, pp_dividing, game from tournament where end_date='" + date + "';", conn);
+                SQLiteCommand command = new SQLiteCommand("select id_tournament, prize_pool, pp_teams, pp_dividing, game, system from tournament where end_date='" + date + "';", conn);
                 SQLiteDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    ex += FinishTournament(reader.GetInt32(0), reader.GetInt32(1), reader.GetInt32(2), reader.GetInt32(3), reader.GetInt32(4));
+                    ex += FinishTournament(reader.GetInt32(0), reader.GetInt32(1), reader.GetInt32(2), reader.GetInt32(3), reader.GetInt32(4), reader.GetInt32(5));
                 }
                 reader.Close();
                 command = new SQLiteCommand(ex, conn);
@@ -342,64 +590,86 @@ namespace EsportManager
             }
         }
 
-        private string FinishTournament(int idTournament, int prizePool, int ppTeams, int ppDividing, int game)
+        private string FinishTournament(int idTournament, int prizePool, int ppTeams, int ppDividing, int game, int system)
         {
-            TournamentStandings standings;
             string ret = "";
-            standings = new TournamentStandings(DatabaseName, idTournament, prizePool, ppTeams, ppDividing);
-            for (int i = 0; i < standings.standings.Count; i++)
+            if (system ==1 || system == 2 || system == 6)
             {
-                ret += "update tournament_token set id_teamxsection=" + standings.standings.ElementAt(i).IdTeamSection + " where id_tournament_from=" + idTournament + " and tournament_from_position=" + standings.standings.ElementAt(i).Position + ";";
-                ret += "update team set budget = budget + " + standings.standings.ElementAt(i).PrizePool + " where id_team=" + standings.standings.ElementAt(i).IdTeam + ";";
+                TournamentStandings standings;
+                standings = new TournamentStandings(DatabaseName, idTournament, prizePool, ppTeams, ppDividing, system);
+                for (int i = 0; i < standings.standings.Count; i++)
+                {
+                    ret += "update tournament_token set id_teamxsection=" + standings.standings.ElementAt(i).IdTeamSection + " where id_tournament_from=" + idTournament + " and tournament_from_position=" + standings.standings.ElementAt(i).Position + ";";
+                    ret += "update team set budget = budget + " + standings.standings.ElementAt(i).PrizePool + " where id_team=" + standings.standings.ElementAt(i).IdTeam + ";";
+                }
+                
+            } 
+            else
+            {
+                TournamentBracket bracket = new TournamentBracket(DatabaseName, idTournament, prizePool, ppTeams, ppDividing, system);
+                bracket.CountStandings();
+                for (int i = 0; i < bracket.Teams.Count; i++)
+                {
+                    ret += "update tournament_token set id_teamxsection=" + bracket.Teams.ElementAt(i).IdTeamSection + " where id_tournament_from=" + idTournament + " and tournament_from_position=" + bracket.Teams.ElementAt(i).Position + ";";
+                    ret += "update team set budget = budget + " + bracket.Teams.ElementAt(i).PrizePool + " where id_team=" + bracket.Teams.ElementAt(i).IdTeam + ";";
+                }
             }
             return ret;
         }
 
         private void PlayAllOtherMatches()
         {
+            List<MatchDetail> updateMatch = new List<MatchDetail>();
             using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + DatabaseName + ";"))
             {
                 int year = int.Parse(date.Substring(0, 4));
                 conn.Open();
+                int idSection = 1;
                 // PŘEDĚLAT SEKCE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                SQLiteCommand command = new SQLiteCommand("select id_match, m.id_teamxsection_home, m.id_teamxsection_away, tour.games_best_of from '" + year + "match1' m join teamxsection a on a.id_teamxsection = m.id_teamxsection_home join teamxsection b on b.id_teamxsection = m.id_teamxsection_away join tournament tour on tour.id_tournament = m.id_tournament where match_date = '" + date + "'", conn);
+                SQLiteCommand command = new SQLiteCommand("select id_match, m.id_teamxsection_home, m.id_teamxsection_away, tour.games_best_of, a.power_ranking, b.power_ranking from '" + year + "match" + idSection + "' m join teamxsection a on a.id_teamxsection = m.id_teamxsection_home join teamxsection b on b.id_teamxsection = m.id_teamxsection_away join tournament tour on tour.id_tournament = m.id_tournament where match_date = '" + date + "'", conn);
                 SQLiteDataReader reader = command.ExecuteReader();
-                int homeStrength, awayStrength, idMatch, homeTeam, awayTeam, bestOf, homeScore, awayScore;
+                int homeStrength, awayStrength, bestOf;
+                
                 while (reader.Read())
                 {
-                    idMatch = reader.GetInt32(0);
-                    homeTeam = reader.GetInt32(1);
-                    awayTeam = reader.GetInt32(2);
+                    MatchDetail m = new MatchDetail(DatabaseName, idSection, date);
+                    m.IdMatch = reader.GetInt32(0);
+                    m.IdTxSHome = reader.GetInt32(1);
+                    m.IdTxSAway = reader.GetInt32(2);
+                    m.HomePowerRanking = reader.GetInt32(4);
+                    m.AwayPowerRanking = reader.GetInt32(5);
                     bestOf = reader.GetInt32(3);
-                    SQLiteCommand command2 = new SQLiteCommand("select sum(individualSkill + teamplaySkill + playerCoop) / count(*) as i from player where team_fk=" + homeTeam + ";", conn);
+                    SQLiteCommand command2 = new SQLiteCommand("select sum(individualSkill + teamplaySkill + playerCoop) / count(*) as i from player where team_fk=" + m.IdTxSHome + ";", conn);
                     SQLiteDataReader reader2 = command2.ExecuteReader();
                     reader2.Read();
                     homeStrength = reader2.GetInt32(0);
                     reader2.Close();
-                    command2 = new SQLiteCommand("select sum(individualSkill + teamplaySkill + playerCoop) / count(*) as i from player where team_fk=" + awayTeam + ";", conn);
+                    command2 = new SQLiteCommand("select sum(individualSkill + teamplaySkill + playerCoop) / count(*) as i from player where team_fk=" + m.IdTxSAway + ";", conn);
                     reader2 = command2.ExecuteReader();
                     reader2.Read();
                     awayStrength = reader2.GetInt32(0);
                     reader2.Close();
-                    homeScore = 0;
-                    awayScore = 0;
-                    while (homeScore < bestOf && awayScore < bestOf)
+                    m.HomeScore = 0;
+                    m.AwayScore = 0;
+                    while (m.HomeScore < bestOf && m.AwayScore < bestOf)
                     {
                         // tady nějaké výpočty a propočty
                         if (awayStrength > homeStrength)
                         {
-                            awayScore++;
-
+                            m.AwayScore++;
                         }
                         else
                         {
-                            homeScore++;
+                            m.HomeScore++;
                         }
                     }
-                    command2 = new SQLiteCommand("update '" + year + "match1' set home_score=" + homeScore + ", away_score=" + awayScore + " where id_match=" + idMatch + ";", conn);
-                    command2.ExecuteReader();
+                    updateMatch.Add(m);
                 }
                 reader.Close();
+            }
+            for (int i = 0; i < updateMatch.Count; i++)
+            {
+                updateMatch.ElementAt(i).UpdateMatches();
             }
         }
 
@@ -432,7 +702,7 @@ namespace EsportManager
 
 
                     reader.Close();
-                    if (system==1 || system == 2)
+                    if (system==1 || system == 2 || system==6)
                     {
                         if (oddTeams)
                         {
@@ -509,6 +779,36 @@ namespace EsportManager
                                         finalDraw[counter, 1] = draw[i, j + 1];
                                         finalDraw[counter + finalDraw.GetLength(0)/2, 0] = draw[i, j + 1];
                                         finalDraw[counter + finalDraw.GetLength(0)/2, 1] = draw[i, j];
+                                        counter++;
+                                    }
+                                }
+                            }
+                        }
+                        // triple round robin
+                        else if (system == 6)
+                        {
+                            if (oddTeams)
+                            {
+                                finalDraw = new int[(teams - 2) * (teams - 1) * 3 /2, 2];
+                            }
+                            else
+                            {
+                                finalDraw = new int[(teams - 1) * teams * 3 / 2, 2];
+                            }
+
+                            int counter = 0;
+                            for (int i = 0; i < teams - 1; i++)
+                            {
+                                for (int j = 0; j < teams; j += 2)
+                                {
+                                    if (!oddTeams || (draw[i, j] != teams - 1 && draw[i, j + 1] != teams - 1))
+                                    {
+                                        finalDraw[counter, 0] = draw[i, j];
+                                        finalDraw[counter, 1] = draw[i, j + 1];
+                                        finalDraw[counter + finalDraw.GetLength(0)*2 / 3, 0] = draw[i, j];
+                                        finalDraw[counter + finalDraw.GetLength(0)*2 / 3, 1] = draw[i, j + 1];
+                                        finalDraw[counter + finalDraw.GetLength(0) / 3, 0] = draw[i, j + 1];
+                                        finalDraw[counter + finalDraw.GetLength(0) / 3, 1] = draw[i, j];
                                         counter++;
                                     }
                                 }
@@ -623,20 +923,53 @@ namespace EsportManager
                                 futureMatchesCounter++;
                             }
                         }
-
                     }
-                    
+                    if (system == 4)
+                    {
+                        finalDraw = new int[1, 2];
+                        finalDraw[0, 0] = teams - 1;
+                        finalDraw[0, 1] = teams - 2;
+                        futureMatches = new int[teams-2,6];
+                        for (int i = 0; i < futureMatches.GetLength(0); i++)
+                        {
+                            if (i==0)
+                            {
+                                futureMatches[i, 0] = -1;
+                                futureMatches[i, 1] = 0;
+                                futureMatches[i, 2] = teams - 3;
+                                futureMatches[i, 3] = -1;
+                                futureMatches[i, 4] = -1;
+                                futureMatches[i, 5] = -1;
+                            } else
+                            {
+                                futureMatches[i, 0] = -1;
+                                futureMatches[i, 1] = -1;
+                                futureMatches[i, 2] = teams - 3 - i;
+                                futureMatches[i, 3] = -1;
+                                futureMatches[i, 4] = -1;
+                                futureMatches[i, 5] = i - 1;
+                            }
+                        }
+                    }
+
                     command = new SQLiteCommand("select id_teamxsection from tournament_token where id_tournament_to=" + tournamentsToDraw.ElementAt(tourToDraw) + " order by seed", conn);
                     reader = command.ExecuteReader();
+
                     int[] realIds = new int[teams];
                     int[] realIdMatches = new int[finalDraw.GetLength(0)];
-                    int[] realIdFuture = new int[futureMatches.GetLength(0)];
+                    int[] realIdFuture = null;
+                    if (futureMatches != null)
+                    {
+                        realIdFuture = new int[futureMatches.GetLength(0)];
+                    }
+                    
                     for (int i = 0; i < teams; i++)
                     {
                         reader.Read();
                         realIds[i] = reader.GetInt32(0);
                     }
                     reader.Close();
+                    realIds = CheckIfTeamsAreUnique(realIds, tournamentsToDraw.ElementAt(tourToDraw));
                     DateTime date = startDate;
                     int[] daysPlaying = new int[7];
                     for (int i = 0; i < daysPlaying.Length; i++)
@@ -701,7 +1034,7 @@ namespace EsportManager
                                     realIdMatches[matchCounter] = reader.GetInt32(0);
                                     reader.Close();
                                     matchCounter++;
-                                } else if (matchCounter < finalDraw.GetLength(0) + futureMatches.GetLength(0))
+                                } else if (futureMatches !=null && matchCounter < finalDraw.GetLength(0) + futureMatches.GetLength(0))
                                 {
                                     if (futureMatches[matchCounter - finalDraw.GetLength(0), 0] != -1)
                                     {
@@ -754,6 +1087,40 @@ namespace EsportManager
             }
         }
 
+        private int[] CheckIfTeamsAreUnique(int[] realIds, int tournament)
+        {
+            int invalidId = -1;
+            for (int i = 0; i < realIds.Length - 1; i++)
+            {
+                for (int j = i + 1; j < realIds.Length; j++)
+                {
+                    if (realIds[i] == realIds[j])
+                    {
+                        invalidId = j;   
+                    }
+                }
+            }
+            if (invalidId != -1)
+            {
+                using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + DatabaseName + ";"))
+                {
+                    conn.Open();
+                    SQLiteCommand command = new SQLiteCommand("select DISTINCT teamxsection.id_teamxsection from teamxsection left join tournament_token on teamxsection.id_teamxsection=tournament_token.id_teamxsection where tournament_token.id_teamxsection is null order by power_ranking;", conn);
+                    SQLiteDataReader reader = command.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        realIds[invalidId] = reader.GetInt32(0);
+                    }
+                    reader.Close();
+                    command = new SQLiteCommand("update tournament_token set id_teamxsection=" + realIds[invalidId] + " where id_tournament_to=" + tournament + " and seed=" + invalidId + ";", conn);
+                    command.ExecuteReader();
+                    conn.Close();
+                }
+                realIds = CheckIfTeamsAreUnique(realIds, tournament);
+            }
+            return realIds;
+        }
+
         private void EndYearClick(object sender, RoutedEventArgs e)
         {
             ChangePropertiesOfNextActionButton();
@@ -776,8 +1143,8 @@ namespace EsportManager
                         comm += "update player set value=0, salary=0, team_fk=NULL, contractEnd='' where id_player=" + reader.GetInt32(0) + ";";
                         /*SQLiteCommand command2 = new SQLiteCommand("update player set value=0, salary=0, team_fk=NULL, contractEnd='' where id_player=" + reader.GetInt32(0) + ";", conn);
                         command2.ExecuteReader();*/
-                    }
-                    reader.Close();
+                }
+                reader.Close();
                     command = new SQLiteCommand(comm, conn);
                     command.ExecuteReader();
                     AddAllPlayers();
@@ -845,7 +1212,7 @@ namespace EsportManager
                     }
 
                     reader.Close();
-                    command = new SQLiteCommand("select nick, coach.name, surname, team_fk from coach join teamxsection on teamxsection.id_team=coach.team_fk where teamxsection.id_teamxsection=" + sectionsList.ElementAt(i).ID + " and game=" + sectionsList.ElementAt(i).sectionID + ";", conn);
+                    command = new SQLiteCommand("select nick, coach.name, surname, team_fk from coach join teamxsection on teamxsection.id_team=coach.team_fk where teamxsection.id_teamxsection=" + sectionsList.ElementAt(i).ID + " and game=" + sectionsList.ElementAt(i).SectionID + ";", conn);
                     reader = command.ExecuteReader();
                     while (reader.Read())
                     {
@@ -898,14 +1265,14 @@ namespace EsportManager
                 for (int i = 0; i < sectionsList.Count; i++)
                 {
                     List<MatchDetail> tournaments = new List<MatchDetail>();
-                    string matchTableName = year + "match" + sectionsList.ElementAt(i).sectionID;
-                    command = new SQLiteCommand("select tournament.id_tournament, tournament.shortcut, match_date, id_teamxsection_home, id_teamxsection_away, tournament.city_fk, cities.name, home_score, away_score from '" + matchTableName + "' join tournament on tournament.id_tournament='" + matchTableName + "'.id_tournament join cities on cities.id_city=tournament.city_fk where id_teamxsection_home=" + sectionsList.ElementAt(i).ID + " or id_teamxsection_away=" + sectionsList.ElementAt(i).ID + " order by match_date desc;", conn);
+                    string matchTableName = year + "match" + sectionsList.ElementAt(i).SectionID;
+                    command = new SQLiteCommand("select tournament.id_tournament, tournament.shortcut, match_date, id_teamxsection_home, id_teamxsection_away, tournament.city_fk, cities.name, home_score, away_score from '" + matchTableName + "' join tournament on tournament.id_tournament='" + matchTableName + "'.id_tournament join cities on cities.id_city=tournament.city_fk where id_teamxsection_home=" + sectionsList.ElementAt(i).ID + " or id_teamxsection_away=" + sectionsList.ElementAt(i).ID + " order by match_date asc;", conn);
                     reader = command.ExecuteReader();
                     while (reader.Read())
                     {
                         SQLiteCommand command2;
                         SQLiteDataReader reader2;
-                        MatchDetail m = new MatchDetail();
+                        MatchDetail m = new MatchDetail(DatabaseName,sectionsList.ElementAt(i).SectionID, date);
                         if (reader.GetInt32(3) == sectionsList.ElementAt(i).ID)
                         {
                             m.IdTxSHome = sectionsList.ElementAt(i).ID;
@@ -995,12 +1362,12 @@ namespace EsportManager
                     if (sectionBefore == reader.GetInt32(1))
                     {
                         //je to B tým
-                        sectionsList.Add(new TeamSectionBasic(reader.GetInt32(0), reader.GetInt32(1), reader.GetString(2) + " B"));
+                        sectionsList.Add(new TeamSection(reader.GetInt32(0), reader.GetInt32(1), reader.GetString(2) + " B"));
                     }
                     else
                     {
                         //je to A tým
-                        sectionsList.Add(new TeamSectionBasic(reader.GetInt32(0), reader.GetInt32(1), reader.GetString(2)));
+                        sectionsList.Add(new TeamSection(reader.GetInt32(0), reader.GetInt32(1), reader.GetString(2)));
                     }
 
                     sectionBefore = reader.GetInt32(1);
@@ -1026,42 +1393,42 @@ namespace EsportManager
             switch (numberOfSections)
             {
                 case 2:
-                    SetTabsDesign(Section1, Section1Body, sectionsList.ElementAt(0));
+                    SetTabsDesign(Section1, Section1Body, sectionsList.ElementAt(0), Section1PlayersList, Section1TournamentsList);
                     SetTabAsNewSection(Section2, Section2Body);
                     break;
                 case 3:
-                    SetTabsDesign(Section1, Section1Body, sectionsList.ElementAt(0));
-                    SetTabsDesign(Section2, Section2Body, sectionsList.ElementAt(1));
+                    SetTabsDesign(Section1, Section1Body, sectionsList.ElementAt(0), Section1PlayersList, Section1TournamentsList);
+                    SetTabsDesign(Section2, Section2Body, sectionsList.ElementAt(1), Section2PlayersList, Section2TournamentsList);
                     SetTabAsNewSection(Section3, Section3Body);
                     break;
                 case 4:
-                    SetTabsDesign(Section1, Section1Body, sectionsList.ElementAt(0));
-                    SetTabsDesign(Section2, Section2Body, sectionsList.ElementAt(1));
-                    SetTabsDesign(Section3, Section3Body, sectionsList.ElementAt(2));
+                    SetTabsDesign(Section1, Section1Body, sectionsList.ElementAt(0), Section1PlayersList, Section1TournamentsList);
+                    SetTabsDesign(Section2, Section2Body, sectionsList.ElementAt(1), Section2PlayersList, Section2TournamentsList);
+                    SetTabsDesign(Section3, Section3Body, sectionsList.ElementAt(2), Section3PlayersList, Section3TournamentsList);
                     SetTabAsNewSection(Section4, Section4Body);
                     break;
                 case 5:
-                    SetTabsDesign(Section1, Section1Body, sectionsList.ElementAt(0));
-                    SetTabsDesign(Section2, Section2Body, sectionsList.ElementAt(1));
-                    SetTabsDesign(Section3, Section3Body, sectionsList.ElementAt(2));
-                    SetTabsDesign(Section4, Section4Body, sectionsList.ElementAt(3));
+                    SetTabsDesign(Section1, Section1Body, sectionsList.ElementAt(0), Section1PlayersList, Section1TournamentsList);
+                    SetTabsDesign(Section2, Section2Body, sectionsList.ElementAt(1), Section2PlayersList, Section2TournamentsList);
+                    SetTabsDesign(Section3, Section3Body, sectionsList.ElementAt(2), Section3PlayersList, Section3TournamentsList);
+                    SetTabsDesign(Section4, Section4Body, sectionsList.ElementAt(3), Section4PlayersList, Section4TournamentsList);
                     SetTabAsNewSection(Section5, Section5Body);
                     break;
                 case 6:
-                    SetTabsDesign(Section1, Section1Body, sectionsList.ElementAt(0));
-                    SetTabsDesign(Section2, Section2Body, sectionsList.ElementAt(1));
-                    SetTabsDesign(Section3, Section3Body, sectionsList.ElementAt(2));
-                    SetTabsDesign(Section4, Section4Body, sectionsList.ElementAt(3));
-                    SetTabsDesign(Section5, Section5Body, sectionsList.ElementAt(4));
+                    SetTabsDesign(Section1, Section1Body, sectionsList.ElementAt(0), Section1PlayersList, Section1TournamentsList);
+                    SetTabsDesign(Section2, Section2Body, sectionsList.ElementAt(1), Section2PlayersList, Section2TournamentsList);
+                    SetTabsDesign(Section3, Section3Body, sectionsList.ElementAt(2), Section3PlayersList, Section3TournamentsList);
+                    SetTabsDesign(Section4, Section4Body, sectionsList.ElementAt(3), Section4PlayersList, Section4TournamentsList);
+                    SetTabsDesign(Section5, Section5Body, sectionsList.ElementAt(4), Section5PlayersList, Section5TournamentsList);
                     SetTabAsNewSection(Section6, Section6Body);
                     break;
                 case 7:
-                    SetTabsDesign(Section1, Section1Body, sectionsList.ElementAt(0));
-                    SetTabsDesign(Section2, Section2Body, sectionsList.ElementAt(1));
-                    SetTabsDesign(Section3, Section3Body, sectionsList.ElementAt(2));
-                    SetTabsDesign(Section4, Section4Body, sectionsList.ElementAt(3));
-                    SetTabsDesign(Section5, Section5Body, sectionsList.ElementAt(4));
-                    SetTabsDesign(Section6, Section6Body, sectionsList.ElementAt(5));
+                    SetTabsDesign(Section1, Section1Body, sectionsList.ElementAt(0), Section1PlayersList, Section1TournamentsList);
+                    SetTabsDesign(Section2, Section2Body, sectionsList.ElementAt(1), Section2PlayersList, Section2TournamentsList);
+                    SetTabsDesign(Section3, Section3Body, sectionsList.ElementAt(2), Section3PlayersList, Section3TournamentsList);
+                    SetTabsDesign(Section4, Section4Body, sectionsList.ElementAt(3), Section4PlayersList, Section4TournamentsList);
+                    SetTabsDesign(Section5, Section5Body, sectionsList.ElementAt(4), Section5PlayersList, Section5TournamentsList);
+                    SetTabsDesign(Section6, Section6Body, sectionsList.ElementAt(5), Section6PlayersList, Section6TournamentsList);
                     break;
                 default:
                     break;
@@ -1071,7 +1438,7 @@ namespace EsportManager
 
         private void SetTabAsNewSection(TabItem tab, Grid body)
         {
-
+            body.Children.Clear();
             tab.Header = "+";
             body.Children.Clear();
             Button addSectionButton = new Button();
@@ -1088,19 +1455,22 @@ namespace EsportManager
             // vyjede form s přidáním sekce
             AddNewSection win2 = new AddNewSection(DatabaseName);
             win2.ShowDialog();
-
+            Refresh(SectionTabs.SelectedIndex);
         }
 
-        private void SetTabsDesign(TabItem tab, Grid body, TeamSectionBasic teamSectionBasic)
+        private void SetTabsDesign(TabItem tab, Grid body, TeamSection teamSectionBasic, DataGrid playersList, DataGrid tournamentsList)
         {
+            body.Children.Clear();
+            body.Children.Add(playersList);
+            body.Children.Add(tournamentsList);
             Brush brush = Brushes.Black;
-            if (teamSectionBasic.sectionID % 4 == 0) { brush = Brushes.Brown; }
-            if (teamSectionBasic.sectionID % 4 == 1) { brush = Brushes.Cyan; }
-            if (teamSectionBasic.sectionID % 4 == 2) { brush = Brushes.Salmon; }
-            if (teamSectionBasic.sectionID % 4 == 3) { brush = Brushes.Snow; }
+            if (teamSectionBasic.SectionID % 4 == 0) { brush = Brushes.Brown; }
+            if (teamSectionBasic.SectionID % 4 == 1) { brush = Brushes.Cyan; }
+            if (teamSectionBasic.SectionID % 4 == 2) { brush = Brushes.Salmon; }
+            if (teamSectionBasic.SectionID % 4 == 3) { brush = Brushes.Snow; }
             tab.Background = brush;
             body.Background = brush;
-            tab.Header = teamSectionBasic.sectionName;
+            tab.Header = teamSectionBasic.SectionName;
         }
 
         private void GoToNextDay(object sender, RoutedEventArgs e)
@@ -1141,7 +1511,7 @@ namespace EsportManager
 
         private void ShowRegisteredTournaments(object sender, RoutedEventArgs e)
         {
-            TournamentsParticipating win2 = new TournamentsParticipating(DatabaseName);
+            TournamentShow win2 = new TournamentShow(DatabaseName, 1);
             win2.ShowDialog();
         }
 
@@ -1170,7 +1540,8 @@ namespace EsportManager
 
         private void ShowPowerRanking(object sender, RoutedEventArgs e)
         {
-
+            PowerRanking win2 = new PowerRanking(DatabaseName);
+            win2.ShowDialog();
         }
 
         private void ShowTeams(object sender, RoutedEventArgs e)
@@ -1262,6 +1633,18 @@ namespace EsportManager
         private void ShowOverview(object sender, RoutedEventArgs e)
         {
             TeamDetail win2 = new TeamDetail(DatabaseName, idTeam);
+            win2.ShowDialog();
+        }
+
+        private void ShowOpenTournaments(object sender, RoutedEventArgs e)
+        {
+            TournamentShow win2 = new TournamentShow(DatabaseName, 2);
+            win2.ShowDialog();
+        }
+
+        private void TravelingClick(object sender, RoutedEventArgs e)
+        {
+            Traveling win2 = new Traveling(DatabaseName, idTeam);
             win2.ShowDialog();
         }
     }

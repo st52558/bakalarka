@@ -20,14 +20,11 @@ namespace EsportManager
     /// </summary>
     public partial class AddNewSection : Window
     {
-        class Section
-        {
-            public int ID { get; set; }
-            public string Name { get; set; }
-        }
-        List<Section> sectionList = new List<Section>();
+        
+        List<Game> sectionList = new List<Game>();
         string databaseName;
         int teamId;
+        int teamHomeCity;
         public AddNewSection(string database)
         {
             InitializeComponent();
@@ -42,11 +39,13 @@ namespace EsportManager
             using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
             {
                 conn.Open();
-                SQLiteCommand command = new SQLiteCommand("select id_team, date from info;", conn);
+                SQLiteCommand command = new SQLiteCommand("select info.id_team, date, id_city_fk from info join team on info.id_team=team.id_team;", conn);
                 SQLiteDataReader reader = command.ExecuteReader();
                 reader.Read();
                 teamId = reader.GetInt32(0);
+                teamHomeCity = reader.GetInt32(2);
                 reader.Close();
+
                 //zjistit počet nepoužitelných sekcí
                 command = new SQLiteCommand("select teamxsection.id_section,count(teamxsection.id_section) from teamxsection where teamxsection.id_team=" + teamId + " group by teamxsection.id_section", conn);
                 reader = command.ExecuteReader();
@@ -85,7 +84,7 @@ namespace EsportManager
                     }
                     if (availableSection)
                     {
-                        sectionList.Add(new Section() { ID = reader.GetInt32(0), Name = reader.GetString(1) });
+                        sectionList.Add(new Game(reader.GetInt32(0), reader.GetString(1)));
                     }
                 }
             }
@@ -100,7 +99,7 @@ namespace EsportManager
             using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
             {
                 conn.Open();
-                SQLiteCommand command = new SQLiteCommand("insert into teamxsection (id_team,id_section) values (" + teamId + "," + sectionList.ElementAt(SectionList.SelectedIndex).ID + ");", conn);
+                SQLiteCommand command = new SQLiteCommand("insert into teamxsection (id_team,id_section,power_ranking,id_city) values (" + teamId + "," + sectionList.ElementAt(SectionList.SelectedIndex).ID + ",50 ," + teamHomeCity + ");", conn);
                 command.ExecuteReader();
             }
             this.Close();

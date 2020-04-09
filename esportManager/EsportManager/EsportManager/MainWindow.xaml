@@ -11,8 +11,8 @@
         <Button Name="NewGame"  Content="Nová hra" Margin="325,115,325,0" FontSize="25" VerticalAlignment="Top" Height="50" Click="NewGame_Click" Style="{DynamicResource MyButtonStyle}"/>
         <Button Name="LoadGame" Content="Načíst hru" Margin="325,215,325,0" FontSize="25" VerticalAlignment="Top"  Height="50" Click="LoadGameClick"/>
         <Button Name="QuitGame" Content="Ukončit hru" Margin="325,315,325,0" FontSize="25" VerticalAlignment="Top" Height="50" Click="Quit"/>
-        <Button Name="Twitter" Content="Twitter" Margin="654,140,10,0" FontSize="25" VerticalAlignment="Top" Height="80" Width="80" Click="Twitter_Click"/>
-        <Button Name="Discord" Content="Discord" Margin="654,240,10,0" FontSize="25" VerticalAlignment="Top" Height="80" Width="80" Click="Discord_Click"/>
-        <Button Name="Facebook" Content="Facebook" Margin="654,340,10,0" FontSize="25" VerticalAlignment="Top" Height="80" Width="80" Click="Facebook_Click"/>
+        <Button Name="Twitter" Content="Twitter" Margin="654,140,10,0" FontSize="25" VerticalAlignment="Top" Height="80" Width="80" Click="Twitter_Click" Visibility="Hidden"/>
+        <Button Name="Discord" Content="Discord" Margin="654,240,10,0" FontSize="25" VerticalAlignment="Top" Height="80" Width="80" Click="Discord_Click" Visibility="Hidden"/>
+        <Button Name="Facebook" Content="Facebook" Margin="654,340,10,0" FontSize="25" VerticalAlignment="Top" Height="80" Width="80" Click="Facebook_Click" Visibility="Hidden"/>
     </Grid>
 </Window>

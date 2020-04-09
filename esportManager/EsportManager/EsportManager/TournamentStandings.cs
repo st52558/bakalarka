@@ -16,7 +16,7 @@ namespace EsportManager
         int ppTeams;
         int ppDividing;
 
-        public TournamentStandings(string databasenameI, int tournamentI, int prizePoolI, int ppTeamsI, int ppDividingI)
+        public TournamentStandings(string databasenameI, int tournamentI, int prizePoolI, int ppTeamsI, int ppDividingI, int system)
         {
             databaseName = databasenameI;
             tournament = tournamentI;
@@ -35,12 +35,33 @@ namespace EsportManager
                 }
                 reader.Close();
             }
-            CreateStandings();
+            if (system == 1 || system == 2 || system == 6)
+            {
+                CreateStandings();
+            }
+        }
+
+        private void SetPlayedMatches()
+        {
+            using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
+            {
+                conn.Open();
+                SQLiteCommand command = new SQLiteCommand("select ta.logo, tb.logo, m.id_teamxsection_home, m.id_teamxsection_away, m.id_match, m.home_score, m.away_score from '2019match1' m join teamxsection a on a.id_teamxsection = m.id_teamxsection_home join teamxsection b on b.id_teamxsection = m.id_teamxsection_away join team ta on ta.id_team = a.id_team join team tb on tb.id_team = b.id_team where id_tournament=" + tournament + " and home_score not null order by m.match_date;", conn);
+                SQLiteDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    // výpočet pro tabulku
+                    if (standings != null)
+                    {
+                        SetPlayedMatch(reader.GetInt32(2), reader.GetInt32(3), reader.GetInt32(5), reader.GetInt32(6));
+                    }
+                }
+            }
         }
 
         public void CreateStandings()
         {
-            
+            SetPlayedMatches();
             standings = standings.OrderByDescending(o => o.MatchesWon).ToList();
             for (int i = 0; i < standings.Count; i++)
             {

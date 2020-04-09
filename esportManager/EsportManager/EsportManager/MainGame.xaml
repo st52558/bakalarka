@@ -25,11 +25,11 @@
                 <MenuItem Name="Sponsors" Header="Sponzoři" Click="ShowSponsors" />
                 <MenuItem Name="Overview" Header="Přehled" Click="ShowOverview" />
                 <MenuItem Header="Trénink" Click="ShowTraining" />
-                <MenuItem Header="Cestování" />
+                <MenuItem Name="Traveling" Header="Cestování" Click="TravelingClick" />
             </MenuItem>
             <MenuItem Header="Turnaje">
                 <MenuItem Name="RegistererdTournaments" Header="Přihlášené" Click="ShowRegisteredTournaments" />
-                <MenuItem Header="Volné turnaje tento měsíc" />
+                <MenuItem Name="OpenTournaments" Header="Volné turnaje tento měsíc" Click="ShowOpenTournaments" />
             </MenuItem>
         </Menu>
         <Grid DockPanel.Dock="Bottom" HorizontalAlignment="Right" Height="200" Width="800" >
