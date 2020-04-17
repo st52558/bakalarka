@@ -60,7 +60,7 @@ namespace EsportManager
                 reader.Read();
                 city = reader.GetInt32(0);
                 reader.Close();
-                command = new SQLiteCommand("select city_fk from tournament where id_tournament=" + match.IdTournament + ";",conn);
+                command = new SQLiteCommand("select id_city from tournament where id_tournament=" + match.IdTournament + ";",conn);
                 reader = command.ExecuteReader();
                 reader.Read();
                 int city2 = reader.GetInt32(0);
@@ -110,7 +110,7 @@ namespace EsportManager
             using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
             {
                 conn.Open();
-                SQLiteCommand command = new SQLiteCommand("select id_player, nick, position, playerCoop, individualSkill, teamplaySkill, energy, p.name from player join position_type p on p.id_section=player.game and p.id_position_in_game=player.position where team_fk=" + match.IdTxSHome + ";", conn);
+                SQLiteCommand command = new SQLiteCommand("select id_player, nick, position, playerCoop, individualSkill, teamplaySkill, energy, p.name from player join position_type p on p.id_section=player.id_section and p.id_position_in_game=player.id_position where id_teamxsection=" + match.IdTxSHome + ";", conn);
                 SQLiteDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
@@ -122,7 +122,7 @@ namespace EsportManager
             using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
             {
                 conn.Open();
-                SQLiteCommand command = new SQLiteCommand("select id_player, nick, position, playerCoop, individualSkill, teamplaySkill, energy, p.name from player join position_type p on p.id_section=player.game and p.id_position_in_game=player.position where team_fk=" + match.IdTxSAway + ";", conn);
+                SQLiteCommand command = new SQLiteCommand("select id_player, nick, position, playerCoop, individualSkill, teamplaySkill, energy, p.name from player join position_type p on p.id_section=player.id_section and p.id_position_in_game=player.id_position where id_teamxsection=" + match.IdTxSAway + ";", conn);
                 SQLiteDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
@@ -273,7 +273,7 @@ namespace EsportManager
                 AwayLogo.Source = imageSource;
                 match.IdTxSHome = reader.GetInt32(4);
                 match.IdTxSAway = reader.GetInt32(5);
-                bestOf = reader.GetInt32(6);
+                match.ScoreToWin = reader.GetInt32(6)/2 +1;
                 TournamentName.Content = reader.GetString(7);
                 match.IdMatch = reader.GetInt32(8);
                 match.HomePowerRanking = reader.GetInt32(9);
@@ -285,8 +285,6 @@ namespace EsportManager
 
         private void PlayMatchClick(object sender, RoutedEventArgs e)
         {
-            int homeStrength = 0;
-            int awayStrength = 0;
             if (!playersInDestination)
             {
                 MessageBox.Show("Hráči nejsou na místě konání zápasu. Zápas byl automaticky kontumován. Váš tým zaplatí pokutu 10000$.","Kontumace zápasu", MessageBoxButton.OK);
@@ -320,7 +318,6 @@ namespace EsportManager
                 this.Close();
             } else
             {
-                
                 for (int i = 0; i < Panel.Children.Count; i++)
                 {
                     if (Panel.Children[i] is ComboBox)
@@ -335,7 +332,7 @@ namespace EsportManager
                                 {
                                     if (counter == c.SelectedIndex)
                                     {
-                                        homeStrength += homePlayers.ElementAt(j).IndiSkill + homePlayers.ElementAt(j).TeamSkill + homePlayers.ElementAt(j).PlayerCoop;
+                                        match.HomeStrength += homePlayers.ElementAt(j).IndiSkill + homePlayers.ElementAt(j).TeamSkill + homePlayers.ElementAt(j).PlayerCoop;
                                         break;
                                     }
                                     counter++;
@@ -350,7 +347,7 @@ namespace EsportManager
                                 {
                                     if (counter == c.SelectedIndex)
                                     {
-                                        awayStrength += awayPlayers.ElementAt(j).IndiSkill + awayPlayers.ElementAt(j).TeamSkill + awayPlayers.ElementAt(j).PlayerCoop;
+                                        match.AwayStrength += awayPlayers.ElementAt(j).IndiSkill + awayPlayers.ElementAt(j).TeamSkill + awayPlayers.ElementAt(j).PlayerCoop;
                                         break;
                                     }
                                     counter++;
@@ -358,35 +355,22 @@ namespace EsportManager
                             }
                         }
                     }
+                    match.PlayMatch();
                 }
                 Score.Visibility = Visibility.Visible;
-                if (awayStrength > homeStrength)
+                Score.Content = match.HomeScore + "-" + match.AwayScore;
+                matchFinished = true;
+                PlayMatch.Content = "Pokračovat";
+                if (match.AwayScore > match.HomeScore)
                 {
-                    match.AwayScore++;
-                    
+                    HomeLogo.Opacity = 0.1;
+                    AwayBorder.Visibility = Visibility.Visible;
                 } else
                 {
-                    match.HomeScore++;
+                    AwayLogo.Opacity = 0.1;
+                    HomeBorder.Visibility = Visibility.Visible;
                 }
-                Score.Content = match.HomeScore + "-" + match.AwayScore;
-                if (match.HomeScore + match.AwayScore == bestOf)
-                {
-                    matchFinished = true;
-                    PlayMatch.Content = "Pokračovat";
-                    if (match.AwayScore > match.HomeScore)
-                    {
-                        HomeLogo.Opacity = 0.1;
-                        AwayBorder.Visibility = Visibility.Visible;
-                    } else
-                    {
-                        AwayLogo.Opacity = 0.1;
-                        HomeBorder.Visibility = Visibility.Visible;
-                    }
-                }
-                
             }
         }
-
-        
     }
 }

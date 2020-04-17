@@ -95,7 +95,7 @@ namespace EsportManager
             {
                 conn.Open();
 
-                SQLiteCommand command = new SQLiteCommand("select id_stat,jmeno from (select mesto.id_mesto,mesto.nazev,mesto.id_stat_fk from team inner join mesto on mesto.id_mesto=team.id_city_fk group by id_city_fk) inner join stat on id_stat_fk=stat.id_stat group by id_stat", conn);
+                SQLiteCommand command = new SQLiteCommand("select nation.id_nation,nation.name from (select city.id_city,city.name,city.id_nation as nat from team inner join city on city.id_city=team.id_city group by city.id_city) inner join nation on nat=nation.id_nation group by nation.id_nation", conn);
                 SQLiteDataReader reader = command.ExecuteReader();
 
                 while (reader.Read())
@@ -125,7 +125,7 @@ namespace EsportManager
                 if (NationsCB.SelectedIndex > -1) 
                 { 
                     int nationID = nationList.ElementAt(NationsCB.SelectedIndex).IdNation;
-                    command = new SQLiteCommand("select id_mesto from mesto where id_stat_fk=" + nationID, conn);
+                    command = new SQLiteCommand("select id_city from city where id_nation=" + nationID, conn);
                     reader = command.ExecuteReader();
                     while (reader.Read())
                     {
@@ -134,7 +134,7 @@ namespace EsportManager
                     reader.Close();
                     for (int i = 0; i < citiesList.Count; i++)
                     {
-                        command = new SQLiteCommand("select id_team,name from team where name like '%" + TeamNameTW.Text + "%' and id_city_fk=" + citiesList.ElementAt(i), conn);
+                        command = new SQLiteCommand("select id_team,name from team where name like '%" + TeamNameTW.Text + "%' and id_city=" + citiesList.ElementAt(i), conn);
                         reader = command.ExecuteReader();
                         while (reader.Read())
                         {

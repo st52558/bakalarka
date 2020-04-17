@@ -61,7 +61,7 @@ namespace EsportManager
                 }
                 reader.Close();
 
-                command = new SQLiteCommand("select id_mesto, nazev from mesto order by nazev",conn);
+                command = new SQLiteCommand("select id_city, name from city order by name", conn);
                 reader = command.ExecuteReader();
                 while (reader.Read())
                 {
@@ -86,7 +86,7 @@ namespace EsportManager
             using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
             {
                 conn.Open();
-                SQLiteCommand command = new SQLiteCommand("select teamxsection.id_city, team.id_city_fk from teamxsection join team on team.id_team=teamxsection.id_team where id_teamxsection=" + sections.ElementAt(SectionsCB.SelectedIndex).ID + ";", conn);
+                SQLiteCommand command = new SQLiteCommand("select teamxsection.id_city, team.id_city from teamxsection join team on team.id_team=teamxsection.id_team where id_teamxsection=" + sections.ElementAt(SectionsCB.SelectedIndex).ID + ";", conn);
                 SQLiteDataReader reader = command.ExecuteReader();
                 if (reader.Read())
                 {

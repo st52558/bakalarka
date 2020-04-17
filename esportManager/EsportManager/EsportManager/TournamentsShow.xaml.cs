@@ -99,7 +99,7 @@ namespace EsportManager
             using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
             {
                 conn.Open();
-                SQLiteCommand command = new SQLiteCommand("select id_tournament_to, tournament.name, tournament.start_date, tournament.end_date, prize_pool, mesto.nazev, token_value, tournament.drawn from tournament_token join tournament on tournament.id_tournament=tournament_token.id_tournament_to join mesto on tournament.city_fk=id_mesto where id_teamxsection=" + sectionId + ";", conn);
+                SQLiteCommand command = new SQLiteCommand("select id_tournament_to, tournament.name, tournament.start_date, tournament.end_date, prize_pool, city.name, token_value, tournament.drawn from tournament_token join tournament on tournament.id_tournament=tournament_token.id_tournament_to join city on tournament.id_city=city.id_city where id_teamxsection=" + sectionId + ";", conn);
                 SQLiteDataReader reader = command.ExecuteReader();
                 bool drawn = false;
                 while (reader.Read())
@@ -128,7 +128,7 @@ namespace EsportManager
             using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
             {
                 conn.Open();
-                SQLiteCommand command = new SQLiteCommand("select distinct id_tournament_to, tournament.name, tournament.start_date, tournament.end_date, prize_pool, mesto.nazev, token_value, tournament.drawn from tournament_token join tournament on tournament.id_tournament=tournament_token.id_tournament_to join mesto on tournament.city_fk=id_mesto where start_date>'" + date + "' and id_teamxsection is null and open_reg=1 order by start_date;", conn);
+                SQLiteCommand command = new SQLiteCommand("select distinct id_tournament_to, tournament.name, tournament.start_date, tournament.end_date, prize_pool, city.name, token_value, tournament.drawn from tournament_token join tournament on tournament.id_tournament=tournament_token.id_tournament_to join city on tournament.id_city=city.id_city where start_date>'" + date + "' and id_teamxsection is null and open_reg=1 order by start_date;", conn);
                 SQLiteDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {

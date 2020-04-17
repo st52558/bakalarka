@@ -21,6 +21,8 @@ namespace EsportManager
     public partial class PowerRanking : Window
     {
         string databaseName;
+        string date;
+        int year;
         List<Game> games;
         List<TeamSection> teamSections;
         public PowerRanking(string databaseNameI)
@@ -28,7 +30,18 @@ namespace EsportManager
             databaseName = databaseNameI;
             games = new List<Game>();
             InitializeComponent();
+            using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
+            {
+                conn.Open();
+                SQLiteCommand command = new SQLiteCommand("select date from info;", conn);
+                SQLiteDataReader reader = command.ExecuteReader();
+                reader.Read();
+                date = reader.GetString(0);
+                reader.Close();
+                year = int.Parse(date.Substring(0, 4));
+            }
             AddSectionsToComboBox();
+            
         }
 
         private void AddSectionsToComboBox()
@@ -75,7 +88,7 @@ namespace EsportManager
                 
                 for (int i = 0; i < teamSections.Count; i++)
                 {
-                    command = new SQLiteCommand("select id_teamxsection_home, home_score, away_score from '2019match" + games.ElementAt(SectionsCB.SelectedIndex).ID + "' where (id_teamxsection_home=" + teamSections.ElementAt(i).ID + " or id_teamxsection_away=" + teamSections.ElementAt(i).ID + ") and home_score is not null", conn);
+                    command = new SQLiteCommand("select id_teamxsection_home, home_score, away_score from '" + year + "match" + games.ElementAt(SectionsCB.SelectedIndex).ID + "' where (id_teamxsection_home=" + teamSections.ElementAt(i).ID + " or id_teamxsection_away=" + teamSections.ElementAt(i).ID + ") and home_score is not null", conn);
                     reader = command.ExecuteReader();
                     while (reader.Read())
                     {

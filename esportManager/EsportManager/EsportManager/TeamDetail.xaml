@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EsportManager"
         mc:Ignorable="d"
-        Title="TeamDetail" Height="450" Width="800" ResizeMode="NoResize">
+        Title="Detail týmu" Height="450" Width="800" ResizeMode="NoResize">
     <Grid>
         <Image Name="TeamLogo" HorizontalAlignment="Left" Height="260" Width="260" Margin="10,10,0,0" VerticalAlignment="Top" />
 

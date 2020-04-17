@@ -45,7 +45,6 @@ namespace EsportManager
         public TournamentInfoGroup(string databaseNameI, int tournamentI, bool openNextFormI)
         {
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            year = 2019;
             databaseName = databaseNameI;
             tournament = tournamentI;
             openNextForm = openNextFormI;
@@ -275,7 +274,7 @@ namespace EsportManager
             using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
             {
                 conn.Open();
-                SQLiteCommand command = new SQLiteCommand("select name,game,prize_pool,pp_teams,pp_dividing,system,drawn from tournament where id_tournament=" + tournament + ";", conn);
+                SQLiteCommand command = new SQLiteCommand("select name,id_section,prize_pool,pp_teams,pp_dividing,system,drawn from tournament where id_tournament=" + tournament + ";", conn);
                 SQLiteDataReader reader = command.ExecuteReader();
                 reader.Read();
                 TournamentName.Content = reader.GetString(0);
@@ -284,10 +283,10 @@ namespace EsportManager
                 bool drawn = reader.GetInt32(6) == 1;
                 if (system == 1 || system == 2 || system == 6)
                 {
-                    standings = new TournamentStandings(databaseName, tournament, reader.GetInt32(2), reader.GetInt32(3), reader.GetInt32(4), system);
+                    standings = new TournamentStandings(databaseName, tournament, reader.GetInt32(2), reader.GetInt32(3), reader.GetInt32(4), system, idSection);
                 } else if (system == 3 || system == 4)
                 {
-                    bracket = new TournamentBracket(databaseName, tournament, drawn, system);
+                    bracket = new TournamentBracket(databaseName, tournament, drawn, system, idSection);
                 }
                 reader.Close();
             }

@@ -24,6 +24,8 @@ namespace EsportManager
                 NextMatch = null;
             }
         }
+        string date;
+        int year;
         string databaseName;
         int tournament;
         public List<TournamentTeam> Teams;
@@ -33,8 +35,9 @@ namespace EsportManager
         public int PpTeams { get; set; }
         public int PpDividing { get; set; }
         public int System { get; set; }
+        public int IdSection { get; set; }
 
-        public TournamentBracket(string databasenameI, int tournamentI, bool drawn, int system)
+        public TournamentBracket(string databasenameI, int tournamentI, bool drawn, int system, int section)
         {
             Teams = new List<TournamentTeam>();
             firstRound = new List<BracketObject>();
@@ -42,6 +45,7 @@ namespace EsportManager
             databaseName = databasenameI;
             tournament = tournamentI;
             System = system;
+            IdSection = section;
             using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
             {
                 conn.Open();
@@ -50,8 +54,15 @@ namespace EsportManager
                 while (reader.Read())
                 {
                     Teams.Add(new TournamentTeam(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(2)));
+
                 }
                 reader.Close();
+                command = new SQLiteCommand("select date from info");
+                reader = command.ExecuteReader();
+                reader.Read();
+                date = reader.GetString(0);
+                reader.Close();
+                year = int.Parse(date.Substring(0, 4));
             }
             if (drawn)
             {
@@ -60,7 +71,7 @@ namespace EsportManager
             }
         }
 
-        public TournamentBracket(string databasenameI, int tournamentI, int prizePool, int ppTeams, int ppDividing, int system)
+        public TournamentBracket(string databasenameI, int tournamentI, int prizePool, int ppTeams, int ppDividing, int system, int section)
         {
             Teams = new List<TournamentTeam>();
             firstRound = new List<BracketObject>();
@@ -71,6 +82,7 @@ namespace EsportManager
             PpTeams = ppTeams;
             PpDividing = ppDividing;
             System = system;
+            IdSection = section;
             using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
             {
                 conn.Open();
@@ -92,7 +104,7 @@ namespace EsportManager
             using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
             {
                 conn.Open();
-                SQLiteCommand command = new SQLiteCommand("select id_match, id_home, id_away, type_home, type_away from '2019future_match1' where id_tournament=" + tournament + ";", conn);
+                SQLiteCommand command = new SQLiteCommand("select id_match, id_home, id_away, type_home, type_away from '" + year + "future_match" + IdSection + "' where id_tournament=" + tournament + ";", conn);
                 SQLiteDataReader reader = command.ExecuteReader();
                 TournamentTeam home;
                 TournamentTeam away;
@@ -205,7 +217,7 @@ namespace EsportManager
             using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
             {
                 conn.Open();
-                SQLiteCommand command = new SQLiteCommand("select id_match,id_teamxsection_home, id_teamxsection_away from '2019match1' where id_tournament=" + tournament + ";", conn);
+                SQLiteCommand command = new SQLiteCommand("select id_match,id_teamxsection_home, id_teamxsection_away from '" + year + "match" + IdSection +"' where id_tournament=" + tournament + ";", conn);
                 SQLiteDataReader reader = command.ExecuteReader();
                 TournamentTeam home = null;
                 TournamentTeam away = null;
@@ -234,7 +246,7 @@ namespace EsportManager
             using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
             {
                 conn.Open();
-                SQLiteCommand command = new SQLiteCommand("select id_match, home_score, away_score from '2019match1' where id_tournament=" + tournament + ";", conn);
+                SQLiteCommand command = new SQLiteCommand("select id_match, home_score, away_score from '" + year + "match" + IdSection +"' where id_tournament=" + tournament + ";", conn);
                 SQLiteDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EsportManager"
         mc:Ignorable="d"
-        Title="ViewSponsors" Height="340" Width="400" ResizeMode="NoResize" Activated="Window_Activated">
+        Title="Sponzoři" Height="340" Width="400" ResizeMode="NoResize" Activated="Window_Activated">
     <Grid>
         <Button Name="AddSponsor1" Content="Přidat sponzora" HorizontalAlignment="Center" Margin="0,80,0,0" VerticalAlignment="Top" Width="100" Visibility="Hidden" Click="AddNewSponsor"/>
         <Button Name="AddSponsor2" Content="Přidat sponzora" HorizontalAlignment="Center" Margin="0,180,0,0" VerticalAlignment="Top" Width="100" Visibility="Hidden" Click="AddNewSponsor"/>

@@ -79,12 +79,12 @@ namespace EsportManager
                 SQLiteCommand command;
                 if (GamesComboBox.SelectedIndex <= 0)
                 {
-                    command = new SQLiteCommand("select section.shortcut, nick, coach.name, surname, id_coach from coach join section on coach.game=section.id_section where coach.team_fk is null;", conn);
+                    command = new SQLiteCommand("select section.shortcut, nick, coach.name, surname, id_coach from coach join section on coach.id_section=section.id_section where coach.id_team is null;", conn);
                 }
                 else
                 {
                     int game = sections.ElementAt(GamesComboBox.SelectedIndex - 1).ID;
-                    command = new SQLiteCommand("select section.shortcut, nick, coach.name, surname, id_coach from coach join section on coach.game=section.id_section where coach.team_fk is null and coach.game=" + game + ";", conn);
+                    command = new SQLiteCommand("select section.shortcut, nick, coach.name, surname, id_coach from coach join section on coach.id_section=section.id_section where coach.id_team is null and coach.id_section=" + game + ";", conn);
                 }
                 players = new List<CoachesDataGrid>();
                 playerIds = new List<int>();
@@ -149,7 +149,7 @@ namespace EsportManager
                             int playerValue = (salary * 100 / 3);
                             playerValue = playerValue / 100;
                             playerValue = playerValue * 100;
-                            command = new SQLiteCommand("update coach set team_fk=" + teamId + ", contractEnd='" + date +"', value=" + playerValue + ", salary=" + salary + " where id_coach=" + playerIds.ElementAt(FreePlayersGrid.SelectedIndex) + ";", conn);
+                            command = new SQLiteCommand("update coach set id_team=" + teamId + ", contractEnd='" + date +"', value=" + playerValue + ", salary=" + salary + " where id_coach=" + playerIds.ElementAt(FreePlayersGrid.SelectedIndex) + ";", conn);
                             command.ExecuteReader();
                         }
                     }

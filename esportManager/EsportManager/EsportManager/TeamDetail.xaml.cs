@@ -41,7 +41,7 @@ namespace EsportManager
             {
                 List<Tournament> tournaments = new List<Tournament>();
                 conn.Open();
-                SQLiteCommand command = new SQLiteCommand("select tournament.id_tournament, tournament.name, section.shortcut from team join teamxsection on teamxsection.id_team=team.id_team join tournament_token on tournament_token.id_teamxsection=teamxsection.id_teamxsection join tournament on tournament.id_tournament=tournament_token.id_tournament_to join section on section.id_section=tournament.game where team.id_team=" + team + ";", conn);
+                SQLiteCommand command = new SQLiteCommand("select tournament.id_tournament, tournament.name, section.shortcut from team join teamxsection on teamxsection.id_team=team.id_team join tournament_token on tournament_token.id_teamxsection=teamxsection.id_teamxsection join tournament on tournament.id_tournament=tournament_token.id_tournament_to join section on section.id_section=tournament.id_section where team.id_team=" + team + ";", conn);
                 SQLiteDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
@@ -62,7 +62,7 @@ namespace EsportManager
             {
                 List<Player> players = new List<Player>();
                 conn.Open();
-                SQLiteCommand command = new SQLiteCommand("select nick, player.name, surname, position_type.name, section.shortcut, id_player from player join position_type on position_type.id_position_in_game=player.position and position_type.id_section=player.game join section on player.game=section.id_section join teamxsection on teamxsection.id_teamxsection=player.team_fk join team on teamxsection.id_team=team.id_team where team.id_team=" + team + ";", conn);
+                SQLiteCommand command = new SQLiteCommand("select nick, player.name, surname, position_type.name, section.shortcut, id_player from player join position_type on position_type.id_position_in_game=player.id_position and position_type.id_section=player.id_section join section on player.id_section=section.id_section join teamxsection on teamxsection.id_teamxsection=player.id_teamxsection join team on teamxsection.id_team=team.id_team where team.id_team=" + team + ";", conn);
                 SQLiteDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
@@ -77,7 +77,7 @@ namespace EsportManager
                 }
 
                 reader.Close();
-                command = new SQLiteCommand("select nick, coach.name, surname, section.shortcut from coach join section on coach.game=section.id_section where coach.team_fk=" + team + ";", conn);
+                command = new SQLiteCommand("select nick, coach.name, surname, section.shortcut from coach join section on coach.id_section=section.id_section where coach.id_team=" + team + ";", conn);
                 reader = command.ExecuteReader();
                 while (reader.Read())
                 {

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EsportManager"
         mc:Ignorable="d"
-        Title="Hlavní menu" Height="480" Width="800" ResizeMode="CanMinimize" Closing="Window_Closing">
+        Title="Hlavní menu" Height="480" Width="800" Closing="Window_Closing" ResizeMode="NoResize">
     <Grid>
         <Image Name="Background" Margin="0,0,0,0" Stretch="Fill" />
         <Button Name="NewGame"  Content="Nová hra" Margin="325,115,325,0" FontSize="25" VerticalAlignment="Top" Height="50" Click="NewGame_Click" Style="{DynamicResource MyButtonStyle}"/>

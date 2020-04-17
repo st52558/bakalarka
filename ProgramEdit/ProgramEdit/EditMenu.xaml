@@ -1,0 +1,18 @@
+﻿<Window x:Class="ProgramEdit.EditMenu"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ProgramEdit"
+        mc:Ignorable="d"
+        Title="EditMenu" Height="450" Width="800">
+    <Grid>
+        <Button FontSize="60" Name="Team" Content="Tým" HorizontalAlignment="Left" VerticalAlignment="Top" Width="264" Height="210" Margin="264,0,0,0" Click="Team_Click"/>
+        <Button FontSize="60" Name="Player" Content="Hráč" HorizontalAlignment="Left" VerticalAlignment="Top" Width="264" Height="210" Margin="528,210,0,0" Click="Player_Click"/>
+        <Button FontSize="60" Name="Tournament" Content="Turnaj" HorizontalAlignment="Left" VerticalAlignment="Top" Width="264" Height="210" Margin="528,0,0,0" Click="Tournament_Click"/>
+        <Button FontSize="60" Name="Sponsor" Content="Sponzor" HorizontalAlignment="Left" VerticalAlignment="Top" Width="264" Height="210" Margin="0,210,0,0" Click="Sponsor_Click"/>
+        <Button FontSize="60" Name="Coach" Content="Trenér" HorizontalAlignment="Left" VerticalAlignment="Top" Width="264" Height="210" Click="Coach_Click"/>
+        <Button FontSize="60" Name="Section" Content="Hra" HorizontalAlignment="Left" VerticalAlignment="Top" Width="264" Height="210" Margin="264,210,0,0" Click="Section_Click"/>
+
+    </Grid>
+</Window>

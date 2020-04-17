@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EsportManager"
         mc:Ignorable="d"
-        Title="TournamentInfoGroup" Height="450" Width="800" ResizeMode="NoResize">
+        Title="Detail turnaje" Height="450" Width="800" ResizeMode="NoResize">
     <Grid Name="MainGrid">
         <DataGrid Name="Standings" HorizontalAlignment="Left" Height="345" Margin="10,65,0,0" VerticalAlignment="Top" Width="480" IsReadOnly="True" CanUserDeleteRows="False" CanUserAddRows="False" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="False" AutoGenerateColumns="False" FontSize="20" MouseDoubleClick="ShowTeamDetail">
             <DataGrid.Columns>

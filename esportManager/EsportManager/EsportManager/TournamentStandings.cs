@@ -10,25 +10,37 @@ namespace EsportManager
     class TournamentStandings
     {
         public List<TournamentTeam> standings { get; set; }
+        string date;
+        int year;
         string databaseName;
         int tournament;
         int prizePool;
         int ppTeams;
         int ppDividing;
+        int idSection;
 
-        public TournamentStandings(string databasenameI, int tournamentI, int prizePoolI, int ppTeamsI, int ppDividingI, int system)
+        public TournamentStandings(string databasenameI, int tournamentI, int prizePoolI, int ppTeamsI, int ppDividingI, int system, int section)
         {
             databaseName = databasenameI;
             tournament = tournamentI;
             prizePool = prizePoolI;
             ppTeams = ppTeamsI;
             ppDividing = ppDividingI;
+            idSection = section;
             standings = new List<TournamentTeam>();
+
             using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
             {
                 conn.Open();
-                SQLiteCommand command = new SQLiteCommand("select tournament_token.id_teamxsection,team.name,team.id_team from tournament_token join teamxsection on teamxsection.id_teamxsection=tournament_token.id_teamxsection join team on team.id_team=teamxsection.id_team where id_tournament_to=" + tournament + ";", conn);
+                SQLiteCommand command = new SQLiteCommand("select date from info");
                 SQLiteDataReader reader = command.ExecuteReader();
+                reader.Read();
+                date = reader.GetString(0);
+                reader.Close();
+                year = int.Parse(date.Substring(0, 4));
+                conn.Open();
+                command = new SQLiteCommand("select tournament_token.id_teamxsection,team.name,team.id_team,teamxsection.id_section from tournament_token join teamxsection on teamxsection.id_teamxsection=tournament_token.id_teamxsection join team on team.id_team=teamxsection.id_team where id_tournament_to=" + tournament + ";", conn);
+                reader = command.ExecuteReader();
                 while (reader.Read())
                 {
                     standings.Add(new TournamentTeam(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(2)));
@@ -46,7 +58,7 @@ namespace EsportManager
             using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
             {
                 conn.Open();
-                SQLiteCommand command = new SQLiteCommand("select ta.logo, tb.logo, m.id_teamxsection_home, m.id_teamxsection_away, m.id_match, m.home_score, m.away_score from '2019match1' m join teamxsection a on a.id_teamxsection = m.id_teamxsection_home join teamxsection b on b.id_teamxsection = m.id_teamxsection_away join team ta on ta.id_team = a.id_team join team tb on tb.id_team = b.id_team where id_tournament=" + tournament + " and home_score not null order by m.match_date;", conn);
+                SQLiteCommand command = new SQLiteCommand("select ta.logo, tb.logo, m.id_teamxsection_home, m.id_teamxsection_away, m.id_match, m.home_score, m.away_score from '" + year + "match" + idSection +"' m join teamxsection a on a.id_teamxsection = m.id_teamxsection_home join teamxsection b on b.id_teamxsection = m.id_teamxsection_away join team ta on ta.id_team = a.id_team join team tb on tb.id_team = b.id_team where id_tournament=" + tournament + " and home_score not null order by m.match_date;", conn);
                 SQLiteDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {

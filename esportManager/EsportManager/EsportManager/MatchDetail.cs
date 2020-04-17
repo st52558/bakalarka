@@ -29,6 +29,10 @@ namespace EsportManager
         public int AwayScore { get; set; }
         public int HomePowerRanking { get; set; }
         public int AwayPowerRanking { get; set; }
+        public int HomeStrength { get; set; }
+        public int AwayStrength { get; set; }
+        public int ScoreToWin { get; set; }
+
         Random random;
 
         public MatchDetail(string databaseNameI, int idSectionI, string date)
@@ -38,6 +42,22 @@ namespace EsportManager
             databaseName = databaseNameI;
             curDate = date;
             random = new Random();
+        }
+
+        public void PlayMatch()
+        {
+            int homeWinProb = 50 + HomeStrength - AwayStrength;
+            while (HomeScore < ScoreToWin && AwayScore < ScoreToWin)
+            {
+                if (random.Next(0, 101) <= homeWinProb)
+                {
+                    HomeScore++;
+                }
+                else
+                {
+                    AwayScore++;
+                }
+            }
         }
 
         public void UpdateMatches()
@@ -56,7 +76,7 @@ namespace EsportManager
                         HomePowerRanking++;
                         AwayPowerRanking--;
                     }
-                } 
+                }
                 else
                 {
                     idWinner = IdTxSAway;
@@ -70,7 +90,7 @@ namespace EsportManager
                     }
                 }
                 conn.Open();
-                SQLiteCommand command = new SQLiteCommand("update player set playerCoop=playerCoop+" + random.Next(-1,2) + ", energy=energy-2 where team_fk=" + idLoser + "; update player set playerCoop=playerCoop+" + random.Next(0, 3) + ", energy=energy-2 where team_fk=" + idWinner + ";", conn);
+                SQLiteCommand command = new SQLiteCommand("update player set playerCoop=playerCoop+" + random.Next(-1,2) + ", energy=energy-2 where id_teamxsection=" + idLoser + "; update player set playerCoop=playerCoop+" + random.Next(0, 3) + ", energy=energy-2 where id_teamxsection=" + idWinner + ";", conn);
                 command.ExecuteReader();
                 command = new SQLiteCommand("update teamxsection set power_ranking=" + HomePowerRanking + " where id_teamxsection=" + IdTxSHome + "; update teamxsection set power_ranking=" + AwayPowerRanking + " where id_teamxsection=" + IdTxSAway + ";", conn);
                 command.ExecuteReader();

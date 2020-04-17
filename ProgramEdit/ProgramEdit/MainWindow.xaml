@@ -1,0 +1,17 @@
+﻿<Window x:Class="ProgramEdit.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ProgramEdit"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="305.145" Width="397.493" ResizeMode="NoResize">
+    <Grid>
+        <Button Content="Upravit hru" HorizontalAlignment="Center" Margin="0,219,0,0" VerticalAlignment="Top" Width="100" Click="Button_Click"/>
+        <Label Content="Casual Esport Manager" HorizontalAlignment="Center" Margin="0,10,0,0" VerticalAlignment="Top" FontSize="30"/>
+        <ComboBox Name="Databases" HorizontalAlignment="Center" Margin="0,153,0,0" VerticalAlignment="Top" Width="120"/>
+        <Label Content="Editor" HorizontalAlignment="Center" Margin="0,60,0,0" VerticalAlignment="Top" FontSize="20"/>
+        <Label Content="Databáze" HorizontalAlignment="Center" Margin="0,127,0,0" VerticalAlignment="Top"/>
+
+    </Grid>
+</Window>

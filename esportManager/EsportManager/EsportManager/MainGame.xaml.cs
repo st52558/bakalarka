@@ -22,9 +22,14 @@ namespace EsportManager
         int todaysMatchTeam;
         int matchTeamSection;
         string teamName;
+        int coach;
+        string coachName;
+        int year;
+        Random random;
         public MainGame(string database)
         {
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            random = new Random();
             DatabaseName = database;
             InitializeComponent();
             SetLabels();
@@ -127,6 +132,7 @@ namespace EsportManager
             NextActionButton.Click -= SponsorContractExpired;
             NextActionButton.Click -= NextMonthClick;
             NextActionButton.Click -= PlayerContractExpired;
+            NextActionButton.Click -= CoachContractExpired;
             NextActionButton.Click -= NextDayClick;
             NextActionButton.Click -= EndYearClick;
             NextActionButton.Click -= PlayMatch;
@@ -139,25 +145,32 @@ namespace EsportManager
                 string curDate = reader.GetString(0);
                 reader.Close();
                 // hledání hráčů, kterým končí smlouvy v týmu!!!!  
-                command = new SQLiteCommand("select player.contractEnd from player join teamxsection on player.team_fk=teamxsection.id_teamxsection join team on team.id_team=teamxsection.id_team where team.id_team=" + idTeam + ";", conn);
+                command = new SQLiteCommand("select player.contractEnd from player join teamxsection on player.id_teamxsection=teamxsection.id_teamxsection join team on team.id_team=teamxsection.id_team where team.id_team=" + idTeam + " and contractEnd='" + curDate + "';", conn);
                 reader = command.ExecuteReader();
-                while (reader.Read())
+                if (reader.Read())
                 {
-                    if (reader.GetString(0).CompareTo(curDate) <= 0)
-                    {
-                        NextActionButton.Content = "hráči končí smlouva";
-                        NextActionButton.Click += PlayerContractExpired;
-                        return;
-                    }
+                    NextActionButton.Content = "hráči končí smlouva";
+                    NextActionButton.Click += PlayerContractExpired;
+                    return;
                 }
                 reader.Close();
                 // končí zaměstnanci smlouva
-
+                command = new SQLiteCommand("select coach.id_coach, coach.nick from coach where coach.id_team=" + idTeam + " and contractEnd='" + curDate + "';", conn);
+                reader = command.ExecuteReader();
+                if (reader.Read())
+                {
+                    coach = reader.GetInt32(0);
+                    coachName = reader.GetString(1);
+                    NextActionButton.Content = "trenérovi končí smlouva";
+                    NextActionButton.Click += CoachContractExpired;
+                    return;
+                }
+                reader.Close();
                 // končí sponzorská smlouva
                 int yearCurrent = int.Parse(date.Remove(4, 6));
                 int monthCurrent = int.Parse(date.Remove(7, 3).Remove(0, 5));
                 int dayCurrent = int.Parse(date.Remove(0, 8));
-                command = new SQLiteCommand("select teamxsponsor.expiration_date from sponsor2 join teamxsponsor on sponsor2.id_sponsor=teamxsponsor.id_sponsor where teamxsponsor.id_team=" + idTeam + ";", conn);
+                command = new SQLiteCommand("select teamxsponsor.expiration_date from sponsor join teamxsponsor on sponsor.id_sponsor=teamxsponsor.id_sponsor where teamxsponsor.id_team=" + idTeam + ";", conn);
                 reader = command.ExecuteReader();
                 while (reader.Read())
                 {
@@ -175,7 +188,8 @@ namespace EsportManager
                 // je na řadě zápas
                 for (int i = 0; i < sectionsList.Count; i++)
                 {
-                    command = new SQLiteCommand("select count(*) from '2019match1' where match_date='" + curDate + "' and (id_teamxsection_home=" + sectionsList.ElementAt(i).ID + " or id_teamxsection_away=" + sectionsList.ElementAt(i).ID + ") and home_score is null", conn);
+                    
+                    command = new SQLiteCommand("select count(*) from '" + yearCurrent +"match" + sectionsList.ElementAt(i).SectionID + "' where match_date='" + curDate + "' and (id_teamxsection_home=" + sectionsList.ElementAt(i).ID + " or id_teamxsection_away=" + sectionsList.ElementAt(i).ID + ") and home_score is null", conn);
                     reader = command.ExecuteReader();
                     reader.Read();
                     if (reader.GetInt32(0) > 0)
@@ -223,6 +237,38 @@ namespace EsportManager
             */
         }
 
+        private void CoachContractExpired(object sender, RoutedEventArgs e)
+        {
+            using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + DatabaseName + ";"))
+            {
+                conn.Open();
+                MessageBoxResult result = MessageBox.Show("Trenérovi " + coachName + " končí smlouva. Chcete jeho smlouvu o rok prodloužit?", "Trenérům končí smlouva", MessageBoxButton.YesNo);
+                if (result == MessageBoxResult.No)
+                {
+                    SQLiteCommand command = new SQLiteCommand("update coach set value = 0, salary = 0, id_team = NULL, contractEnd = '' where id_coach = " + coach + "; ", conn);
+                    command.ExecuteReader();
+                    AddAllPlayers();
+                    //trenéři jsou volní
+                    ChangePropertiesOfNextActionButton();
+                }
+                else if (result == MessageBoxResult.Yes)
+                {
+                    SQLiteCommand command = new SQLiteCommand("select contractEnd from coach where id_coach=" + coach + ";", conn);
+                    SQLiteDataReader reader = command.ExecuteReader();
+                    string contractEnd = "";
+                    if (reader.Read())
+                    {
+                        int year = int.Parse(reader.GetString(0).Substring(0, 4));
+                        year++;
+                        contractEnd = year.ToString() + reader.GetString(0).Remove(0, 4);
+                    }
+                    reader.Close();
+                    command = new SQLiteCommand("update coach set contractEnd='" + contractEnd + "' where id_coach=" + coach + ";", conn);
+                    command.ExecuteReader();
+                }
+            }
+        }
+
         private void PlayMatch(object sender, RoutedEventArgs e)
         {
             Match win2 = new Match(DatabaseName, todaysMatchTeam, matchTeamSection);
@@ -241,6 +287,12 @@ namespace EsportManager
                     command.ExecuteReader();
                     ChangePropertiesOfNextActionButton();
                 }
+            } 
+            else if (result == MessageBoxResult.No)
+            {
+                ViewSponsors win2 = new ViewSponsors(1, DatabaseName);
+                win2.ShowDialog();
+                ChangePropertiesOfNextActionButton();
             }
         }
 
@@ -249,7 +301,7 @@ namespace EsportManager
             using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + DatabaseName + ";"))
             {
                 conn.Open();
-                SQLiteCommand command = new SQLiteCommand("select sum(monthly_payment) from sponsor2 join teamxsponsor on teamxsponsor.id_sponsor=sponsor2.id_sponsor and teamxsponsor.id_team=" + idTeam + ";", conn);
+                SQLiteCommand command = new SQLiteCommand("select sum(monthly_payment) from sponsor join teamxsponsor on teamxsponsor.id_sponsor=sponsor.id_sponsor and teamxsponsor.id_team=" + idTeam + ";", conn);
                 SQLiteDataReader reader = command.ExecuteReader();
                 reader.Read();
                 int income = 0;
@@ -258,7 +310,7 @@ namespace EsportManager
                      income = reader.GetInt32(0);
                 }
                 reader.Close();
-                command = new SQLiteCommand("select sum(salary) from player join teamxsection on teamxsection.id_team=player.team_fk and teamxsection.id_team=" + idTeam + ";", conn);
+                command = new SQLiteCommand("select sum(salary) from player join teamxsection on teamxsection.id_team=player.id_teamxsection and teamxsection.id_team=" + idTeam + ";", conn);
                 reader = command.ExecuteReader();
                 reader.Read();
                 income -= reader.GetInt32(0);
@@ -313,6 +365,8 @@ namespace EsportManager
 
         private void NextDayClick(object sender, RoutedEventArgs e)
         {
+            // každodenní rutina týmů
+            EveryDayTeamActions();
             // odehrávání zápasů
             PlayAllOtherMatches();
             // vyhodnocení ukončených turnajů
@@ -358,7 +412,8 @@ namespace EsportManager
                 conn.Open();
                 for (int i = 0; i < sectionsList.Count; i++)
                 {
-                    SQLiteCommand command = new SQLiteCommand("select count(*) from '2019match1' where match_date='" + date + "' and id_teamxsection_home=" + sectionsList.ElementAt(i).ID + " or id_teamxsection_away=" + sectionsList.ElementAt(i).ID + ";", conn);
+                    
+                    SQLiteCommand command = new SQLiteCommand("select count(*) from '" + curYear + "match" + sectionsList.ElementAt(i).SectionID +"' where match_date='" + date + "' and id_teamxsection_home=" + sectionsList.ElementAt(i).ID + " or id_teamxsection_away=" + sectionsList.ElementAt(i).ID + ";", conn);
                     SQLiteDataReader reader = command.ExecuteReader();
                     reader.Read();
                     int matches = reader.GetInt32(0);
@@ -386,12 +441,42 @@ namespace EsportManager
             ChangePropertiesOfNextActionButton();
         }
 
+        private void EveryDayTeamActions()
+        {
+            using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + DatabaseName + ";"))
+            {
+                conn.Open();
+                SQLiteCommand command = new SQLiteCommand("select teamxsection.id_teamxsection, section.n_o_players-count(player.id_teamxsection), team.reputation from player join teamxsection on player.id_teamxsection=teamxsection.id_teamxsection join section on section.id_section=teamxsection.id_section join team on team.id_team=teamxsection.id_team where teamxsection.id_team<>" + idTeam + " group by player.id_teamxsection HAVING count(player.id_teamxsection)<section.n_o_players;", conn);
+                SQLiteDataReader reader = command.ExecuteReader();
+                SQLiteCommand command2 = new SQLiteCommand("select id_player, individualSkill, teamplaySkill from player where id_teamxsection is null", conn);
+                SQLiteDataReader reader2 = command2.ExecuteReader();
+                string newDate = year + random.Next(1, 3) + date.Substring(4, 6);
+                while (reader.Read())
+                {
+                    for (int i = 0; i < reader.GetInt32(1); i++)
+                    {
+                        while (reader2.Read())
+                        {
+                            int newSalary = 1000 + (int)(((reader.GetInt32(2) * (reader2.GetInt32(1) + reader2.GetInt32(2)) / 2) - 3600) * 1.02);
+                            int playerValue = (newSalary * 100 / 3);
+                            playerValue = playerValue / 100;
+                            playerValue = playerValue * 100;
+                            SQLiteCommand command3 = new SQLiteCommand("update player set contractEnd = '" + newDate + "', value = " + playerValue + ", salary = " + newSalary + ", playerCoop=70 where id_player = " + reader2.GetInt32(0) + "; ",conn);
+                            command3.ExecuteReader();
+                        }
+                    }
+                }
+                reader.Close();
+                reader2.Close();
+            }
+        }
+
         private void PayingForAccommodations()
         {
             using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + DatabaseName + ";"))
             {
                 conn.Open();
-                SQLiteCommand command = new SQLiteCommand("select teamxsection.id_city, team.id_city_fk from teamxsection join team on teamxsection.id_team=team.id_team where teamxsection.id_team=" + idTeam + ";", conn);
+                SQLiteCommand command = new SQLiteCommand("select teamxsection.id_city, team.id_city from teamxsection join team on teamxsection.id_team=team.id_team where teamxsection.id_team=" + idTeam + ";", conn);
                 SQLiteDataReader reader = command.ExecuteReader();
                 int payment = 0;
                 while (reader.Read()) 
@@ -447,8 +532,9 @@ namespace EsportManager
             {
                 List<Player> players = new List<Player>();
                 conn.Open();
-                SQLiteCommand command = new SQLiteCommand("select id_player, playerCoop, individualSkill, teamplaySkill, individualPotencial, teamplayPotencial, energy from player where team_fk=" + section + ";", conn);
+                SQLiteCommand command = new SQLiteCommand("select id_player, playerCoop, individualSkill, teamplaySkill, individualPotencial, teamplayPotencial, energy, id_section from player where id_teamxsection=" + section + ";", conn);
                 SQLiteDataReader reader = command.ExecuteReader();
+                int idSection = 0;
                 while (reader.Read())
                 {
                     Player p = new Player();
@@ -459,15 +545,16 @@ namespace EsportManager
                     p.IndiPotencial = reader.GetInt32(4);
                     p.TeamPotencial = reader.GetInt32(5);
                     p.Energy = reader.GetInt32(6);
+                    idSection = reader.GetInt32(7);
                     players.Add(p);
                 }
                 reader.Close();
-                command = new SQLiteCommand("select id_coach, training from coach where team_fk=" + idTeam + ";", conn);
+                command = new SQLiteCommand("select id_coach, training from coach where id_team=" + idTeam + " and id_section=" + idSection + ";", conn);
                 reader = command.ExecuteReader();
-                Coach coach = null;
+                Coach coach = new Coach();
+                coach.Training = 20;
                 if (reader.Read())
                 {
-                    coach = new Coach();
                     coach.IdCoach = reader.GetInt32(0);
                     coach.Training = reader.GetInt32(1);
                 }
@@ -578,7 +665,7 @@ namespace EsportManager
             {
                 string ex = "";
                 conn.Open();
-                SQLiteCommand command = new SQLiteCommand("select id_tournament, prize_pool, pp_teams, pp_dividing, game, system from tournament where end_date='" + date + "';", conn);
+                SQLiteCommand command = new SQLiteCommand("select id_tournament, prize_pool, pp_teams, pp_dividing, id_section, system, from tournament where end_date='" + date + "';", conn);
                 SQLiteDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
@@ -590,13 +677,13 @@ namespace EsportManager
             }
         }
 
-        private string FinishTournament(int idTournament, int prizePool, int ppTeams, int ppDividing, int game, int system)
+        private string FinishTournament(int idTournament, int prizePool, int ppTeams, int ppDividing, int game, int system )
         {
             string ret = "";
             if (system ==1 || system == 2 || system == 6)
             {
                 TournamentStandings standings;
-                standings = new TournamentStandings(DatabaseName, idTournament, prizePool, ppTeams, ppDividing, system);
+                standings = new TournamentStandings(DatabaseName, idTournament, prizePool, ppTeams, ppDividing, system, game);
                 for (int i = 0; i < standings.standings.Count; i++)
                 {
                     ret += "update tournament_token set id_teamxsection=" + standings.standings.ElementAt(i).IdTeamSection + " where id_tournament_from=" + idTournament + " and tournament_from_position=" + standings.standings.ElementAt(i).Position + ";";
@@ -606,7 +693,7 @@ namespace EsportManager
             } 
             else
             {
-                TournamentBracket bracket = new TournamentBracket(DatabaseName, idTournament, prizePool, ppTeams, ppDividing, system);
+                TournamentBracket bracket = new TournamentBracket(DatabaseName, idTournament, prizePool, ppTeams, ppDividing, system, game);
                 bracket.CountStandings();
                 for (int i = 0; i < bracket.Teams.Count; i++)
                 {
@@ -628,7 +715,6 @@ namespace EsportManager
                 // PŘEDĚLAT SEKCE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 SQLiteCommand command = new SQLiteCommand("select id_match, m.id_teamxsection_home, m.id_teamxsection_away, tour.games_best_of, a.power_ranking, b.power_ranking from '" + year + "match" + idSection + "' m join teamxsection a on a.id_teamxsection = m.id_teamxsection_home join teamxsection b on b.id_teamxsection = m.id_teamxsection_away join tournament tour on tour.id_tournament = m.id_tournament where match_date = '" + date + "'", conn);
                 SQLiteDataReader reader = command.ExecuteReader();
-                int homeStrength, awayStrength, bestOf;
                 
                 while (reader.Read())
                 {
@@ -638,31 +724,20 @@ namespace EsportManager
                     m.IdTxSAway = reader.GetInt32(2);
                     m.HomePowerRanking = reader.GetInt32(4);
                     m.AwayPowerRanking = reader.GetInt32(5);
-                    bestOf = reader.GetInt32(3);
-                    SQLiteCommand command2 = new SQLiteCommand("select sum(individualSkill + teamplaySkill + playerCoop) / count(*) as i from player where team_fk=" + m.IdTxSHome + ";", conn);
+                    m.ScoreToWin = reader.GetInt32(3) / 2 + 1;
+                    SQLiteCommand command2 = new SQLiteCommand("select sum(individualSkill + teamplaySkill + playerCoop) / count(*) as i from player where id_teamxsection=" + m.IdTxSHome + ";", conn);
                     SQLiteDataReader reader2 = command2.ExecuteReader();
                     reader2.Read();
-                    homeStrength = reader2.GetInt32(0);
+                    m.HomeStrength = reader2.GetInt32(0);
                     reader2.Close();
-                    command2 = new SQLiteCommand("select sum(individualSkill + teamplaySkill + playerCoop) / count(*) as i from player where team_fk=" + m.IdTxSAway + ";", conn);
+                    command2 = new SQLiteCommand("select sum(individualSkill + teamplaySkill + playerCoop) / count(*) as i from player where id_teamxsection=" + m.IdTxSAway + ";", conn);
                     reader2 = command2.ExecuteReader();
                     reader2.Read();
-                    awayStrength = reader2.GetInt32(0);
+                    m.AwayStrength = reader2.GetInt32(0);
                     reader2.Close();
                     m.HomeScore = 0;
                     m.AwayScore = 0;
-                    while (m.HomeScore < bestOf && m.AwayScore < bestOf)
-                    {
-                        // tady nějaké výpočty a propočty
-                        if (awayStrength > homeStrength)
-                        {
-                            m.AwayScore++;
-                        }
-                        else
-                        {
-                            m.HomeScore++;
-                        }
-                    }
+                    m.PlayMatch();
                     updateMatch.Add(m);
                 }
                 reader.Close();
@@ -680,7 +755,7 @@ namespace EsportManager
                 using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + DatabaseName + ";"))
                 {
                     conn.Open();
-                    SQLiteCommand command = new SQLiteCommand("select start_date, playing_days, n_of_teams, end_date, game, system from tournament where id_tournament=" + tournamentsToDraw.ElementAt(tourToDraw) + ";", conn);
+                    SQLiteCommand command = new SQLiteCommand("select start_date, playing_days, n_of_teams, end_date, id_section, system from tournament where id_tournament=" + tournamentsToDraw.ElementAt(tourToDraw) + ";", conn);
                     SQLiteDataReader reader = command.ExecuteReader();
                     reader.Read();
                     int game = reader.GetInt32(4);
@@ -1123,33 +1198,60 @@ namespace EsportManager
 
         private void EndYearClick(object sender, RoutedEventArgs e)
         {
+            date = NextDay(date);
+            using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + DatabaseName + ";"))
+            {
+                conn.Open();
+                SQLiteCommand command = new SQLiteCommand("CREATE TABLE '" + date.Substring(0, 4) + "future_match1' ('id_match'  INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,'id_home'  INTEGER NOT NULL,'id_away'   INTEGER NOT NULL,'type_home' INTEGER NOT NULL,'type_away' INTEGER NOT NULL,'date'  BLOB NOT NULL,'id_tournament' INTEGER NOT NULL,FOREIGN KEY('id_tournament') REFERENCES 'tournament'('id_tournament'));", conn);
+                command.ExecuteReader();
+                command = new SQLiteCommand("CREATE TABLE '" + date.Substring(0, 4) + "match1' ('id_match'  INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,    'id_teamxsection_home'  INTEGER NOT NULL,    'id_teamxsection_away'  INTEGER NOT NULL,    'home_score'    INTEGER,    'away_score'    INTEGER,    'match_date'    TEXT NOT NULL,    'id_tournament' INTEGER NOT NULL,    FOREIGN KEY('id_tournament') REFERENCES 'tournament'('id_tournament'),    FOREIGN KEY('id_teamxsection_home') REFERENCES 'teamxsection'('id_teamxsection'),    FOREIGN KEY('id_teamxsection_away') REFERENCES 'teamxsection'('id_teamxsection')); ", conn);
+                command.ExecuteReader();
+                command = new SQLiteCommand("select id_tournament, start_date, end_date from tournament", conn);
+                SQLiteDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    SQLiteCommand command2 = new SQLiteCommand("update tournament set start_date=" + date.Substring(0, 4) + reader.GetString(1).Substring(4,6) + ", end_date=" + date.Substring(0, 4) + reader.GetString(1).Substring(4, 6) + " where id_tournament=" + reader.GetInt32(0) + ";", conn);
+                    command2.ExecuteReader();
+                }
+                reader.Close();
+            }
             ChangePropertiesOfNextActionButton();
             SetLabels();
         }
 
         private void PlayerContractExpired(object sender, RoutedEventArgs e)
         {
-            MessageBoxResult result = MessageBox.Show("Nejméně jednomu vašemu hráči končí smlouva, kliknutím na Ano tým opustí.", "Hráčům končí smlouva", MessageBoxButton.YesNo);
-            if (result == MessageBoxResult.Yes)
+            using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + DatabaseName + ";"))
             {
-                using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + DatabaseName + ";"))
+                conn.Open();
+                MessageBoxResult result = MessageBox.Show("Nejméně jednomu vašemu hráči končí smlouva. Chcete jeho/jejich smlouvu prodloužit? Stisknutím 'Ne' všechny hráče propustíte.", "Hráčům končí smlouva", MessageBoxButton.YesNo);
+                if (result == MessageBoxResult.No)
                 {
-                    conn.Open();
-                    SQLiteCommand command = new SQLiteCommand("select player.id_player from player join teamxsection on player.team_fk=teamxsection.id_teamxsection join team on team.id_team=teamxsection.id_team where team.id_team=" + idTeam + " and contractEnd<='" + date + "';", conn);
+
+                    SQLiteCommand command = new SQLiteCommand("select player.id_player from player join teamxsection on player.id_teamxsection=teamxsection.id_teamxsection join team on team.id_team=teamxsection.id_team where team.id_team=" + idTeam + " and contractEnd<='" + date + "';", conn);
                     SQLiteDataReader reader = command.ExecuteReader();
                     string comm = "";
                     while (reader.Read())
                     {
-                        comm += "update player set value=0, salary=0, team_fk=NULL, contractEnd='' where id_player=" + reader.GetInt32(0) + ";";
-                        /*SQLiteCommand command2 = new SQLiteCommand("update player set value=0, salary=0, team_fk=NULL, contractEnd='' where id_player=" + reader.GetInt32(0) + ";", conn);
-                        command2.ExecuteReader();*/
-                }
-                reader.Close();
+                        comm += "update player set value=0, salary=0, id_teamxsection=NULL, contractEnd='' where id_player=" + reader.GetInt32(0) + ";";
+                    }
+                    reader.Close();
                     command = new SQLiteCommand(comm, conn);
                     command.ExecuteReader();
                     AddAllPlayers();
                     //hráči jsou volní
                     ChangePropertiesOfNextActionButton();
+                }
+                else if (result == MessageBoxResult.Yes)
+                {
+                    SQLiteCommand command = new SQLiteCommand("select player.id_player from player join teamxsection on player.id_teamxsection=teamxsection.id_teamxsection join team on team.id_team=teamxsection.id_team where team.id_team=" + idTeam + " and contractEnd<='" + date + "';", conn);
+                    SQLiteDataReader reader = command.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        PlayerDetail win2 = new PlayerDetail(DatabaseName, reader.GetInt32(0));
+                        win2.ShowDialog();
+                    }
+                    reader.Close();
                 }
             }
         }
@@ -1163,7 +1265,7 @@ namespace EsportManager
                 for (int i = 0; i < sectionsList.Count; i++)
                 {
                     List<Player> players = new List<Player>();
-                    SQLiteCommand command = new SQLiteCommand("select nick, player.name, surname, position_type.name, energy, id_player from player join position_type on position_type.id_position_in_game=player.position and position_type.id_section=player.game where team_fk=" + sectionsList.ElementAt(i).ID, conn);
+                    SQLiteCommand command = new SQLiteCommand("select nick, player.name, surname, position_type.name, energy, id_player from player join position_type on position_type.id_position_in_game=player.id_position and position_type.id_section=player.id_section where id_teamxsection=" + sectionsList.ElementAt(i).ID, conn);
                     SQLiteDataReader reader = command.ExecuteReader();
                     string nick, name, surname, position;
                     while (reader.Read())
@@ -1212,7 +1314,7 @@ namespace EsportManager
                     }
 
                     reader.Close();
-                    command = new SQLiteCommand("select nick, coach.name, surname, team_fk from coach join teamxsection on teamxsection.id_team=coach.team_fk where teamxsection.id_teamxsection=" + sectionsList.ElementAt(i).ID + " and game=" + sectionsList.ElementAt(i).SectionID + ";", conn);
+                    command = new SQLiteCommand("select nick, coach.name, surname, teamxsection.id_team from coach join teamxsection on teamxsection.id_team=coach.id_team where teamxsection.id_teamxsection=" + sectionsList.ElementAt(i).ID + " and teamxsection.id_section=" + sectionsList.ElementAt(i).SectionID + ";", conn);
                     reader = command.ExecuteReader();
                     while (reader.Read())
                     {
@@ -1266,7 +1368,7 @@ namespace EsportManager
                 {
                     List<MatchDetail> tournaments = new List<MatchDetail>();
                     string matchTableName = year + "match" + sectionsList.ElementAt(i).SectionID;
-                    command = new SQLiteCommand("select tournament.id_tournament, tournament.shortcut, match_date, id_teamxsection_home, id_teamxsection_away, tournament.city_fk, cities.name, home_score, away_score from '" + matchTableName + "' join tournament on tournament.id_tournament='" + matchTableName + "'.id_tournament join cities on cities.id_city=tournament.city_fk where id_teamxsection_home=" + sectionsList.ElementAt(i).ID + " or id_teamxsection_away=" + sectionsList.ElementAt(i).ID + " order by match_date asc;", conn);
+                    command = new SQLiteCommand("select tournament.id_tournament, tournament.shortcut, match_date, id_teamxsection_home, id_teamxsection_away, tournament.id_city, city.name, home_score, away_score from '" + matchTableName + "' join tournament on tournament.id_tournament='" + matchTableName + "'.id_tournament join city on city.id_city=tournament.id_city where id_teamxsection_home=" + sectionsList.ElementAt(i).ID + " or id_teamxsection_away=" + sectionsList.ElementAt(i).ID + " order by match_date asc;", conn);
                     reader = command.ExecuteReader();
                     while (reader.Read())
                     {
@@ -1479,7 +1581,7 @@ namespace EsportManager
             using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + DatabaseName + ";"))
             {
                 conn.Open();
-                SQLiteCommand command = new SQLiteCommand("select player.id_player, player.individualSkill, player.teamplaySkill, team.reputation from player join teamxsection on player.team_fk = teamxsection.id_teamxsection join team on team.id_team = teamxsection.id_team;", conn);
+                SQLiteCommand command = new SQLiteCommand("select player.id_player, player.individualSkill, player.teamplaySkill, team.reputation from player join teamxsection on player.id_teamxsection = teamxsection.id_teamxsection join team on team.id_team = teamxsection.id_team;", conn);
                 SQLiteDataReader reader = command.ExecuteReader();
                 double salary, salary4;
                 int salary2, salary3;

@@ -4,7 +4,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="MainGame" Height="450" Width="800" Closing="Window_Closing" IsEnabledChanged="Window_IsEnabledChanged" Activated="Window_Activated" ResizeMode="NoResize" Background="LightGray">
+        Title="Hlavní hra" Height="450" Width="800" Closing="Window_Closing" IsEnabledChanged="Window_IsEnabledChanged" Activated="Window_Activated" ResizeMode="NoResize" Background="LightGray">
     <DockPanel>
         <Menu DockPanel.Dock="Top" Height="20" VerticalAlignment="Top" >
             <MenuItem Header="Hra">
@@ -55,6 +55,7 @@
                             <DataGridTextColumn Header="E"
                           Binding="{Binding Energy}"/>
                         </DataGrid.Columns>
+
                         <DataGrid.RowStyle>
                             <Style TargetType="DataGridRow">
                                 <Style.Triggers>

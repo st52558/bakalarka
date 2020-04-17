@@ -27,7 +27,7 @@ namespace EsportManager
         int idTeam;
         string date;
         int[] availableSponsorsIndexes = new int[3];
-        Random random = new Random(); // nastavit seed na: měsíc * rok aby se sponzoři a datumy měnily každý měsíc!!
+        Random random; // nastavit seed na: měsíc * rok aby se sponzoři a datumy měnily každý měsíc!!
 
         public ViewSponsors(int form, string name)
         {
@@ -45,6 +45,7 @@ namespace EsportManager
                 date = reader.GetString(1);
                 reader.Close();
             }
+            random = new Random(databaseName.Last() * idTeam * int.Parse(date.Substring(6,1)) * int.Parse(date.Substring(8,1)));
             ShowRightComponents(formType);
         }
 
@@ -128,7 +129,7 @@ namespace EsportManager
                 using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
                 {
                     conn.Open();
-                    SQLiteCommand command = new SQLiteCommand("select sponsor2.id_sponsor, sponsor2.name, monthly_payment, renew_bonus, success_payment, teamxsponsor.expiration_date from sponsor2 join teamxsponsor on sponsor2.id_sponsor=teamxsponsor.id_sponsor where teamxsponsor.id_team=" + idTeam + ";", conn);
+                    SQLiteCommand command = new SQLiteCommand("select sponsor.id_sponsor, sponsor.name, monthly_payment, renew_bonus, success_payment, teamxsponsor.expiration_date from sponsor join teamxsponsor on sponsor.id_sponsor=teamxsponsor.id_sponsor where teamxsponsor.id_team=" + idTeam + ";", conn);
                     SQLiteDataReader reader = command.ExecuteReader();
                     int sponsorsCount = 0;
                     while (reader.Read())
@@ -195,7 +196,7 @@ namespace EsportManager
                 using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
                 {
                     conn.Open();
-                    SQLiteCommand command = new SQLiteCommand("select count(*) from sponsor2 join team on team.reputation>=sponsor2.min_team_strength where id_team=" + idTeam + ";", conn);
+                    SQLiteCommand command = new SQLiteCommand("select count(*) from sponsor join team on team.reputation>=sponsor.min_team_strength where id_team=" + idTeam + ";", conn);
                     SQLiteDataReader reader = command.ExecuteReader();
                     reader.Read();
                     int possibleSponsorCount = reader.GetInt32(0);
@@ -210,7 +211,7 @@ namespace EsportManager
                     Array.Sort(chosenSponsors);
 
 
-                    command = new SQLiteCommand("select id_sponsor, sponsor2.name, monthly_payment, renew_bonus, success_payment from sponsor2 join team on team.reputation>=sponsor2.min_team_strength where id_team=" + idTeam + ";", conn);
+                    command = new SQLiteCommand("select id_sponsor, sponsor.name, monthly_payment, renew_bonus, success_payment from sponsor join team on team.reputation>=sponsor.min_team_strength where id_team=" + idTeam + ";", conn);
                     reader = command.ExecuteReader();
                     int commandCount = 0;
                     while (reader.Read())

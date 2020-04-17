@@ -23,12 +23,13 @@ namespace EsportManager
         public int IdTeamSection { get; set; }
         public bool Chosen { get; set; }
         public string SectionName { get; set; }
-        public string SectionId { get; set; }
+        public int IdSection { get; set; }
         public string TeamName { get; set; }
         public int IdTeam { get; set; }
         public int Value { get; set; }
         public int Salary { get; set; }
         public string ContractEnd { get; set; }
+
 
         // pro zápas
         public Player(int id_player, string nick, int position, int playerCoop, int individualSkill, int teamplaySkill, int energy, string posName ,int teamxsection)
@@ -48,7 +49,7 @@ namespace EsportManager
 
         }
         // pro detail hráče
-        public Player(int id_player, string name, string nick, string surname, string teamName, string sectionName, string positionName, int salary, string contractEnd, int value, int idTeam, int individualSkill, int teamplaySkill, int teamSection)
+        public Player(int id_player, string name, string nick, string surname, string teamName, string sectionName, string positionName, int salary, string contractEnd, int value, int idTeam, int individualSkill, int teamplaySkill, int teamSection, int section, int playercoop)
         {
             IdPlayer = id_player;
             Nick = nick;
@@ -65,6 +66,8 @@ namespace EsportManager
             IndiSkill = individualSkill;
             TeamSkill = teamplaySkill;
             IdTeamSection = teamSection;
+            IdSection = section;
+            PlayerCoop = playercoop;
         }
     }
 }

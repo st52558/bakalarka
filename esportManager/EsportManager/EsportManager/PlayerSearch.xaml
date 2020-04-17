@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EsportManager"
         mc:Ignorable="d"
-        Title="PlayerSearch" Height="450" Width="500">
+        Title="Vyhledávání hráčů" Height="450" Width="500" ResizeMode="NoResize">
     <Grid>
         <ComboBox Name="TournamentsComboBox" HorizontalAlignment="Center" Margin="100,10,150,0" VerticalAlignment="Top" Width="130" SelectionChanged="TournamentChanged" />
         <DataGrid FontSize="12" Name="FreePlayersGrid" HorizontalAlignment="Center" Width="400" Margin="0,50,0,10" IsReadOnly="True" AutoGenerateColumns="False" CanUserAddRows="False" CanUserReorderColumns="True" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="False" MouseDoubleClick="SignPlayer">

@@ -47,7 +47,7 @@ namespace EsportManager
             using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
             {
                 conn.Open();
-                SQLiteCommand command = new SQLiteCommand("select id_tournament, name, game from tournament;", conn);
+                SQLiteCommand command = new SQLiteCommand("select id_tournament, name, id_section from tournament;", conn);
                 SQLiteDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
@@ -109,7 +109,7 @@ namespace EsportManager
                 conn.Open();
                 string com;
                 SQLiteCommand command;
-                com = "select section.shortcut, position_type.name, nick, player.name, surname, id_player, team.shortcut from player join section on player.game=section.id_section join position_type on position_type.id_section=section.id_section and id_position_in_game=player.position join teamxsection on player.team_fk=teamxsection.id_teamxsection join team on team.id_team=teamxsection.id_team ";
+                com = "select section.shortcut, position_type.name, nick, player.name, surname, id_player, team.shortcut from player join section on player.id_section=section.id_section join position_type on position_type.id_section=section.id_section and id_position_in_game=player.id_position join teamxsection on player.id_teamxsection=teamxsection.id_teamxsection join team on team.id_team=teamxsection.id_team ";
                 if (TeamsComboBox.SelectedIndex > 0)
                 {
                     com += "where team.id_team=" + teams.ElementAt(TeamsComboBox.SelectedIndex - 1).IdTeam + ";";

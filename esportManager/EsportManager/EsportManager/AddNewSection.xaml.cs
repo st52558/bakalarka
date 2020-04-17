@@ -39,7 +39,7 @@ namespace EsportManager
             using (SQLiteConnection conn = new SQLiteConnection(@"Data Source=.\" + databaseName + ";"))
             {
                 conn.Open();
-                SQLiteCommand command = new SQLiteCommand("select info.id_team, date, id_city_fk from info join team on info.id_team=team.id_team;", conn);
+                SQLiteCommand command = new SQLiteCommand("select info.id_team, date, id_city from info join team on info.id_team=team.id_team;", conn);
                 SQLiteDataReader reader = command.ExecuteReader();
                 reader.Read();
                 teamId = reader.GetInt32(0);
